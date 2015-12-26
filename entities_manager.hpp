@@ -5,6 +5,9 @@
   *
   */
 
+#ifndef ENTITIES_MANAGER_HPP
+#define ENTITIES_MANAGER_HPP
+
 namespace Engine
 {
 
@@ -21,3 +24,5 @@ class EntitiesManager
 
 
 } // end namespace Engine
+
+#endif // ENTITIES_MANAGER_HPP

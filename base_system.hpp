@@ -5,6 +5,9 @@
   *
   */
 
+#ifndef BASE_SYSTEMS_HPP
+#define BASE_SYSTEMS_HPP
+
 #include <map>
 #include "component_data.hpp"
 
@@ -44,3 +47,5 @@ protected:
 };
 
 } // end namespace Engine
+
+#endif // BASE_SYSTEMS_HPP

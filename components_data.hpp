@@ -5,6 +5,9 @@
   *
   */
 
+#ifndef COMPENTS_DATA_HPP
+#define COMPENTS_DATA_HPP
+
 #include "data_utils.hpp"
 
 // forward declaration
@@ -52,7 +55,7 @@ struct TransformationsComponent
   Boundary boundary;
 };
 
-struct PhysicsAndCollisionComponent
+struct PhysicsAndCollisionsComponent
 {
   // values between 0.0 - 1.0 (in relation to world size) / t / t
   Vector3 linVelocity;
@@ -65,7 +68,7 @@ struct PhysicsAndCollisionComponent
   float elasticity;
 };
 
-struct GraphicsAndAnimationComponent
+struct GraphicsAndAnimationsComponent
 {
   AtlasData * atlas;
   TextureData * texture;
@@ -77,7 +80,7 @@ struct GraphicsAndAnimationComponent
   // AlphaMode ???
 };
 
-struct SoundsComponent
+struct SoundEffectsComponent
 {
   MusicData * music;
   // values between 0.0 - 1.0
@@ -89,7 +92,7 @@ struct SoundsComponent
   eSoundState soundFxState;
 };
 
-struct InputAndControllerComponent
+struct InputAndControllersComponent
 {};
 
 struct LogicAndStatesComponent
@@ -98,3 +101,5 @@ struct LogicAndStatesComponent
 
 
 } // end namespace Engine
+
+#endif // COMPENTS_DATA_HPP

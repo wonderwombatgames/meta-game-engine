@@ -5,6 +5,9 @@
   *
   */
 
+#ifndef DATA_UTILS_HPP
+#define DATA_UTILS_HPP
+
 namespace Engine
 {
 
@@ -163,3 +166,5 @@ enum eSoundState
 };
 
 } // end namespace Engine
+
+#endif // DATA_UTILS_HPP
