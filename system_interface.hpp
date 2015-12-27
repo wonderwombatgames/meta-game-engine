@@ -42,11 +42,6 @@ class IManagedEntity;
 class ISystem
 {
 public:
-  static bool isValid(ISystem * system)
-  {
-    return (0 < ISystem::s_systems.count(system));
-  }
-
   virtual ~ISystem(){}
   void addEntity(int entityId){};
   void delEntity(int entityId){};
@@ -54,14 +49,19 @@ public:
   {
     this->run(entity);
   }
+  static bool isValid(ISystem * system);
  protected:
   // must be overriden in each system (impl. NVI)
   virtual void run(IManagedEntity * entity){};
-
-  static set< ISystem * > s_systems;
 };
 
 typedef shared_ptr<ISystem> ISystemPtr;
+
+inline bool ISystem::isValid(ISystem * system)
+{
+  static set< ISystem * > s_systems;
+  return (0 < s_systems.count(system));
+}
 
 } // end namespace Engine
 

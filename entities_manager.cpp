@@ -46,12 +46,12 @@ void EntitiesManager::IEntity::tearDownComponents()
 
 EntitiesManager * EntitiesManager::instance()
 {
-  static EntitiesManager * _instance = nullptr;
-  if (nullptr == _instance)
+  static EntitiesManager * s_instance = nullptr;
+  if (nullptr == s_instance)
   {
-    _instance = new EntitiesManager();
+    s_instance = new EntitiesManager();
   }
-  return _instance;
+  return s_instance;
 }
 
 bool EntitiesManager::destroyEntity(int id)

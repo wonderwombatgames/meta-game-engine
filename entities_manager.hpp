@@ -26,11 +26,23 @@ public:
 
   class IEntity
   {
+    friend class EntitiesManager;
+
   public:
     virtual ~IEntity()
     {
       this->tearDownComponents();
     }
+
+    IEntity() = delete;
+    IEntity(IEntity & other) = delete;
+
+    IEntity(int id, const char * name = nullptr):
+      _entityId(id),
+      _isActive(true),
+      _mustDestroy(false),
+      _name(name)
+      {};
 
     int getId()
     {
@@ -68,12 +80,6 @@ public:
     string _name;
     set< ISystem * > _componentSystems;
 
-    IEntity(int id, const char * name = nullptr):
-        _entityId(id),
-        _isActive(true),
-        _mustDestroy(false),
-        _name(name)
-         {};
 
     // tear down (de register) components from systems
     void tearDownComponents();
@@ -121,8 +127,12 @@ class IManagedEntity : public EntitiesManager::IEntity
 {
 public:
   virtual ~IManagedEntity(){}
-protected:
-  IManagedEntity(int id) : EntitiesManager::IEntity(id){}
+  IManagedEntity() = delete;
+  IManagedEntity(IManagedEntity & other) = delete;
+
+//protected:
+  IManagedEntity(int id, const char * name = nullptr) :
+      EntitiesManager::IEntity(id, name) {}
 };
 
 
@@ -131,7 +141,7 @@ inline int EntitiesManager::createEntity(const char * name)
 {
   int id = this->newId();
   EntityType * entity = new EntityType(id, name);
-  entity->setupComponents();
+  entity->setUpComponents();
   this->_entities[id].reset(entity);
   this->_size = this->refreshEntities();
   return id;
