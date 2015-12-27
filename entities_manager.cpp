@@ -32,6 +32,7 @@ bool EntitiesManager::IEntity::resume()
   return false;
 }
 
+
 // tear down (de register) components from systems
 void EntitiesManager::IEntity::tearDownComponents()
 {
@@ -54,9 +55,20 @@ EntitiesManager * EntitiesManager::instance()
   return s_instance;
 }
 
-bool EntitiesManager::destroyEntity(int id)
+bool EntitiesManager::addComponent(int entitityId, ISystem * system)
 {
-  auto entity = this->_entities.find(id);
+  auto entity = this->_entities.find(entitityId);
+  if(entity != this->_entities.end())
+  {
+    entity->second->addComponent(system);
+    return true;
+  }
+  return false;
+}
+
+bool EntitiesManager::destroyEntity(int entityId)
+{
+  auto entity = this->_entities.find(entityId);
   if (entity->second)
   {
     entity->second->destroy();

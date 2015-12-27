@@ -26,8 +26,6 @@ public:
 
   class IEntity
   {
-    friend class EntitiesManager;
-
   public:
     virtual ~IEntity()
     {
@@ -47,6 +45,11 @@ public:
     int getId()
     {
       return this->_entityId;
+    }
+
+    const string & getName()
+    {
+      return this->_name;
     }
 
     bool suspend();
@@ -80,12 +83,16 @@ public:
     string _name;
     set< ISystem * > _componentSystems;
 
+    void addComponent(ISystem * system)
+    {
+      this->_componentSystems.insert(system);
+    }
 
     // tear down (de register) components from systems
     void tearDownComponents();
 
-    // must be overriden on each entityType
-    // to register components into systems
+    // can be overriden on each entityType
+    // to register components into systems at constructor time
     virtual void setUpComponents() {};
 
   };
@@ -95,9 +102,21 @@ public:
   template< class EntityType = IEntity >
   int createEntity(const char * name);
 
+  bool addComponent(int entitityId, ISystem * system);
+  // convenience function
+  bool addComponent(int entitityId, ISystem & system)
+  {
+    return this->addComponent(entitityId, &system);
+  }
+
   bool destroyEntity(int id);
 
   void updateComponents(ISystem * system);
+  // convenience function
+  void updateComponents(ISystem & system)
+  {
+    this->updateComponents(&system);
+  }
 
   int refreshEntities();
 
@@ -107,7 +126,7 @@ public:
   }
 
 protected:
-  enum {  MAX_ENTITIES_AMOUNT = 1000  };
+  enum {  MAX_ENTITIES_AMOUNT = 10000  };
 
   int newId();
 
@@ -125,6 +144,7 @@ protected:
 // un-nesting entity class
 class IManagedEntity : public EntitiesManager::IEntity
 {
+  friend class EntitiesManager;
 public:
   virtual ~IManagedEntity(){}
   IManagedEntity() = delete;
