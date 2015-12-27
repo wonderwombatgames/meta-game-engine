@@ -37,7 +37,7 @@ struct TransformationsComponent
 
   // rotation
   // values between 0.0 - 1.0  (= 0 - 360)
-  Rotation rotation;
+  Rotation3 rotation;
 
   // scales
   // <1.0 : smaller | > 1.0 : larger
@@ -60,8 +60,8 @@ struct PhysicsAndCollisionsComponent
   // values between 0.0 - 1.0 (in relation to world size) / t / t
   Vector3 linVelocity;
   Vector3 linAcceleration;
-  Vector3 angVelocity;
-  Vector3 angAcceleration;
+  Rotation3 angVelocity;
+  Rotation3 angAcceleration;
   // arbritary value in relation to other entities
   float mass;
   // values between 0.0 - 1.0
@@ -93,11 +93,14 @@ struct SoundEffectsComponent
 };
 
 struct InputAndControllersComponent
-{};
+{
+
+};
 
 struct LogicAndStatesComponent
-{};
+{
 
+};
 
 
 } // end namespace Engine

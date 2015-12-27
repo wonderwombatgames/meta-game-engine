@@ -27,7 +27,7 @@ struct Vector3
   float z;
 };
 
-struct Rotation
+struct Rotation3
 {
 // rotation
 float angleXY;
