@@ -15,25 +15,30 @@ namespace Engine
 {
 using namespace std;
 
-// namespace
-// {
-//   struct EmptyType {};
-// }
-//
-// template< class Component, class AuxComponent = EmptyType >
-// class UpdateFunction
-// {
-// public:
-//   typedef Component ComponentDataType;
-//   typedef AuxComponent AuxComponentDataType;
-//
-//   void operator()(Component * data, AuxComponent * aux = nullptr)
-//   {
-//     // use Component data
-//   }
-// };
+#if 0
+  namespace
+  {
+    struct EmptyType {};
+  }
 
-// template< class Update >
+  template< class Component, class AuxComponent = EmptyType >
+  class UpdateFunction
+  {
+  public:
+    typedef Component ComponentDataType;
+    typedef AuxComponent AuxComponentDataType;
+
+    void operator()(Component * data, AuxComponent * aux = nullptr)
+    {
+      // use Component data
+    }
+  };
+#endif
+
+// forward declare entity type interface
+class IManagedEntity;
+
+//
 class ISystem
 {
 public:
@@ -43,16 +48,20 @@ public:
   }
 
   virtual ~ISystem(){}
-  virtual void addEntity(int entityId){};
-  virtual void delEntity(int entityId){};
-  virtual void runEntity(int entityId){};
+  void addEntity(int entityId){};
+  void delEntity(int entityId){};
+  void runEntity(IManagedEntity * entity)
+  {
+    this->run(entity);
+  }
  protected:
-   static set< ISystem * > s_systems;
-//   Update updateFunction;
+  // must be overriden in each system (impl. NVI)
+  virtual void run(IManagedEntity * entity){};
+
+  static set< ISystem * > s_systems;
 };
 
 typedef shared_ptr<ISystem> ISystemPtr;
-typedef weak_ptr<ISystem> ISystemWPtr;
 
 } // end namespace Engine
 
