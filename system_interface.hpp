@@ -37,27 +37,22 @@ public:
     assert(ISystem::systemRegistrar(this, name, REGISTER));
   }
 
-  const string & getName()
-  {
-    return this->_name;
-  }
-
-  FrameCount getFrame()
-  {
-    return this->_frames;
-  }
-
-  void addEntity(int entityId){};
-  void delEntity(int entityId){};
-
-  void runEntity(IManagedEntity * entity)
-  {
-    this->run(entity);
-    ++(this->_frames);
-  }
-
   // check if the pointer actually points to a system
   static bool isValid(ISystem & system);
+
+  // get system name
+  const string & getName() { return this->_name;  }
+
+  // perform one step in the system
+  FrameCount update(float delta) { this->step(delta); return ++(this->_frames); }
+
+  // entity related methods
+  void addEntity(int entityId){};
+  void delEntity(int entityId){};
+  void presetEntity(IManagedEntity * entity)
+  {
+    this->preset(entity);
+  }
 
  protected:
    enum eRegistrar
@@ -73,7 +68,8 @@ public:
       eRegistrar op = VERIFY);
 
   // must be overriden in each system (impl. NVI)
-  virtual void run(IManagedEntity * entity){};
+  virtual void preset(IManagedEntity * entity){};
+  virtual void step(float delta){};
 
   string _name;
 

@@ -16,7 +16,7 @@ using namespace std;
 // IEntity Methods
 //
 
-virtual EntitiesManager::IEntity::~IEntity()
+EntitiesManager::IEntity::~IEntity()
 {
   this->tearDownComponents();
 }
@@ -88,7 +88,7 @@ bool EntitiesManager::addComponent(int entitityId, ISystem & system)
   return false;
 }
 
-void EntitiesManager::updateComponents(ISystem & system)
+void EntitiesManager::presetComponents(ISystem & system)
 {
   if (ISystem::isValid(system))
   {
@@ -97,7 +97,7 @@ void EntitiesManager::updateComponents(ISystem & system)
       auto entity = this->_entities[entityId];
       if(entity->isInSystem(system))
       {
-        system.runEntity(entity.get());
+        system.presetEntity(entity.get());
       }
     }
   }

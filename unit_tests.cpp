@@ -52,29 +52,12 @@ int main(int argc, char *argv[])
 
   for (int i = 0; i < 50; ++i)
   {
-    em->updateComponents(dummySystem1);
-    em->updateComponents(dummySystem2);
+    em->presetComponents(dummySystem1);
+    em->presetComponents(dummySystem2);
+    assert(dummySystem1.update(16) == 1+i); // 2 entities * 50 updates
+    assert(dummySystem2.update(16) == 1+i); // 2 entities * 50 updates
   }
-  assert(dummySystem1.getFrame() == 100); // 2 entities * 50 updates
-  assert(dummySystem2.getFrame() == 100); // 2 entities * 50 updates
   cout << "!!!OK - " << ++test_count << " => Performed 50 updates on each component system" << endl;
-
-  for (int i = 0; i < 50; ++i)
-  {
-    em->updateComponents(dummySystem1);
-    em->updateComponents(dummySystem2);
-    if(i == 24)
-    {
-      assert(em->suspendEntity(id1));
-    }
-    if(i == 34)
-    {
-      assert(em->resumeEntity(id1));
-    }
-  }
-  assert(dummySystem1.getFrame() == 200); // 100 + 2 entities * 50 updates
-  assert(dummySystem2.getFrame() == 190); // 100 + 1 entities * 50 updates + 1 entity * 40
-  cout << "!!!OK - " << ++test_count << " => Performed 50 more updates per system - suspended 1 entity during 10 frames" << endl;
 
   assert(em->suspendEntity(id2));
   cout << "!!!OK - " << ++test_count << " => Suspended 1 entity" << endl;

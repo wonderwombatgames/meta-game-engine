@@ -121,7 +121,7 @@ public:
   // component related methods
   bool addComponent(int entitityId, ISystem & system);
 
-  void updateComponents(ISystem & system);
+  void presetComponents(ISystem & system);
 
 protected:
   enum {  MAX_ENTITIES_AMOUNT = 10000  };

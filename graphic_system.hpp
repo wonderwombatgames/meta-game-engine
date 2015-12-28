@@ -63,11 +63,13 @@ public:
   GraphicSystem(GraphicSystem & other) = delete;
 
 protected:
-  virtual void run(IManagedEntity * entity) override {};
+  virtual void preset(IManagedEntity * entity) override {};
+  virtual void step(float delta) override {};
 };
 
 GraphicSystem::~GraphicSystem()
 {
+  quitGraphicSystem();
 }
 GraphicSystem::GraphicSystem(const char * name): ISystem(name)
 {
