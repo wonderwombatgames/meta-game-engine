@@ -22,39 +22,6 @@ class ParticlesEmitterData;
 namespace Engine
 {
 
-struct TransformationsComponent
-{
-  // kind of transforation 2D/3D
-  eTransformation kind;
-
-  // position
-  // values between 0.0 - 1.0 (in relation to world size)
-  Vector3 position;
-
-  // size
-  // values between 0.0 - 1.0 (in relation to world size)
-  Vector3 size;
-
-  // rotation
-  // values between 0.0 - 1.0  (= 0 - 360)
-  Rotation3 rotation;
-
-  // scales
-  // <1.0 : smaller | > 1.0 : larger
-  Vector3 scale;
-
-  // defines the anchor within the boudaries
-  // also used by phisics = center of mass
-  // and rendering = drawing pivot
-  // values between 0.0 - 1.0 (in relation to entity size)
-  Vector3 anchor;
-
-  // entity boundaries
-  // used by phisics as well.
-  // values between 0.0 - 1.0 (in relation to entity size)
-  Boundary boundary;
-};
-
 struct PhysicsAndCollisionsComponent
 {
   // values between 0.0 - 1.0 (in relation to world size) / t / t
@@ -62,22 +29,44 @@ struct PhysicsAndCollisionsComponent
   Vector3 linAcceleration;
   Rotation3 angVelocity;
   Rotation3 angAcceleration;
+
   // arbritary value in relation to other entities
   float mass;
+
   // values between 0.0 - 1.0
   float elasticity;
+
+  // body
+  Boundary bodyContour;
 };
 
 struct GraphicsAndAnimationsComponent
 {
-  AtlasData * atlas;
-  TextureData * texture;
-  GraphicEffectsData * effects;
-  ShaderData * shader;
-  ParticlesEmitterData * emitter;
+  // defines the anchor within the boudaries
+  // also used by phisics = center of mass
+  // and rendering = drawing pivot
+  // values between 0.0 - 1.0 (in relation to entity size)
+  Vector3 anchor;
+
+  // entity boundaries
+  // values between 0.0 - 1.0 (in relation to world size and the anchor)
+  BoxBoundary clipRectangle;
+
+  // colour parameters
   Colour colour;
   Colour tint;
   // AlphaMode ???
+
+  // texture data
+  unsigned int animationFrame;
+  TextureData * texture;
+  AtlasData * atlas;
+
+  // special components
+  GraphicEffectsData * effects;
+  ShaderData * shader;
+  ParticlesEmitterData * emitter;
+
 };
 
 struct SoundEffectsComponent

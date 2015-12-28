@@ -12,10 +12,10 @@ namespace Engine
 {
 
 
-enum eTransformation
+enum eSpace
 {
-  TRANSFORMATION_2D,
-  TRANSFORMATION_3D,
+  SPACE_2D,
+  SPACE_3D,
 };
 
 struct Vector3
@@ -29,11 +29,11 @@ struct Vector3
 
 struct Rotation3
 {
-// rotation
-float angleXY;
-// these next 2 angles are used only in 3d
-float angleYZ;
-float angleZX;
+  // rotation
+  float angleXY;
+  // these next 2 angles are used only in 3d
+  float angleYZ;
+  float angleZX;
 };
 
 #define POLYGON_BOUND_MAX_VERTICES 8

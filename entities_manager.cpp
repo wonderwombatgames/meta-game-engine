@@ -12,6 +12,10 @@ namespace Engine
 {
 using namespace std;
 
+//
+// IEntity Methods
+//
+
 bool EntitiesManager::IEntity::suspend()
 {
   if (this->_isActive)
@@ -32,18 +36,31 @@ bool EntitiesManager::IEntity::resume()
   return false;
 }
 
-
 // tear down (de register) components from systems
 void EntitiesManager::IEntity::tearDownComponents()
 {
   for(auto system : this->_componentSystems)
   {
-    if (ISystem::isValid(system))
+    if (ISystem::isValid(*system))
     {
       system->delEntity(this->getId());
     }
   }
 }
+
+// add one more component to the entity
+void EntitiesManager::IEntity::addComponent(ISystem & system)
+{
+  if (ISystem::isValid(system))
+  {
+    this->_componentSystems.insert(&system);
+    system.addEntity(this->getId());
+  }
+}
+
+//
+// EntitiesManager Methods
+//
 
 EntitiesManager * EntitiesManager::instance()
 {
@@ -55,7 +72,7 @@ EntitiesManager * EntitiesManager::instance()
   return s_instance;
 }
 
-bool EntitiesManager::addComponent(int entitityId, ISystem * system)
+bool EntitiesManager::addComponent(int entitityId, ISystem & system)
 {
   auto entity = this->_entities.find(entitityId);
   if(entity != this->_entities.end())
@@ -66,18 +83,7 @@ bool EntitiesManager::addComponent(int entitityId, ISystem * system)
   return false;
 }
 
-bool EntitiesManager::destroyEntity(int entityId)
-{
-  auto entity = this->_entities.find(entityId);
-  if (entity->second)
-  {
-    entity->second->destroy();
-    return true;
-  }
-  return false;
-}
-
-void EntitiesManager::updateComponents(ISystem * system)
+void EntitiesManager::updateComponents(ISystem & system)
 {
   if (ISystem::isValid(system))
   {
@@ -86,11 +92,42 @@ void EntitiesManager::updateComponents(ISystem * system)
       auto entity = this->_entities[entityId];
       if(entity->isInSystem(system))
       {
-        system->runEntity(entity.get());
+        system.runEntity(entity.get());
       }
     }
   }
   this->_size = this->refreshEntities();
+}
+
+bool EntitiesManager::destroyEntity(int entityId)
+{
+  auto entity = this->_entities.find(entityId);
+  if (entity != this->_entities.end())
+  {
+    entity->second->destroy();
+    return true;
+  }
+  return false;
+}
+
+bool EntitiesManager::suspendEntity(int entityId)
+{
+  auto entity = this->_entities.find(entityId);
+  if (entity != this->_entities.end())
+  {
+    return entity->second->suspend();
+  }
+  return false;
+}
+
+bool EntitiesManager::resumeEntity(int entityId)
+{
+  auto entity = this->_entities.find(entityId);
+  if (entity != this->_entities.end())
+  {
+    return entity->second->resume();
+  }
+  return false;
 }
 
 int EntitiesManager::refreshEntities()

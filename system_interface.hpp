@@ -18,39 +18,23 @@ namespace Engine
 {
 using namespace std;
 
-#if 0
-  namespace
-  {
-    struct EmptyType {};
-  }
-
-  template< class Component, class AuxComponent = EmptyType >
-  class UpdateFunction
-  {
-  public:
-    typedef Component ComponentDataType;
-    typedef AuxComponent AuxComponentDataType;
-
-    void operator()(Component * data, AuxComponent * aux = nullptr)
-    {
-      // use Component data
-    }
-  };
-#endif
-
 // forward declare entity type interface
 class IManagedEntity;
 typedef unsigned long long int FrameCount;
+
 //
 class ISystem
 {
 public:
-  virtual ~ISystem(){}
+  virtual ~ISystem()
+  {
+    assert(ISystem::systemRegistrar(this, _name.c_str(), UNREGISTER));
+  }
   ISystem() = delete;
   ISystem(ISystem & other) = delete;
-  ISystem(const char * name = "empty"): _name(name), _frames(0)
+  ISystem(const char * name): _name(name), _frames(0)
   {
-    assert(ISystem::systemRegistrar(this, name));
+    assert(ISystem::systemRegistrar(this, name, REGISTER));
   }
 
   const string & getName()
@@ -73,48 +57,77 @@ public:
   }
 
   // check if the pointer actually points to a system
-  static bool isValid(ISystem * system);
+  static bool isValid(ISystem & system);
 
  protected:
+   enum eRegistrar
+  {
+    REGISTER,
+    UNREGISTER,
+    VERIFY,
+  };
+
+   static bool systemRegistrar(
+      ISystem * system,
+      const char * name = nullptr,
+      eRegistrar op = VERIFY);
+
   // must be overriden in each system (impl. NVI)
   virtual void run(IManagedEntity * entity){};
-
-  static bool systemRegistrar(ISystem * system, const char * name = nullptr);
 
   string _name;
 
   FrameCount _frames;
 };
 
-inline bool ISystem::isValid(ISystem * system)
+inline bool ISystem::isValid(ISystem & system)
 {
-  return ISystem::systemRegistrar(system, nullptr);
+  return ISystem::systemRegistrar(&system, nullptr);
 }
 
-inline bool ISystem::systemRegistrar(ISystem * system, const char * name)
+inline bool ISystem::systemRegistrar(
+    ISystem * system,
+    const char * name,
+    eRegistrar op)
 {
   static map< string, ISystem * > s_systems;
 
-  if (nullptr == name)
-  // in this case we are checking if the system is registered.
+  string searchName;
+  if (nullptr != name)
   {
-    string searchName(system->getName());
+    searchName = name;
+  }
+  else if (nullptr != system)
+  {
+    searchName = system->getName();
+  }
+
+  if(op == REGISTER)
+  {
+    if (nullptr != system)
+    {
+      s_systems[searchName] = system;
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+  else if(op == UNREGISTER || op == VERIFY)
+  {
     for (auto s: s_systems)
     {
       if(s.second->getName() == searchName)
       {
+        if(op == UNREGISTER)
+        {
+          s_systems.erase(string(name));
+        }
         return true;
       }
     }
   }
-  else if (nullptr != system)
-  // here we are registering a new system.
-  {
-
-    s_systems[string(name)] = system;
-    return true;
-  }
-  // otherwise fail!
   return false;
 }
 

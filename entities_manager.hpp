@@ -14,10 +14,32 @@
 #include <deque>
 #include <memory>
 #include "system_interface.hpp"
+#include "data_utils.hpp"
 
 namespace Engine
 {
 using namespace std;
+
+//
+struct EntitiesBaseComponent
+{
+  int entityId;
+
+  // kind of space 2D/3D
+  eSpace kind;
+
+  // position
+  // values between 0.0 - 1.0 (in relation to world size)
+  Vector3 position;
+
+  // rotation
+  // values between 0.0 - 1.0  (= 0 - 360)
+  Rotation3 rotation;
+
+  // scales
+  // <1.0 : smaller | > 1.0 : larger
+  Vector3 scale;
+};
 
 //
 class EntitiesManager
@@ -27,119 +49,121 @@ public:
   class IEntity
   {
   public:
-    virtual ~IEntity()
-    {
-      this->tearDownComponents();
-    }
+    // this POD is to be used by the component systems
+    EntitiesBaseComponent _entityData;
 
+    virtual ~IEntity()
+    {  this->tearDownComponents();  }
+
+    IEntity(int id, const char * name);
     IEntity() = delete;
     IEntity(IEntity & other) = delete;
 
-    IEntity(int id, const char * name = nullptr):
-      _entityId(id),
-      _isActive(true),
-      _mustDestroy(false),
-      _name(name)
-      {};
 
-    int getId()
-    {
-      return this->_entityId;
-    }
-
-    const string & getName()
-    {
-      return this->_name;
-    }
-
+    // this methods are mostly used by the component systems
     bool suspend();
 
     bool resume();
 
     bool isActive()
-    {
-      return this->_isActive;
-    }
+    {  return this->_isActive;  }
 
     void destroy()
-    {
-      this->_mustDestroy = true;
-    }
+    {  this->_mustDestroy = true;  }
 
     bool mustDestroy()
-    {
-      return this->_mustDestroy;
-    }
+    {  return this->_mustDestroy;  }
 
-    bool isInSystem(ISystem * system)
-    {
-      return (0 < this->_componentSystems.count(system));
-    }
+    bool isInSystem(ISystem & system)
+    {  return (0 < this->_componentSystems.count(&system));  }
+
+    int getId()
+    {  return this->_entityData.entityId;  }
+
+    const string & getName()
+    {  return this->_name; }
 
   protected:
-    int _entityId;
     bool _isActive;
     bool _mustDestroy;
     string _name;
     set< ISystem * > _componentSystems;
 
-    void addComponent(ISystem * system)
-    {
-      this->_componentSystems.insert(system);
-    }
+    // can be overriden on each entityType
+    // register components into systems during constructor exec
+    virtual void setUpComponents() {};
 
     // tear down (de register) components from systems
     void tearDownComponents();
 
-    // can be overriden on each entityType
-    // to register components into systems at constructor time
-    virtual void setUpComponents() {};
+    // add one more component to the entity
+    void addComponent(ISystem & system);
 
   };
 
+  // singleton access
   static EntitiesManager * instance();
 
+  int size()
+  {  return this->_size;  }
+
+  // entity related methods
   template< class EntityType = IEntity >
   int createEntity(const char * name);
 
-  bool addComponent(int entitityId, ISystem * system);
-  // convenience function
-  bool addComponent(int entitityId, ISystem & system)
-  {
-    return this->addComponent(entitityId, &system);
-  }
+  bool destroyEntity(int entityId);
 
-  bool destroyEntity(int id);
+  bool suspendEntity(int entityId);
 
-  void updateComponents(ISystem * system);
-  // convenience function
-  void updateComponents(ISystem & system)
-  {
-    this->updateComponents(&system);
-  }
+  bool resumeEntity(int entityId);
 
   int refreshEntities();
 
-  int size()
-  {
-    return this->_size;
-  }
+  // component related methods
+  bool addComponent(int entitityId, ISystem & system);
+
+  void updateComponents(ISystem & system);
 
 protected:
   enum {  MAX_ENTITIES_AMOUNT = 10000  };
 
+  // creates a new random entity ID < MAX_ENTITIES_AMOUNT
   int newId();
 
+  // CTOR
   EntitiesManager() : _size(0) {};
 
   typedef shared_ptr<IManagedEntity> IEntityPtr;
   typedef unordered_map<int, IEntityPtr> Entities;
+  typedef unordered_map<string, int> EntitiesLookUp;
 
   int _size;
   Entities _entities;
+  EntitiesLookUp _lookUp;
   deque<int> _activeEntities;
 };
 
+inline EntitiesManager::IEntity::IEntity(int id, const char * name):
+  _isActive(true),
+  _mustDestroy(false),
+  _name(name)
+  {
+    // defaults
+    this->_entityData.entityId = id;
+    this->_entityData.kind = SPACE_2D;
+  };
+
+template< class EntityType >
+inline int EntitiesManager::createEntity(const char * name)
+{
+  int id = this->newId();
+  EntityType * entity = new EntityType(id, name);
+  entity->setUpComponents();
+  this->_entities[id].reset(entity);
+  this->_lookUp[entity->getName()] = id;
+  this->_size = this->refreshEntities();
+  return id;
+}
 
 // un-nesting entity class
 class IManagedEntity : public EntitiesManager::IEntity
@@ -149,23 +173,9 @@ public:
   virtual ~IManagedEntity(){}
   IManagedEntity() = delete;
   IManagedEntity(IManagedEntity & other) = delete;
-
-//protected:
   IManagedEntity(int id, const char * name = nullptr) :
       EntitiesManager::IEntity(id, name) {}
 };
-
-
-template< class EntityType >
-inline int EntitiesManager::createEntity(const char * name)
-{
-  int id = this->newId();
-  EntityType * entity = new EntityType(id, name);
-  entity->setUpComponents();
-  this->_entities[id].reset(entity);
-  this->_size = this->refreshEntities();
-  return id;
-}
 
 } // end namespace Engine
 
