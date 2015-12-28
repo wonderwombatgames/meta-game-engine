@@ -1,9 +1,9 @@
 /**
-  * implement audion backend functions using SDL
+  * implement graphic backend functions using SDL
   *
   */
 
-#include "backend.hpp"
+#include "graphic_system_handler.hpp"
 #include <SDL2/SDL.h>
 
 // this anonymous (restricted) namespace contains a
@@ -117,7 +117,20 @@ namespace Engine
 {
 using namespace std;
 
-// grahics
+// implement handler interface using SDL
+template< class Texture >
+errorCode GraphicsHandler::LoadTexture(Texture* tex, const char * filepath, const char * atlas)
+{
+  return 0;
+}
+
+template< class ViewPort >
+errorCode GraphicsHandler::CreateViewPort(ViewPort * view, BoxBoundary & rect, uint8_t flags)
+{
+  return 0;
+}
+
+// grahics functions
 bool initGraphicSystem(uint flags)
 {
   return SDLWrapper::instance()->initVideo();
@@ -133,7 +146,7 @@ errorCode getGraphicHandler(IHandler * handler, const IConfig * data)
   return 0;
 }
 
-// inputs
+// inputs functions
 bool initInputSystem(uint flags)
 {
   return SDLWrapper::instance()->initInput();
@@ -149,7 +162,7 @@ errorCode getInputHandler(IHandler * handler, const IConfig * data)
   return 0;
 }
 
-// events
+// events functions
 bool initEventSystem(uint flags)
 {
   return SDLWrapper::instance()->initEvents();

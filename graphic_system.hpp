@@ -11,12 +11,10 @@
 #include <cassert>
 #include <string>
 #include <unordered_map>
-
 #include <memory>
 
 #include "system_interface.hpp"
-#include "data_utils.hpp"
-#include "backend.hpp"
+#include "graphic_system_handler.hpp"
 
 // forward declaration
 class TextureAtlas;
@@ -57,23 +55,24 @@ struct GraphicsAndAnimationsComponent
 class GraphicSystem : public ISystem
 {
 public:
-  virtual ~GraphicSystem();
   GraphicSystem(const char * name);
   GraphicSystem() = delete;
   GraphicSystem(GraphicSystem & other) = delete;
+  virtual ~GraphicSystem();
 
 protected:
   virtual void preset(IManagedEntity * entity) override {};
   virtual void step(float delta) override {};
 };
 
-GraphicSystem::~GraphicSystem()
-{
-  quitGraphicSystem();
-}
 GraphicSystem::GraphicSystem(const char * name): ISystem(name)
 {
   assert(initGraphicSystem(0));
+}
+
+GraphicSystem::~GraphicSystem()
+{
+  quitGraphicSystem();
 }
 
 } // end namespace Engine

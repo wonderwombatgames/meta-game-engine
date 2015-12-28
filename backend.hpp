@@ -6,48 +6,49 @@
 #ifndef BACKEND_HPP
 #define BACKEND_HPP
 
-#include <memory>
+#include <cstdint>
 
 namespace Engine
 {
-using namespace std;
 
 typedef uint8_t errorCode;
 
 class IHandler
 {
+public:
   virtual ~IHandler(){}
 };
 
 class IConfig
 {
+public:
   virtual ~IConfig(){}
 };
 
 
 // graphics functions
-bool initGraphicSystem(uint flags);
+bool initGraphicSystem(uint16_t flags);
 void quitGraphicSystem();
 errorCode getGraphicHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
 // inputs functions
-bool initInputSystem(uint flags);
+bool initInputSystem(uint16_t flags);
 void quitInputSystem();
 errorCode getInputHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
 // events functions
-bool initEventSystem(uint flags);
+bool initEventSystem(uint16_t flags);
 void quitEventSystem();
 errorCode getEventHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
 // physics functions
-bool initPhysicSystem(uint flags);
+bool initPhysicSystem(uint16_t flags);
 void quitPhysicSystem();
 errorCode getPhysicHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
 
 // audio
-bool initAudioSystem(uint flags);
+bool initAudioSystem(uint16_t flags);
 void quitAudioSystem();
 errorCode getAudioHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
