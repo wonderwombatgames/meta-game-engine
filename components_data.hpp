@@ -11,13 +11,8 @@
 #include "data_utils.hpp"
 
 // forward declaration
-class AtlasData;
-class TextureData;
 class MusicData;
 class SoundFxData;
-class GraphicEffectsData;
-class ShaderData;
-class ParticlesEmitterData;
 
 namespace Engine
 {
@@ -38,35 +33,6 @@ struct PhysicsAndCollisionsComponent
 
   // body
   Boundary bodyContour;
-};
-
-struct GraphicsAndAnimationsComponent
-{
-  // defines the anchor within the boudaries
-  // also used by phisics = center of mass
-  // and rendering = drawing pivot
-  // values between 0.0 - 1.0 (in relation to entity size)
-  Vector3 anchor;
-
-  // entity boundaries
-  // values between 0.0 - 1.0 (in relation to world size and the anchor)
-  BoxBoundary clipRectangle;
-
-  // colour parameters
-  Colour colour;
-  Colour tint;
-  // AlphaMode ???
-
-  // texture data
-  unsigned int animationFrame;
-  TextureData * texture;
-  AtlasData * atlas;
-
-  // special components
-  GraphicEffectsData * effects;
-  ShaderData * shader;
-  ParticlesEmitterData * emitter;
-
 };
 
 struct SoundEffectsComponent

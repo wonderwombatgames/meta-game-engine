@@ -52,8 +52,7 @@ public:
     // this POD is to be used by the component systems
     EntitiesBaseComponent _entityData;
 
-    virtual ~IEntity()
-    {  this->tearDownComponents();  }
+    virtual ~IEntity();
 
     IEntity(int id, const char * name);
     IEntity() = delete;

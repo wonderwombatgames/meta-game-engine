@@ -16,6 +16,11 @@ using namespace std;
 // IEntity Methods
 //
 
+virtual EntitiesManager::IEntity::~IEntity()
+{
+  this->tearDownComponents();
+}
+
 bool EntitiesManager::IEntity::suspend()
 {
   if (this->_isActive)

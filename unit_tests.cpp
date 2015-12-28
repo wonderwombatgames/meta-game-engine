@@ -8,7 +8,7 @@
 
 using namespace Engine;
 
-int main()
+int main(int argc, char *argv[])
 {
   int test_count = 0;
 
@@ -74,8 +74,6 @@ int main()
   }
   assert(dummySystem1.getFrame() == 200); // 100 + 2 entities * 50 updates
   assert(dummySystem2.getFrame() == 190); // 100 + 1 entities * 50 updates + 1 entity * 40
-  // cout << "dummy1 frames: " << dummySystem1.getFrame() << endl;
-  // cout << "dummy2 frames: " << dummySystem2.getFrame() << endl;
   cout << "!!!OK - " << ++test_count << " => Performed 50 more updates per system - suspended 1 entity during 10 frames" << endl;
 
   assert(em->suspendEntity(id2));
