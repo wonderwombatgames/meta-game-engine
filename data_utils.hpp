@@ -11,6 +11,8 @@
 namespace Engine
 {
 
+typedef float ColourComponent;
+typedef float SpatialDimention;
 
 enum eSpace
 {
@@ -20,34 +22,35 @@ enum eSpace
 
 struct Vector3
 {
-  float x;
-  float y;
-  // depending on kind this is
-  // either the 3rd axis or the z-order
-  float z;
+  SpatialDimention x;
+  SpatialDimention y;
+  // depending on kind of space this might be
+  // either the 3rd axis or the z-order.
+  // in case it is z-order it is casted to integer.
+  SpatialDimention z;
 };
 
 struct Rotation3
 {
   // rotation
-  float angleXY;
+  SpatialDimention angleXY;
   // these next 2 angles are used only in 3d
-  float angleYZ;
-  float angleZX;
+  SpatialDimention angleYZ;
+  SpatialDimention angleZX;
 };
 
-#define POLYGON_BOUND_MAX_VERTICES 8
 
 enum eBoundary
 {
   CIRCLE,
   BOX,
-  // POLYGON,
+  POLYGON,
+  MULTIBOX,
 };
 
 struct CircleBoundary
 {
-  float radius;
+  SpatialDimention radius;
 };
 
 struct BoxBoundary
@@ -56,10 +59,21 @@ struct BoxBoundary
   Vector3 buttonRight;
 };
 
+// #define POLYGON_BOUND_MAX_VERTICES 16
 // struct PolygonBoundary
 // {
+//   unsigned char numOfVertice;
 //   Vector3 * vertices[POLYGON_BOUND_MAX_VERTICES];
 // };
+
+// #define MULTIBOX_BOUND_MAX_BOXES 8
+// struct MultiBoxBoundary
+// {
+//   unsigned char numOfBoxes;
+//   Vector3 * topLefts[MULTIBOX_BOUND_MAX_BOXES];
+//   Vector3 * bottomRigths[MULTIBOX_BOUND_MAX_BOXES];
+// };
+
 
 struct Boundary
 {
@@ -69,6 +83,7 @@ struct Boundary
     CircleBoundary  circleBound;
     BoxBoundary     boxBound;
     // PolygonBoundary polyBound;
+    // MultiBoxBoundary multiBoxBound;
   };
 };
 
@@ -86,55 +101,55 @@ enum eColour
 
 struct ColourRGB
 {
-  float r;
-  float g;
-  float b;
+  ColourComponent r;
+  ColourComponent g;
+  ColourComponent b;
 };
 
 struct ColourRGBA
 {
-  float r;
-  float g;
-  float b;
-  float a;
+  ColourComponent r;
+  ColourComponent g;
+  ColourComponent b;
+  ColourComponent a;
 };
 
 struct ColourHSL
 {
-  float h;
-  float s;
-  float l;
+  ColourComponent h;
+  ColourComponent s;
+  ColourComponent l;
 };
 
 struct ColourHSLA
 {
-  float h;
-  float s;
-  float l;
-  float a;
+  ColourComponent h;
+  ColourComponent s;
+  ColourComponent l;
+  ColourComponent a;
 };
 
 struct ColourHSV
 {
-  float h;
-  float s;
-  float v;
+  ColourComponent h;
+  ColourComponent s;
+  ColourComponent v;
 };
 
 struct ColourHSVA
 {
-  float h;
-  float s;
-  float v;
-  float a;
+  ColourComponent h;
+  ColourComponent s;
+  ColourComponent v;
+  ColourComponent a;
 };
 
 struct ColourCMYK
 {
-  float c;
-  float m;
-  float y;
-  float k;
+  ColourComponent c;
+  ColourComponent m;
+  ColourComponent y;
+  ColourComponent k;
 };
 
 struct ColourHex

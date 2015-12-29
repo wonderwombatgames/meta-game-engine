@@ -13,10 +13,10 @@ namespace Engine
 {
 using namespace std;
 
-class GraphicsHandler : public IHandler
+class GraphicSystemHandler : public IHandler
 {
 public:
-  virtual ~GraphicsHandler(){}
+  virtual ~GraphicSystemHandler(){}
 
   template< class Texture >
   errorCode LoadTexture(Texture * tex, const char * filepath, const char * atlas = nullptr);

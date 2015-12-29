@@ -15,9 +15,9 @@ int main(int argc, char *argv[])
   EntitiesManager * em = EntitiesManager::instance();
   int id1 = em->createEntity<IManagedEntity>("player1");
   assert(em->refreshEntities() == 1);
-  cout << "!!!OK - " << ++test_count << " => Created Entity" << endl;
-
   assert(em->destroyEntity(id1));
+  cout << "entities count = " << em->count() << endl;
+
   assert(em->refreshEntities() == 0);
   cout << "!!!OK - " << ++test_count << " => Destroied Entity" << endl;
 
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
   cout << "!!!OK - " << ++test_count << " => Added second Dummy Component to second valid entity" << endl;
 
   id1 = em->createEntity<IManagedEntity>("player1");
-  assert(em->size() == 3);
+  assert(em->count() == 3);
   cout << "!!!OK - " << ++test_count << " => Created third Entity" << endl;
 
   assert(em->addComponent(id1, dummySystem2));
@@ -52,8 +52,6 @@ int main(int argc, char *argv[])
 
   for (int i = 0; i < 50; ++i)
   {
-    em->presetComponents(dummySystem1);
-    em->presetComponents(dummySystem2);
     assert(dummySystem1.update(16) == 1+i); // 2 entities * 50 updates
     assert(dummySystem2.update(16) == 1+i); // 2 entities * 50 updates
   }

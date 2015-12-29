@@ -16,6 +16,16 @@ using namespace std;
 // IEntity Methods
 //
 
+EntitiesManager::IEntity::IEntity(EntityID id, const char * name):
+  _destroy(false),
+  _name(name)
+{
+  // defaults
+  this->_entityData.isActive = true;
+  this->_entityData.entityId = id;
+  this->_entityData.kind = SPACE_2D;
+}
+
 EntitiesManager::IEntity::~IEntity()
 {
   this->tearDownComponents();
@@ -23,9 +33,9 @@ EntitiesManager::IEntity::~IEntity()
 
 bool EntitiesManager::IEntity::suspend()
 {
-  if (this->_isActive)
+  if (this->_entityData.isActive)
   {
-    this->_isActive = false;
+    this->_entityData.isActive = false;
     return true;
   }
   return false;
@@ -33,9 +43,9 @@ bool EntitiesManager::IEntity::suspend()
 
 bool EntitiesManager::IEntity::resume()
 {
-  if (!this->_isActive)
+  if (!this->_entityData.isActive)
   {
-    this->_isActive = true;
+    this->_entityData.isActive = true;
     return true;
   }
   return false;
@@ -48,7 +58,7 @@ void EntitiesManager::IEntity::tearDownComponents()
   {
     if (ISystem::isValid(*system))
     {
-      system->delEntity(this->getId());
+      system->delEntity(this->_entityData);
     }
   }
 }
@@ -59,7 +69,7 @@ void EntitiesManager::IEntity::addComponent(ISystem & system)
   if (ISystem::isValid(system))
   {
     this->_componentSystems.insert(&system);
-    system.addEntity(this->getId());
+    system.addEntity(this->_entityData);
   }
 }
 
@@ -77,7 +87,7 @@ EntitiesManager * EntitiesManager::instance()
   return s_instance;
 }
 
-bool EntitiesManager::addComponent(int entitityId, ISystem & system)
+bool EntitiesManager::addComponent(EntityID entitityId, ISystem & system)
 {
   auto entity = this->_entities.find(entitityId);
   if(entity != this->_entities.end())
@@ -88,34 +98,18 @@ bool EntitiesManager::addComponent(int entitityId, ISystem & system)
   return false;
 }
 
-void EntitiesManager::presetComponents(ISystem & system)
-{
-  if (ISystem::isValid(system))
-  {
-    for(auto entityId : this->_activeEntities)
-    {
-      auto entity = this->_entities[entityId];
-      if(entity->isInSystem(system))
-      {
-        system.presetEntity(entity.get());
-      }
-    }
-  }
-  this->_size = this->refreshEntities();
-}
-
-bool EntitiesManager::destroyEntity(int entityId)
+bool EntitiesManager::destroyEntity(EntityID entityId)
 {
   auto entity = this->_entities.find(entityId);
   if (entity != this->_entities.end())
   {
-    entity->second->destroy();
+    entity->second->destroy(true);
     return true;
   }
   return false;
 }
 
-bool EntitiesManager::suspendEntity(int entityId)
+bool EntitiesManager::suspendEntity(EntityID entityId)
 {
   auto entity = this->_entities.find(entityId);
   if (entity != this->_entities.end())
@@ -125,7 +119,7 @@ bool EntitiesManager::suspendEntity(int entityId)
   return false;
 }
 
-bool EntitiesManager::resumeEntity(int entityId)
+bool EntitiesManager::resumeEntity(EntityID entityId)
 {
   auto entity = this->_entities.find(entityId);
   if (entity != this->_entities.end())
@@ -135,20 +129,47 @@ bool EntitiesManager::resumeEntity(int entityId)
   return false;
 }
 
+
+bool EntitiesManager::isEntityActive(EntityID entityId)
+{
+  auto entity = this->_entities.find(entityId);
+  if (entity != this->_entities.end())
+  {
+    return entity->second->isActive();
+  }
+  return false;
+}
+
+const string * EntitiesManager::lookUpentityName(EntityID entityId)
+{
+
+  auto entity = this->_entities.find(entityId);
+  if (entity != this->_entities.end())
+  {
+    return &(entity->second->getName());
+  }
+  return nullptr;
+}
+
+EntityID EntitiesManager::lookUpEntityId(const string& name)
+{
+  auto entity = this->_lookUp.find(name);
+  if (entity != this->_lookUp.end())
+  {
+    return entity->second;
+  }
+  return InvalidEntityID();
+}
+
 int EntitiesManager::refreshEntities()
 {
   // find all entities marked to be destroied
-  deque<int> toDestroy;
-  this->_activeEntities.clear();
+  deque<EntityID> toDestroy;
   for(auto entity : this->_entities)
   {
-    if(entity.second->mustDestroy())
+    if(entity.second->destroy())
     {
-      toDestroy.push_back(entity.second->getId());
-    }
-    else if(entity.second->isActive())
-    {
-      this->_activeEntities.push_back(entity.second->getId());
+      toDestroy.push_back(entity.second->_entityData.entityId);
     }
   }
   // destroy the marked entities
@@ -156,16 +177,17 @@ int EntitiesManager::refreshEntities()
   {
     this->_entities.erase(id);
   }
+  this->_count = this->_entities.size();
   // return number of entities after clean up
-  return this->_entities.size();
+  return this->_count;
 }
 
-int EntitiesManager::newId()
+EntityID EntitiesManager::newId()
 {
-  const int maxEntities = EntitiesManager::MAX_ENTITIES_AMOUNT;
+  const EntityID maxEntities = EntitiesManager::MAX_ENTITIES_AMOUNT;
   // use current time as seed for random generator
   srand(time(0));
-  int randomId = (rand() * (maxEntities + 1)) % maxEntities;
+  EntityID randomId = (rand() * (maxEntities + 1)) % maxEntities;
   int attempts = 0;
   // check that the id was not used yet
   while (this->_entities.count(randomId)>0)

@@ -13,6 +13,7 @@
 #include <string>
 #include <cassert>
 
+#include "entity_component.hpp"
 
 namespace Engine
 {
@@ -21,6 +22,7 @@ using namespace std;
 // forward declare entity type interface
 class IManagedEntity;
 typedef unsigned long long int FrameCount;
+typedef float TimeDimension;
 
 //
 class ISystem
@@ -37,42 +39,38 @@ public:
     assert(ISystem::systemRegistrar(this, name, REGISTER));
   }
 
-  // check if the pointer actually points to a system
-  static bool isValid(ISystem & system);
-
   // get system name
   const string & getName() { return this->_name;  }
-
+  // check if the pointer actually points to a system
+  static bool isValid(ISystem & system);
   // perform one step in the system
-  FrameCount update(float delta) { this->step(delta); return ++(this->_frames); }
-
-  // entity related methods
-  void addEntity(int entityId){};
-  void delEntity(int entityId){};
-  void presetEntity(IManagedEntity * entity)
+  FrameCount update(TimeDimension delta)
   {
-    this->preset(entity);
+    this->step(delta);
+    return ++(this->_frames);
   }
 
+  // entity related methods
+  void addEntity(EntityComponent & entityId){};
+  void delEntity(EntityComponent & entityId){};
+
  protected:
-   enum eRegistrar
+  enum eRegistrar
   {
     REGISTER,
     UNREGISTER,
     VERIFY,
   };
 
-   static bool systemRegistrar(
+  static bool systemRegistrar(
       ISystem * system,
       const char * name = nullptr,
       eRegistrar op = VERIFY);
 
   // must be overriden in each system (impl. NVI)
-  virtual void preset(IManagedEntity * entity){};
-  virtual void step(float delta){};
+  virtual void step(TimeDimension delta){};
 
   string _name;
-
   FrameCount _frames;
 };
 
