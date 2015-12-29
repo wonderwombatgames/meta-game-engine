@@ -62,10 +62,7 @@ public:
     VERIFY,
   };
 
-  static bool systemRegistrar(
-      ISystem * system,
-      const char * name = nullptr,
-      eRegistrar op = VERIFY);
+  static bool systemRegistrar(ISystem * system, const char * name = nullptr, eRegistrar op = VERIFY);
 
   // must be overriden in each system (impl. NVI)
   virtual void step(TimeDimension delta){};

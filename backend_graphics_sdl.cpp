@@ -3,8 +3,12 @@
   *
   */
 
-#include "graphic_system_handler.hpp"
 #include <SDL2/SDL.h>
+
+#include "graphic_system_handler.hpp"
+#include "backend.hpp"
+#include "viewport.hpp"
+#include "texture.hpp"
 
 // this anonymous (restricted) namespace contains a
 // singleton class that inits SDL and its subsystems
@@ -62,7 +66,7 @@ inline void SDLWrapper::quit()
   SDL_Quit();
 }
 
-inline bool initSubsystem(const Uint32 flag)
+inline bool initSubsystem(const Engine::Flags flag)
 {
   bool wasInit = SDL_WasInit(flag);
   if(!wasInit)
@@ -81,12 +85,13 @@ bool SDLWrapper::initEvents()
 {
   return initSubsystem(SDL_INIT_EVENTS | SDL_INIT_TIMER);
 }
+
 bool SDLWrapper::initInput()
 {
   return initSubsystem(SDL_INIT_GAMECONTROLLER | SDL_INIT_JOYSTICK);
 }
 
-inline void quitSubsystem(const Uint32 flag)
+inline void quitSubsystem(const Engine::Flags flag)
 {
   bool wasInit = SDL_WasInit(flag);
   if(wasInit)
@@ -117,21 +122,26 @@ namespace Engine
 {
 using namespace std;
 
+
+
 // implement handler interface using SDL
-template< class Texture >
-errorCode GraphicsHandler::LoadTexture(Texture* tex, const char * filepath, const char * atlas)
+
+template< class Impl >
+  ErrorCode
+  GraphicSystemHandler< Impl >::LoadTexture(Texture* tex, const char * filepath, const char * atlas)
 {
   return 0;
 }
 
-template< class ViewPort >
-errorCode GraphicsHandler::CreateViewPort(ViewPort * view, BoxBoundary & rect, uint8_t flags)
+template< class Impl >
+  ErrorCode
+  GraphicSystemHandler< Impl >::CreateViewPort(ViewPort< Impl > * view, BoxBoundary & rect, Flags flags)
 {
   return 0;
 }
 
 // grahics functions
-bool initGraphicSystem(uint flags)
+bool initGraphicSystem(Flags flags)
 {
   return SDLWrapper::instance()->initVideo();
 }
@@ -141,13 +151,13 @@ void quitGraphicSystem()
   SDLWrapper::instance()->quitVideo();
 }
 
-errorCode getGraphicHandler(IHandler * handler, const IConfig * data)
+ErrorCode getGraphicHandler(IHandler * handler, const IConfig * data)
 {
   return 0;
 }
 
 // inputs functions
-bool initInputSystem(uint flags)
+bool initInputSystem(Flags flags)
 {
   return SDLWrapper::instance()->initInput();
 }
@@ -157,13 +167,13 @@ void quitInputSystem()
   SDLWrapper::instance()->quitInput();
 }
 
-errorCode getInputHandler(IHandler * handler, const IConfig * data)
+ErrorCode getInputHandler(IHandler * handler, const IConfig * data)
 {
   return 0;
 }
 
 // events functions
-bool initEventSystem(uint flags)
+bool initEventSystem(Flags flags)
 {
   return SDLWrapper::instance()->initEvents();
 }
@@ -173,7 +183,7 @@ void quitEventSystem()
   SDLWrapper::instance()->quitEvents();
 }
 
-errorCode getEventHandler(IHandler * handler, const IConfig * data)
+ErrorCode getEventHandler(IHandler * handler, const IConfig * data)
 {
   return 0;
 }

@@ -3,8 +3,10 @@
   */
 
 #include <iostream>
-#include "system_interface.hpp"
 #include "entities_manager.hpp"
+#include "system_interface.hpp"
+#include "graphic_system.hpp"
+
 
 using namespace Engine;
 

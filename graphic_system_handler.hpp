@@ -8,20 +8,22 @@
 
 #include "backend.hpp"
 #include "data_utils.hpp"
+#include "viewport.hpp"
+#include "texture.hpp"
 
 namespace Engine
 {
 using namespace std;
 
+template< class Impl >
 class GraphicSystemHandler : public IHandler
 {
 public:
   virtual ~GraphicSystemHandler(){}
 
-  template< class Texture >
-  errorCode LoadTexture(Texture * tex, const char * filepath, const char * atlas = nullptr);
-  template< class ViewPort >
-  errorCode CreateViewPort(ViewPort * view, BoxBoundary & rect, uint8_t flags = 0);
+  ErrorCode LoadTexture(Texture * tex, const char * filepath, const char * atlas = nullptr);
+
+  ErrorCode CreateViewPort(ViewPort< Impl > * view, BoxBoundary & rect, Flags flags = 0);
 };
 
 }// end namespace Engine

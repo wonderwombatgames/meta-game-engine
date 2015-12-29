@@ -10,7 +10,7 @@ namespace Engine
 {
 using namespace std;
 
-bool initPhysicSystem(uint flags)
+bool initPhysicSystem(Flags flags)
 {
   return true;
 }
@@ -19,7 +19,7 @@ void quitPhysicSystem()
 {
 }
 
-errorCode getPhysicHandler(IHandler * handler, const IConfig * data)
+ErrorCode getPhysicHandler(IHandler * handler, const IConfig * data)
 {
   return 0;
 }

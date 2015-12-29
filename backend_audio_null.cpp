@@ -10,7 +10,7 @@ namespace Engine
 {
 using namespace std;
 
-bool initAudioSystem(uint flags)
+bool initAudioSystem(Flags flags)
 {
   return true;
 }
@@ -19,7 +19,7 @@ void quitAudioSystem()
 {
 }
 
-errorCode getAudioHandler(IHandler * handler, const IConfig * data)
+ErrorCode getAudioHandler(IHandler * handler, const IConfig * data)
 {
   return 0;
 }

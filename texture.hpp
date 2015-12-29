@@ -6,16 +6,21 @@
 #ifndef TEXTURE_HPP
 #define TEXTURE_HPP
 
+#include <memory>
+
 namespace Engine
 {
-template< class Impl >
+using namespace std;
+
+class Impl;
+
 class Texture
 {
 public:
   static Texture * LoadTexture(const char * filepath, const char * atlas = nullptr);
 
 protected:
-  Impl _data;
+  unique_ptr< Impl > _data;
 };
 
 } // end namespace Engine

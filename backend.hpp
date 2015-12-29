@@ -11,7 +11,8 @@
 namespace Engine
 {
 
-typedef uint8_t errorCode;
+typedef uint32_t Flags;
+typedef uint8_t ErrorCode;
 
 class IHandler
 {
@@ -27,30 +28,29 @@ public:
 
 
 // graphics functions
-bool initGraphicSystem(uint16_t flags);
+bool initGraphicSystem(Flags flags);
 void quitGraphicSystem();
-errorCode getGraphicHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
+ErrorCode getGraphicHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
 // inputs functions
-bool initInputSystem(uint16_t flags);
+bool initInputSystem(Flags flags);
 void quitInputSystem();
-errorCode getInputHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
+ErrorCode getInputHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
 // events functions
-bool initEventSystem(uint16_t flags);
+bool initEventSystem(Flags flags);
 void quitEventSystem();
-errorCode getEventHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
+ErrorCode getEventHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
 // physics functions
-bool initPhysicSystem(uint16_t flags);
+bool initPhysicSystem(Flags flags);
 void quitPhysicSystem();
-errorCode getPhysicHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
-
+ErrorCode getPhysicHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
 // audio
-bool initAudioSystem(uint16_t flags);
+bool initAudioSystem(Flags flags);
 void quitAudioSystem();
-errorCode getAudioHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
+ErrorCode getAudioHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
 
 } // end namespace Engine
