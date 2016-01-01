@@ -182,8 +182,9 @@ using namespace std;
   template <>
   void ViewPort< SDLContext >::setResolution(Vector3 & res)
   {
-    int width = abs(static_cast<int>(res.x));
-    int height = abs(static_cast<int>(res.y));
+    _res = res;
+    int width  = static_cast<int>(_res.x);
+    int height = static_cast<int>(_res.y);
 
     SDL_Rect rect;
     SDL_RenderGetViewport(_data->_view->_renderer, &rect);
@@ -197,33 +198,38 @@ using namespace std;
     this->setColour(this->_background);
   }
 
-  // FIXME: Implemet this!!!
-  // template <>
-  // const Vector3 & ViewPort< SDLContext >::getResolution() const
-  // {
-  //
-  //   return vec;
-  // }
-  //
-  // template <>
-  // const BoxBoundary & ViewPort< SDLContext >::getViewBox() const;
-  // {
-  //
-  //   return box;
-  // }
+  template <>
+  const Vector3 & ViewPort< SDLContext >::getResolution() const
+  {
+    return _res;
+  }
 
   template <>
-  ViewPort< SDLContext >::ViewPort(BoxBoundary & rect, Flags flags)
-      :_data(new Context)
+  void ViewPort< SDLContext >::setViewBox(const BoxBoundary & rect)
   {
-    Vector3 res{
+    _res = {
         (rect.buttonRight.x - rect.topLeft.x),
         (rect.buttonRight.y - rect.topLeft.y), 0 };
 
-    this->setResolution(res);
+    this->setResolution(_res);
+    this->setColour(this->_background);
+  }
+
+  template <>
+  const BoxBoundary & ViewPort< SDLContext >::getViewBox() const
+  {
+    return _rect;
+  }
+
+  template <>
+  ViewPort< SDLContext >::ViewPort(const BoxBoundary & rect, Flags flags)
+      :_data(new Context)
+      ,_rect(rect)
+  {
     this->_background.kind = RGB;
     this->_background.rgb = {0.1, 0.5, 0.9};
-    this->setColour(this->_background);
+
+    this->setViewBox(rect);
   }
 
   // TEXTURE
@@ -263,18 +269,6 @@ using namespace std;
     _data->_image.reset(new SDLTexture(filepath, _data->_view->_renderer));
     return this->hasImage();
   }
-
-  // FIXME: Implement this!
-  // template <>
-  // void Texture< SDLContext >::setPosition(const Vector3 & p)
-  // {
-  //
-  // }
-  //
-  // const Vector3 & Texture< SDLContext >::getPosition()
-  // {
-  //   return vec;
-  // }
 
   template <>
   void Texture< SDLContext >::paint(const Vector3 & offset)

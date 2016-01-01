@@ -26,11 +26,11 @@ public:
 
   bool loadFromFile(const string & filepath, const string & atlas = "");
   bool hasImage();
-//  void setPosition(const Vector3 & p);
-//  const Vector3 & getPosition();
 
   virtual void paint(const Vector3 & offset = {0.0, 0.0, 0.0}) override;
 #if 0
+  void setPosition(const Vector3 & p);
+  const Vector3 & getPosition();
   void setScale(const Vector3 & s);
   const Vector3 & getScale();
   void setAnchor(const Vector3 & a);

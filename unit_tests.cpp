@@ -99,20 +99,20 @@ int main(int argc, char *argv[])
   view.setFullscreen(true);
 
   SDL_Event event;
-  for (int i=0; i<120; ++i)
+  for (int i=0; i<125; ++i)
   {
     SDL_PollEvent(&event);
     if (event.type == SDL_QUIT)
     {
         break;
     }
-    SDL_Delay(1000/24);
+    SDL_Delay(1000/25);
     view.setColour(c1);
     tex.paint();
     view.render();
   }
   cout << "!!!OK - " << ++test_count << " => Painting texture. " << endl;
-  SDL_Delay(2500);
+  SDL_Delay(1000);
   view.setFullscreen(false);
 
   quitGraphicSystem();
