@@ -33,7 +33,8 @@ public:
   void setFullscreen(bool fs);
   bool isFullscreen() const;
   void setResolution(Vector3 & rect);
-  const Vector3 & getResolution() const;
+//  const Vector3 & getResolution() const;
+//  const BoxBoundary & getView() const;
 
 protected:
   typedef T Context;

@@ -28,9 +28,7 @@ struct SDLRenderer
 
 SDLRenderer::SDLRenderer()
 {
-  bool wasInit = SDL_WasInit(SDL_INIT_VIDEO);
-
-  if(wasInit && nullptr == this->_window)
+  if(SDL_WasInit(SDL_INIT_VIDEO) && nullptr == this->_window &&  nullptr == this->_renderer)
   {
     if (  SDL_CreateWindowAndRenderer(
               640,
@@ -39,7 +37,7 @@ SDLRenderer::SDLRenderer()
               &this->_window,
               &this->_renderer) )
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window and renderer: %s", SDL_GetError());
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window and renderer: %s", SDL_GetError());
     }
   }
   assert(this->_window && this->_renderer);
@@ -47,25 +45,46 @@ SDLRenderer::SDLRenderer()
 
 SDLRenderer::~SDLRenderer()
 {
-  SDL_DestroyRenderer(this->_renderer);
-  this->_renderer = nullptr;
-  SDL_DestroyWindow(this->_window);
-  this->_window = nullptr;
+  if(SDL_WasInit(SDL_INIT_VIDEO) && nullptr == this->_window &&  nullptr == this->_renderer)
+  {
+    SDL_DestroyRenderer(this->_renderer);
+    this->_renderer = nullptr;
+    SDL_DestroyWindow(this->_window);
+    this->_window = nullptr;
+  }
 }
 
-// // wrapper around texture
-// struct SDLTexture
-// {
-//   SDLTexture();
-//   ~SDLTexture();
-//   SDL_Texture * _Texture;
-// };
-//
-// SDLTexture::SDLTexture(){}
-// SDLTexture::~SDLTexture()
-// {
-//   this->_Texture = nullptr;
-// }
+// wrapper around texture
+struct SDLTexture
+{
+  SDLTexture(const string & filepath, SDL_Renderer * renderer);
+  ~SDLTexture();
+  SDL_Texture * _texture;
+};
+
+SDLTexture::SDLTexture(const string & filepath, SDL_Renderer * renderer)
+{
+  /// FIXME: use SDL IMAGE to load tex
+  SDL_Surface * surface = SDL_LoadBMP(filepath.c_str());
+  if (!surface) {
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create surface from image: %s", SDL_GetError());
+  }
+  else
+  {
+    this->_texture = SDL_CreateTextureFromSurface(renderer, surface);
+    if (!this->_texture) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create texture from surface: %s", SDL_GetError());
+    }
+    SDL_FreeSurface(surface);
+  }
+  assert(this->_texture);
+}
+
+SDLTexture::~SDLTexture()
+{
+  SDL_DestroyTexture(_texture);
+  this->_texture = nullptr;
+}
 
 
 // context used by viewport and texture
@@ -74,7 +93,7 @@ struct SDLContext
   SDLContext();
 
   static SDLRenderer _renderer;
-  SDL_Texture * _texture;
+  unique_ptr< SDLTexture > _texture;
 };
 
 SDLContext::SDLContext()
@@ -205,7 +224,6 @@ template <>
 ViewPort< SDLContext >::ViewPort(BoxBoundary & rect, Flags flags)
     :_data(new Context)
 {
-  flags = (flags == 0)?SDL_WINDOW_OPENGL:flags;
 
 }
 
@@ -248,12 +266,62 @@ void ViewPort< SDLContext >::setResolution(Vector3 & rect)
 
 }
 
+// template <>
+// const Vector3 & ViewPort< SDLContext >::getResolution() const
+// {
+//
+//   return vec;
+// }
+//
+// template <>
+// const BoxBoundary & ViewPort< SDLContext >::getView() const;
+// {
+//
+//   return box;
+// }
+
 template <>
-const Vector3 & ViewPort< SDLContext >::getResolution() const
+Texture< SDLContext >::Texture(GraphicComponent & component)
 {
 
-  return Vector3{0.0, 0.0, 0.0};
 }
+
+template <>
+Texture< SDLContext >::Texture(GraphicComponent & component, const string & filepath, const string & atlas)
+{
+
+}
+
+template <>
+Texture< SDLContext >::~Texture()
+{
+
+}
+
+template <>
+bool Texture< SDLContext >::loadFromFile(const string & filepath, const string & atlas)
+{
+
+  return false;
+}
+
+template <>
+bool Texture< SDLContext >::hasBMP()
+{
+
+  return false;
+}
+
+template <>
+void Texture< SDLContext >::setPosition(const Vector3 & p)
+{
+
+}
+
+// const Vector3 & Texture< SDLContext >::getPosition()
+// {
+//   return vec;
+// }
 
 
 // // implement handler interface using SDL

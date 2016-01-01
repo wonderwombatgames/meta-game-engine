@@ -22,7 +22,7 @@ public:
   Texture(GraphicComponent & component, const string & filepath, const string & atlas = "");
   Texture() = delete;
   Texture(Texture & other) = delete;
-  ~Texture(){};
+  ~Texture();
 
   bool loadFromFile(const string & filepath, const string & atlas = "");
   bool hasBMP();
