@@ -2,6 +2,8 @@
 #include "viewport.hpp"
 #include "sdl_context.hpp"
 
+// FIXME: change origin from topleft to bottom left!!!
+
 namespace // anonymous
 {
   // converts the float values from Colour into SDL RGB8
@@ -274,6 +276,23 @@ using namespace std;
   void Texture< SDLContext >::paint(const Vector3 & offset)
   {
     // FIXME: the coordinates have to be changed
+    // use: int SDL_RenderCopyEx(SDL_Renderer* renderer,
+    //                  SDL_Texture*           texture,
+    //                  const SDL_Rect*        srcrect,
+    //                  const SDL_Rect*        dstrect,
+    //                  const double           angle,
+    //                  const SDL_Point*       center,
+    //                  const SDL_RendererFlip flip);
+    // need to get
+    // void SDL_GetWindowSize(SDL_Window* window,
+    //                   int*        w,
+    //                   int*        h);
+    // void SDL_RenderGetLogicalSize(SDL_Renderer* renderer,
+    //                   int*        w,
+    //                   int*        h);
+    // then calculate the actual position.
+    // CAVEAT: origin will be changed from topleft to bottonleft!
+
     if(_data->_view->_renderer && this->hasImage())
     {
       SDL_RenderCopy(_data->_view->_renderer, _data->_image->_buffer, NULL, NULL);
