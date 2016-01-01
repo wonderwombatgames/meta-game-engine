@@ -14,14 +14,6 @@ namespace Engine
 {
 using namespace std;
 
-class IGraphics
-{
-public:
-  IGraphics(){}
-  virtual ~IGraphics(){}
-  virtual void paint() = 0;
-};
-
 template <typename T >
 class Texture : public IGraphics
 {
@@ -34,10 +26,10 @@ public:
 
   bool loadFromFile(const string & filepath, const string & atlas = "");
   bool hasImage();
-  void setPosition(const Vector3 & p);
+//  void setPosition(const Vector3 & p);
 //  const Vector3 & getPosition();
 
-  virtual void paint() override;
+  virtual void paint(const Vector3 & offset = {0.0, 0.0, 0.0}) override;
 #if 0
   void setScale(const Vector3 & s);
   const Vector3 & getScale();

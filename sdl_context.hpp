@@ -28,7 +28,7 @@ struct SDLTexture
 {
   SDLTexture(const string & filepath, SDL_Renderer * renderer);
   ~SDLTexture();
-  SDL_Texture * _texture;
+  SDL_Texture * _buffer;
 };
 
 // context used by viewport and texture

@@ -16,7 +16,14 @@ namespace Engine
 //class IGraphicEffectsData;
 //class IShaderData;
 //class IParticlesEmitterData;
-class IGraphics;
+
+class IGraphics
+{
+public:
+  IGraphics(){}
+  virtual ~IGraphics(){}
+  virtual void paint(const Vector3 & offset) = 0;
+};
 
 struct GraphicComponent
 {
@@ -24,7 +31,7 @@ struct GraphicComponent
   EntityComponent * entityData;
 
   // texture data
-  IGraphics * ptr;
+  IGraphics * texture;
   Vector3 textureSize;
   unsigned short animationFrame;
 

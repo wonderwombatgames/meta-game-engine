@@ -6,9 +6,9 @@
 #include <cassert>
 #include <cmath>
 
-//#include "graphic_system_handler.hpp"
 #include "backend.hpp"
 #include "sdl_context.hpp"
+//#include "graphic_system_handler.hpp"
 
 
 // this anonymous (restricted) namespace contains a

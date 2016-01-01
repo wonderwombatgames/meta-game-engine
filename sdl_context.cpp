@@ -110,22 +110,23 @@ using namespace std;
     SDL_Surface * surface = SDL_LoadBMP(filepath.c_str());
     if (!surface) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create surface from image: %s", SDL_GetError());
+          assert(false);
     }
     else
     {
-      this->_texture = SDL_CreateTextureFromSurface(renderer, surface);
-      if (!this->_texture) {
+      this->_buffer = SDL_CreateTextureFromSurface(renderer, surface);
+      if (!this->_buffer) {
           SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create texture from surface: %s", SDL_GetError());
       }
       SDL_FreeSurface(surface);
     }
-    assert(this->_texture);
+    assert(this->_buffer);
   }
 
   SDLTexture::~SDLTexture()
   {
-    SDL_DestroyTexture(_texture);
-    this->_texture = nullptr;
+    SDL_DestroyTexture(_buffer);
+    this->_buffer = nullptr;
   }
 
   // context used by viewport and texture
@@ -146,7 +147,6 @@ using namespace std;
   void ViewPort< SDLContext >::clear()
   {
     SDL_RenderClear(_data->_view->_renderer);
-    this->render();
   }
 
   template <>
@@ -193,11 +193,11 @@ using namespace std;
     SDL_SetWindowSize(_data->_view->_window, width, height);
     SDL_RenderSetLogicalSize(_data->_view->_renderer, width, height);
     SDL_RenderSetViewport(_data->_view->_renderer, &rect);
-
     SDL_RenderSetClipRect(_data->_view->_renderer, &rect);
     this->setColour(this->_background);
   }
 
+  // FIXME: Implemet this!!!
   // template <>
   // const Vector3 & ViewPort< SDLContext >::getResolution() const
   // {
@@ -233,7 +233,7 @@ using namespace std;
       ,_component(&component)
       ,_data(new Context)
   {
-    _component->ptr = this;
+    _component->texture = this;
   }
 
   template <>
@@ -242,7 +242,7 @@ using namespace std;
       ,_component(&component)
       ,_data(new Context)
   {
-    _component->ptr = this;
+    _component->texture = this;
     _data->_image.reset(new SDLTexture(filepath, _data->_view->_renderer));
     // FIXME: load atlas!!!
   }
@@ -254,35 +254,38 @@ using namespace std;
   template <>
   bool Texture< SDLContext >::hasImage()
   {
-    return (_data->_image && _data->_image->_texture);
+    return (_data->_image && _data->_image->_buffer);
   }
 
   template <>
   bool Texture< SDLContext >::loadFromFile(const string & filepath, const string & atlas)
   {
-
+    _data->_image.reset(new SDLTexture(filepath, _data->_view->_renderer));
     return this->hasImage();
   }
 
-  template <>
-  void Texture< SDLContext >::setPosition(const Vector3 & p)
-  {
-
-  }
-
+  // FIXME: Implement this!
+  // template <>
+  // void Texture< SDLContext >::setPosition(const Vector3 & p)
+  // {
+  //
+  // }
+  //
   // const Vector3 & Texture< SDLContext >::getPosition()
   // {
   //   return vec;
   // }
 
   template <>
-  void Texture< SDLContext >::paint()
+  void Texture< SDLContext >::paint(const Vector3 & offset)
   {
     // FIXME: the coordinates have to be changed
-    if(_data->_view->_renderer && _data->_image)
+    if(_data->_view->_renderer && this->hasImage())
     {
-      SDL_RenderCopy(_data->_view->_renderer, _data->_image->_texture, NULL, NULL);
+      SDL_RenderCopy(_data->_view->_renderer, _data->_image->_buffer, NULL, NULL);
     }
+    else
+      assert(false);
   }
 
 

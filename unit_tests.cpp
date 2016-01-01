@@ -83,48 +83,39 @@ int main(int argc, char *argv[])
   initGraphicSystem();
   BoxBoundary bb{{0.0,0.0,0.0}, {320.0, 240.0, 0.0}};
   ViewPort< SDLContext > view(bb);
-  cout << "!!!OK - " << ++test_count << " => Created a viewport. Close window to continue" << endl;
+  cout << "!!!OK - " << ++test_count << " => Created a viewport. " << endl;
+
+  GraphicComponent sprite;
+  Texture< SDLContext > tex(sprite);
+  string filename("img/sample.bmp");
+  tex.loadFromFile(filename);
 
   Colour c1;
   c1.kind = RGB;
   c1.rgb = {0.5, 0.5, 0.5};
-  Colour c2;
-  c2.kind = RGB;
-  c2.rgb = {0.9, 0.5, 0.1};
   Vector3 r{640.0, 480.0, 0.0};
+
+  view.setResolution(r);
+  view.setFullscreen(true);
+
   SDL_Event event;
-  for (int i=0; i<6; ++i)
+  for (int i=0; i<120; ++i)
   {
-      SDL_PollEvent(&event);
-      if (event.type == SDL_QUIT)
-      {
-          break;
-      }
-      SDL_Delay(2500);
-      switch (i)
-      {
-        case 0:
-          view.setColour(c1);
-          break;
-        case 1:
-          view.setResolution(r);
-          view.setColour(c1);
-          break;
-        case 2:
-          view.setColour(c2);
-          break;
-        case 3:
-          view.setFullscreen(true);
-          break;
-        case 4:
-          view.setColour(c1);
-          break;
-        case 5:
-          view.setFullscreen(false);
-          break;      }
+    SDL_PollEvent(&event);
+    if (event.type == SDL_QUIT)
+    {
+        break;
+    }
+    SDL_Delay(1000/24);
+    view.setColour(c1);
+    tex.paint();
+    view.render();
   }
+  cout << "!!!OK - " << ++test_count << " => Painting texture. " << endl;
   SDL_Delay(2500);
-	  quitGraphicSystem();
+  view.setFullscreen(false);
+
+  quitGraphicSystem();
 
   return 0;
 }
