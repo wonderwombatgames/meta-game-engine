@@ -7,12 +7,11 @@
 #define BACKEND_HPP
 
 #include <cstdint>
+#include "data_utils.hpp"
+
 
 namespace Engine
 {
-
-typedef uint32_t Flags;
-typedef uint8_t ErrorCode;
 
 class IHandler
 {

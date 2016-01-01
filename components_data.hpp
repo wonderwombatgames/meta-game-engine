@@ -28,6 +28,10 @@ struct PhysicsAndCollisionsComponent
   // arbritary value in relation to other entities
   float mass;
 
+  // defines the center of the body
+  // values between 0.0 - 1.0 (in relation to entity Contour)
+  Vector3 centerOfMass;
+
   // values between 0.0 - 1.0
   float elasticity;
 

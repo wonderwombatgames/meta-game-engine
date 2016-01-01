@@ -32,9 +32,12 @@ public:
 
 protected:
   virtual void step(TimeDimension delta) override {};
+  IHandler * _graphicSystemHandler;
 };
 
-GraphicSystem::GraphicSystem(const char * name): ISystem(name)
+GraphicSystem::GraphicSystem(const char * name)
+    :ISystem(name)
+    ,_graphicSystemHandler(nullptr)
 {
   assert(initGraphicSystem(0));
 }

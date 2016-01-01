@@ -10,34 +10,38 @@
 #include <memory>
 
 #include "data_utils.hpp"
+#include "texture.hpp"
 
 namespace Engine
 {
 using namespace std;
 
-template < class Impl >
+template < typename T >
 class ViewPort
 {
 public:
   ~ViewPort(){};
-
-  static shared_ptr<ViewPort> CreateViewPort(BoxBoundary & rect, uint8_t flags = 0);
-
-protected:
-  ViewPort(BoxBoundary & rect, uint8_t flags = 0);
+  ViewPort(BoxBoundary & rect, Flags flags = 0);
   ViewPort() = delete;
   ViewPort(ViewPort & other) = delete;
 
+  // rendering
+  void paint(Texture< T > & tex);
+  bool render();
+  void clear();
+
+  void setFullscreen(bool fs);
+  bool isFullscreen() const;
+  void setResolution(Vector3 & rect);
+  const Vector3 & getResolution() const;
+
+protected:
+  typedef T Context;
+
   //data
-  unique_ptr< Impl > _data;
+  unique_ptr< T > _data;
 };
 
-template < class Impl >
-inline shared_ptr< ViewPort< Impl > >
-    ViewPort< Impl >::CreateViewPort(BoxBoundary & rect, uint8_t flags)
-{
-  return make_shared< ViewPort< Impl > >(rect, flags);
-}
 
 } // end namespace Engine
 

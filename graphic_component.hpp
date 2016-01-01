@@ -10,7 +10,7 @@
 #include "entity_component.hpp"
 
 // forward declaration
-class TextureAtlas;
+class Texture;
 //class GraphicEffectsData;
 //class ShaderData;
 //class ParticlesEmitterData;
@@ -23,6 +23,11 @@ struct GraphicComponent
   // reference to entity data component
   EntityComponent * entityData;
 
+  // texture data
+  Texture * texture;
+  Vector3 textureSize;
+  unsigned short animationFrame;
+
   // defines the anchor within the boudaries
   // and rendering = drawing pivot
   // values between 0.0 - 1.0 (in relation to entity size | UV)
@@ -31,11 +36,7 @@ struct GraphicComponent
   // colour parameters
   Colour colourMode;
   ColourComponent alphaMode;
-  ColourComponent blendingMode;
-
-  // texture data
-  TextureAtlas * texture;
-  unsigned short animationFrame;
+  BlendingMode blendingMode;
 
   // special components
   //GraphicEffectsData * effects;

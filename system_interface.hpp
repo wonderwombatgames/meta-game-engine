@@ -28,15 +28,15 @@ typedef float TimeDimension;
 class ISystem
 {
 public:
-  virtual ~ISystem()
-  {
-    assert(ISystem::systemRegistrar(this, _name.c_str(), UNREGISTER));
-  }
   ISystem() = delete;
   ISystem(ISystem & other) = delete;
   ISystem(const char * name): _name(name), _frames(0)
   {
     assert(ISystem::systemRegistrar(this, name, REGISTER));
+  }
+  virtual ~ISystem()
+  {
+    assert(ISystem::systemRegistrar(this, _name.c_str(), UNREGISTER));
   }
 
   // get system name
@@ -62,10 +62,9 @@ public:
     VERIFY,
   };
 
-  static bool systemRegistrar(ISystem * system, const char * name = nullptr, eRegistrar op = VERIFY);
-
   // must be overriden in each system (impl. NVI)
   virtual void step(TimeDimension delta){};
+  static bool systemRegistrar(ISystem * system, const char * name = nullptr, eRegistrar op = VERIFY);
 
   string _name;
   FrameCount _frames;
@@ -73,7 +72,7 @@ public:
 
 inline bool ISystem::isValid(ISystem & system)
 {
-  return ISystem::systemRegistrar(&system, nullptr);
+  return ISystem::systemRegistrar(&system, nullptr, VERIFY);
 }
 
 inline bool ISystem::systemRegistrar(

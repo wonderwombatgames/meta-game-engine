@@ -8,9 +8,14 @@
 #ifndef DATA_UTILS_HPP
 #define DATA_UTILS_HPP
 
+#include <cstdint>
+
 namespace Engine
 {
 
+typedef uint32_t Flags;
+typedef uint16_t BlendingMode;
+typedef uint8_t ErrorCode;
 typedef float ColourComponent;
 typedef float SpatialDimention;
 

@@ -29,6 +29,9 @@ struct EntityComponent
 
   // scales
   // <1.0 : smaller | > 1.0 : larger
+  // this attribure i chared by physics and
+  // graphics, but might have application
+  // to the entity behaviour
   Vector3 scale;
 
   // whether or not this entity is active
