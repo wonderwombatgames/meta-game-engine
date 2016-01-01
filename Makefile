@@ -2,11 +2,12 @@ sourcesfiles=entities_manager.cpp \
 		backend_audio_null.cpp \
 		backend_physic_null.cpp \
 		backend_graphics_sdl.cpp \
+		sdl_context.cpp	\
 		unit_tests.cpp
 
 buildflags=`pkg-config --cflags --libs sdl2`
 
-all: tests sdl
+all: tests #sdl
 
 build: unit_tests.cpp ${sourcesfiles} *.hpp
 	g++ -std=c++11 -o unit_tests.x ${sourcesfiles} ${buildflags}

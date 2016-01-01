@@ -14,20 +14,30 @@ namespace Engine
 {
 using namespace std;
 
+class IGraphics
+{
+public:
+  IGraphics(){}
+  virtual ~IGraphics(){}
+  virtual void paint() = 0;
+};
+
 template <typename T >
-class Texture
+class Texture : public IGraphics
 {
 public:
   Texture(GraphicComponent & component);
   Texture(GraphicComponent & component, const string & filepath, const string & atlas = "");
   Texture() = delete;
   Texture(Texture & other) = delete;
-  ~Texture();
+  virtual ~Texture();
 
   bool loadFromFile(const string & filepath, const string & atlas = "");
-  bool hasBMP();
+  bool hasImage();
   void setPosition(const Vector3 & p);
-  const Vector3 & getPosition();
+//  const Vector3 & getPosition();
+
+  virtual void paint() override;
 #if 0
   void setScale(const Vector3 & s);
   const Vector3 & getScale();
@@ -49,7 +59,7 @@ protected:
   typedef T Context;
 
   GraphicComponent * _component;
-  unique_ptr< T > _data;
+  unique_ptr< Context > _data;
 };
 
 

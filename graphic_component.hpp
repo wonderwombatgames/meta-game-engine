@@ -9,14 +9,14 @@
 
 #include "entity_component.hpp"
 
-// forward declaration
-class Texture;
-//class GraphicEffectsData;
-//class ShaderData;
-//class ParticlesEmitterData;
 
 namespace Engine
 {
+// forward declaration
+//class IGraphicEffectsData;
+//class IShaderData;
+//class IParticlesEmitterData;
+class IGraphics;
 
 struct GraphicComponent
 {
@@ -24,7 +24,7 @@ struct GraphicComponent
   EntityComponent * entityData;
 
   // texture data
-  Texture * texture;
+  IGraphics * ptr;
   Vector3 textureSize;
   unsigned short animationFrame;
 

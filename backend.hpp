@@ -27,27 +27,27 @@ public:
 
 
 // graphics functions
-bool initGraphicSystem(Flags flags);
+bool initGraphicSystem(Flags flags = 0);
 void quitGraphicSystem();
 ErrorCode getGraphicHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
 // inputs functions
-bool initInputSystem(Flags flags);
+bool initInputSystem(Flags flags = 0);
 void quitInputSystem();
 ErrorCode getInputHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
 // events functions
-bool initEventSystem(Flags flags);
+bool initEventSystem(Flags flags = 0);
 void quitEventSystem();
 ErrorCode getEventHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
 // physics functions
-bool initPhysicSystem(Flags flags);
+bool initPhysicSystem(Flags flags = 0);
 void quitPhysicSystem();
 ErrorCode getPhysicHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
 // audio
-bool initAudioSystem(Flags flags);
+bool initAudioSystem(Flags flags = 0);
 void quitAudioSystem();
 ErrorCode getAudioHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 

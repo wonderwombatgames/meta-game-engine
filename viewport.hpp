@@ -26,22 +26,23 @@ public:
   ViewPort(ViewPort & other) = delete;
 
   // rendering
-  void paint(Texture< T > & tex);
   void render();
   void clear();
 
+  // reseting the viewport
   void setColour(const Colour & c);
   void setFullscreen(bool fs);
   bool isFullscreen() const;
   void setResolution(Vector3 & res);
 //  const Vector3 & getResolution() const;
-//  const BoxBoundary & getView() const;
+//  const BoxBoundary & getViewBox() const;
 
 protected:
   typedef T Context;
 
   //data
-  unique_ptr< T > _data;
+  unique_ptr< Context > _data;
+  Colour _background;
 };
 
 

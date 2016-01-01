@@ -5,107 +5,11 @@
 
 #include <cassert>
 #include <cmath>
-#include <SDL2/SDL.h>
 
 //#include "graphic_system_handler.hpp"
 #include "backend.hpp"
 #include "viewport.hpp"
-
-
-namespace Engine
-{
-using namespace std;
-
-// here we define classes related to SDL Context;
-
-// wrapper around window and renderer
-struct SDLRenderer
-{
-  SDLRenderer();
-  ~SDLRenderer();
-  static SDL_Window * _window;
-  static SDL_Renderer * _renderer;
-};
-
-// only one instance of the window is allowed
-SDL_Window * SDLRenderer::_window = nullptr;
-SDL_Renderer * SDLRenderer::_renderer = nullptr;
-
-SDLRenderer::SDLRenderer()
-{
-  if(SDL_WasInit(SDL_INIT_VIDEO) && nullptr == this->_window &&  nullptr == this->_renderer)
-  {
-    if (  SDL_CreateWindowAndRenderer(
-              640,
-              480,
-              SDL_WINDOW_OPENGL,
-              &this->_window,
-              &this->_renderer) )
-    {
-      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window and renderer: %s", SDL_GetError());
-    }
-  }
-  assert(this->_window && this->_renderer);
-}
-
-SDLRenderer::~SDLRenderer()
-{
-  if(SDL_WasInit(SDL_INIT_VIDEO) && nullptr == this->_window &&  nullptr == this->_renderer)
-  {
-    SDL_DestroyRenderer(this->_renderer);
-    this->_renderer = nullptr;
-    SDL_DestroyWindow(this->_window);
-    this->_window = nullptr;
-  }
-}
-
-// wrapper around texture
-struct SDLTexture
-{
-  SDLTexture(const string & filepath, SDL_Renderer * renderer);
-  ~SDLTexture();
-  SDL_Texture * _texture;
-};
-
-SDLTexture::SDLTexture(const string & filepath, SDL_Renderer * renderer)
-{
-  /// FIXME: use SDL IMAGE to load tex
-  SDL_Surface * surface = SDL_LoadBMP(filepath.c_str());
-  if (!surface) {
-      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create surface from image: %s", SDL_GetError());
-  }
-  else
-  {
-    this->_texture = SDL_CreateTextureFromSurface(renderer, surface);
-    if (!this->_texture) {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create texture from surface: %s", SDL_GetError());
-    }
-    SDL_FreeSurface(surface);
-  }
-  assert(this->_texture);
-}
-
-SDLTexture::~SDLTexture()
-{
-  SDL_DestroyTexture(_texture);
-  this->_texture = nullptr;
-}
-
-
-// context used by viewport and texture
-struct SDLContext
-{
-  SDLContext();
-
-  SDLRenderer _view;
-  unique_ptr< SDLTexture > _texture;
-};
-
-SDLContext::SDLContext()
-    :_texture(nullptr)
-{}
-
-} // end namespace Engine
+#include "sdl_context.hpp"
 
 
 // this anonymous (restricted) namespace contains a
@@ -284,50 +188,48 @@ namespace Engine
 using namespace std;
 
 
-// rendering
-template <>
-void ViewPort< SDLContext >::paint(Texture< SDLContext > & tex)
-{
-  //SDL_RenderCopy(_data->_view._renderer, texture, NULL, NULL);
-}
-
+// VIEWPORT
 template <>
 void ViewPort< SDLContext >::render()
 {
-  SDL_RenderPresent(_data->_view._renderer);
+  SDL_RenderPresent(_data->_view->_renderer);
 }
 
 template <>
 void ViewPort< SDLContext >::clear()
 {
-  SDL_RenderClear(_data->_view._renderer);
+  SDL_RenderClear(_data->_view->_renderer);
   this->render();
 }
 
 template <>
 void ViewPort< SDLContext >::setColour(const Colour & c)
 {
+  this->_background = c;
   uint8_t r = 0;
   uint8_t g = 0;
   uint8_t b = 0;
   uint8_t a = 0;
   colour8RGBA(r, g, b, a, c);
 
-  SDL_SetRenderDrawColor(_data->_view._renderer, r, g, b, a);
+  SDL_SetRenderDrawColor(_data->_view->_renderer, r, g, b, a);
   this->clear();
 }
 
 template <>
 void ViewPort< SDLContext >::setFullscreen(bool fs)
 {
-  SDL_SetWindowFullscreen(_data->_view._window, SDL_WINDOW_FULLSCREEN);
+  if(fs)
+  {
+    SDL_SetWindowFullscreen(_data->_view->_window, SDL_WINDOW_FULLSCREEN);
+    this->setColour(this->_background);
+  }
 }
 
 template <>
 bool ViewPort< SDLContext >::isFullscreen() const
 {
-
-  return (SDL_GetWindowFlags(_data->_view._window) == SDL_WINDOW_FULLSCREEN);
+  return (SDL_GetWindowFlags(_data->_view->_window) == SDL_WINDOW_FULLSCREEN);
 }
 
 template <>
@@ -336,8 +238,16 @@ void ViewPort< SDLContext >::setResolution(Vector3 & res)
   int width = abs(static_cast<int>(res.x));
   int height = abs(static_cast<int>(res.y));
 
-  SDL_SetWindowSize(_data->_view._window, width, height);
-  SDL_RenderSetLogicalSize(_data->_view._renderer, width, height);
+  SDL_Rect rect;
+  SDL_RenderGetViewport(_data->_view->_renderer, &rect);
+  rect.w = width;
+  rect.h = height;
+
+  SDL_SetWindowSize(_data->_view->_window, width, height);
+  SDL_RenderSetLogicalSize(_data->_view->_renderer, width, height);
+  SDL_RenderSetViewport(_data->_view->_renderer, &rect);
+  SDL_RenderSetClipRect(_data->_view->_renderer, &rect);
+  this->setColour(this->_background);
 }
 
 // template <>
@@ -348,7 +258,7 @@ void ViewPort< SDLContext >::setResolution(Vector3 & res)
 // }
 //
 // template <>
-// const BoxBoundary & ViewPort< SDLContext >::getView() const;
+// const BoxBoundary & ViewPort< SDLContext >::getViewBox() const;
 // {
 //
 //   return box;
@@ -358,43 +268,52 @@ template <>
 ViewPort< SDLContext >::ViewPort(BoxBoundary & rect, Flags flags)
     :_data(new Context)
 {
-  Vector3 res{(rect.buttonRight.x - rect.topLeft.x),
-      (rect.buttonRight.y - rect.topLeft.y), 0};
+  Vector3 res{
+      (rect.buttonRight.x - rect.topLeft.x),
+      (rect.buttonRight.y - rect.topLeft.y), 0 };
+
   this->setResolution(res);
-  SDL_SetRenderDrawColor(_data->_view._renderer, 0x00, 0x00, 0x00, 0x00);
-  this->clear();
+  this->_background.kind = RGB;
+  this->_background.rgb = {0.1, 0.5, 0.9};
+  this->setColour(this->_background);
 }
 
+// TEXTURE
 template <>
 Texture< SDLContext >::Texture(GraphicComponent & component)
+    :IGraphics()
+    ,_component(&component)
+    ,_data(new Context)
 {
-
+  _component->ptr = this;
 }
 
 template <>
 Texture< SDLContext >::Texture(GraphicComponent & component, const string & filepath, const string & atlas)
+    :IGraphics()
+    ,_component(&component)
+    ,_data(new Context)
 {
-
+  _component->ptr = this;
+  _data->_image.reset(new SDLTexture(filepath, _data->_view->_renderer));
+  // FIXME: load atlas!!!
 }
 
 template <>
 Texture< SDLContext >::~Texture()
-{
+{}
 
+template <>
+bool Texture< SDLContext >::hasImage()
+{
+  return (_data->_image && _data->_image->_texture);
 }
 
 template <>
 bool Texture< SDLContext >::loadFromFile(const string & filepath, const string & atlas)
 {
 
-  return false;
-}
-
-template <>
-bool Texture< SDLContext >::hasBMP()
-{
-
-  return false;
+  return this->hasImage();
 }
 
 template <>
@@ -408,6 +327,15 @@ void Texture< SDLContext >::setPosition(const Vector3 & p)
 //   return vec;
 // }
 
+template <>
+void Texture< SDLContext >::paint()
+{
+  // FIXME: the coordinates have to be changed
+  if(_data->_view->_renderer && _data->_image)
+  {
+    SDL_RenderCopy(_data->_view->_renderer, _data->_image->_texture, NULL, NULL);
+  }
+}
 
 // // implement handler interface using SDL
 // //template< class Impl >
