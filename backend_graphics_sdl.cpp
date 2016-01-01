@@ -4,6 +4,7 @@
   */
 
 #include <cassert>
+#include <cmath>
 #include <SDL2/SDL.h>
 
 //#include "graphic_system_handler.hpp"
@@ -22,9 +23,13 @@ struct SDLRenderer
 {
   SDLRenderer();
   ~SDLRenderer();
-  SDL_Window * _window;
-  SDL_Renderer * _renderer;
+  static SDL_Window * _window;
+  static SDL_Renderer * _renderer;
 };
+
+// only one instance of the window is allowed
+SDL_Window * SDLRenderer::_window = nullptr;
+SDL_Renderer * SDLRenderer::_renderer = nullptr;
 
 SDLRenderer::SDLRenderer()
 {
@@ -92,7 +97,7 @@ struct SDLContext
 {
   SDLContext();
 
-  static SDLRenderer _renderer;
+  SDLRenderer _view;
   unique_ptr< SDLTexture > _texture;
 };
 
@@ -213,6 +218,64 @@ namespace // anonymous
     quitSubsystem(SDL_INIT_GAMECONTROLLER | SDL_INIT_JOYSTICK);
   }
 
+
+  void colour8RGBA(uint8_t & r, uint8_t & g, uint8_t & b, uint8_t & a, const Engine::Colour & c)
+  {
+    r = 0;
+    g = 0;
+    b = 0;
+    a = 255;
+
+    switch (c.kind)
+    {
+      case Engine::RGB:
+      {
+        r = (static_cast<uint8_t>(c.rgb.r * 256) % 256);
+        g = (static_cast<uint8_t>(c.rgb.g * 256) % 256);
+        b = (static_cast<uint8_t>(c.rgb.b * 256) % 256);
+      }
+      break;
+      case Engine::RGBA:
+      {
+        r = (static_cast<uint8_t>(c.rgba.r * 256) % 256);
+        g = (static_cast<uint8_t>(c.rgba.g * 256) % 256);
+        b = (static_cast<uint8_t>(c.rgba.b * 256) % 256);
+        a = (static_cast<uint8_t>(c.rgba.a * 256) % 256);
+      }
+      break;
+      case Engine::HSL:
+      {
+        //  TODO
+      }
+      break;
+      case Engine::HSLA:
+      {
+        //  TODO
+      }
+      break;
+      case Engine::HSV:
+      {
+        //  TODO
+      }
+      break;
+      case Engine::HSVA:
+      {
+        //  TODO
+      }
+      break;
+      case Engine::CMYK:
+      {
+        //  TODO
+      }
+      break;
+      case Engine::HEX:
+      {
+        //  TODO
+      }
+      break;
+    }
+  }
+
 } // end namespace anonymous
 
 
@@ -220,50 +283,61 @@ namespace Engine
 {
 using namespace std;
 
-template <>
-ViewPort< SDLContext >::ViewPort(BoxBoundary & rect, Flags flags)
-    :_data(new Context)
-{
-
-}
 
 // rendering
 template <>
 void ViewPort< SDLContext >::paint(Texture< SDLContext > & tex)
 {
-
+  //SDL_RenderCopy(_data->_view._renderer, texture, NULL, NULL);
 }
 
 template <>
-bool ViewPort< SDLContext >::render()
+void ViewPort< SDLContext >::render()
 {
-
-  return false;
+  SDL_RenderPresent(_data->_view._renderer);
 }
 
 template <>
 void ViewPort< SDLContext >::clear()
 {
+  SDL_RenderClear(_data->_view._renderer);
+  this->render();
+}
 
+template <>
+void ViewPort< SDLContext >::setColour(const Colour & c)
+{
+  uint8_t r = 0;
+  uint8_t g = 0;
+  uint8_t b = 0;
+  uint8_t a = 0;
+  colour8RGBA(r, g, b, a, c);
+
+  SDL_SetRenderDrawColor(_data->_view._renderer, r, g, b, a);
+  this->clear();
 }
 
 template <>
 void ViewPort< SDLContext >::setFullscreen(bool fs)
 {
-
+  SDL_SetWindowFullscreen(_data->_view._window, SDL_WINDOW_FULLSCREEN);
 }
 
 template <>
 bool ViewPort< SDLContext >::isFullscreen() const
 {
 
-  return false;
+  return (SDL_GetWindowFlags(_data->_view._window) == SDL_WINDOW_FULLSCREEN);
 }
 
 template <>
-void ViewPort< SDLContext >::setResolution(Vector3 & rect)
+void ViewPort< SDLContext >::setResolution(Vector3 & res)
 {
+  int width = abs(static_cast<int>(res.x));
+  int height = abs(static_cast<int>(res.y));
 
+  SDL_SetWindowSize(_data->_view._window, width, height);
+  SDL_RenderSetLogicalSize(_data->_view._renderer, width, height);
 }
 
 // template <>
@@ -279,6 +353,17 @@ void ViewPort< SDLContext >::setResolution(Vector3 & rect)
 //
 //   return box;
 // }
+
+template <>
+ViewPort< SDLContext >::ViewPort(BoxBoundary & rect, Flags flags)
+    :_data(new Context)
+{
+  Vector3 res{(rect.buttonRight.x - rect.topLeft.x),
+      (rect.buttonRight.y - rect.topLeft.y), 0};
+  this->setResolution(res);
+  SDL_SetRenderDrawColor(_data->_view._renderer, 0x00, 0x00, 0x00, 0x00);
+  this->clear();
+}
 
 template <>
 Texture< SDLContext >::Texture(GraphicComponent & component)

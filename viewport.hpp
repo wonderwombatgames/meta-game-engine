@@ -27,12 +27,13 @@ public:
 
   // rendering
   void paint(Texture< T > & tex);
-  bool render();
+  void render();
   void clear();
 
+  void setColour(const Colour & c);
   void setFullscreen(bool fs);
   bool isFullscreen() const;
-  void setResolution(Vector3 & rect);
+  void setResolution(Vector3 & res);
 //  const Vector3 & getResolution() const;
 //  const BoxBoundary & getView() const;
 
