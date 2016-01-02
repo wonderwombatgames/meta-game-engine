@@ -30,6 +30,7 @@ struct EntityComponent
 
   // scales
   // <1.0 : smaller | > 1.0 : larger
+  // <0.0 : mirror
   // this attribure is shared by physics and
   // graphics, and might have application
   // to the entity behaviour as well

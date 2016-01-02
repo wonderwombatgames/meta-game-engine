@@ -3,6 +3,7 @@
   */
 
 #include <iostream>
+#include <cmath>
 
 #include <SDL2/SDL.h>
 
@@ -85,9 +86,31 @@ int main(int argc, char *argv[])
   ViewPort< SDLContext > view(bb);
   cout << "!!!OK - " << ++test_count << " => Created a viewport. " << endl;
 
+  EntityComponent _entityData;
+  // defaults
+  _entityData.entityId = 0;
+  // kind of space 2D/3D
+  _entityData.kind = SPACE_2D;
+  // position
+  // absolute in pixels (float values)
+  // can contain z-order
+  _entityData.position = {320.0f, 240.0f, 0.0f};
+  // rotation
+  // values between 0.0 - 1.0  (= 0 - 360)
+  _entityData.rotation = {0.0f, 0.0f, 0.0f};
+  // scales
+  // <1.0 : smaller | > 1.0 : larger
+  // <0.0 : mirror
+  _entityData.scale = {1.0f, 1.0f, 1.0f};
+  // whether or not this entity is active
+  _entityData.isActive = true;
+
   GraphicComponent sprite;
   Texture< SDLContext > tex(sprite);
-  string filename("img/sample.bmp");
+  sprite.entityData = &_entityData;
+  sprite.anchor = {0.5f, 0.5f, 0.5f};
+
+  string filename("img/sample.png");
   tex.loadFromFile(filename);
 
   Colour c1;
@@ -96,24 +119,40 @@ int main(int argc, char *argv[])
   Dimension3 r{640.0, 480.0, 0.0};
 
   view.setResolution(r);
-  view.setFullscreen(true);
+  //view.setFullscreen(true);
 
+  float rotation = 0.0f;
+  float rand_x = 0;
+  float rand_y = 0;
+  bool running = true;
   SDL_Event event;
-  for (int i=0; i<125; ++i)
+  for (int i = 0; running && (i < 250); ++i)
   {
-    SDL_PollEvent(&event);
-    if (event.type == SDL_QUIT)
+    while (SDL_PollEvent(&event))
     {
-        break;
+      if (event.type == SDL_QUIT)
+      {
+          running = false;
+          break;
+      }
     }
-    SDL_Delay(1000/25);
-    view.setColour(c1);
-    tex.paint();
+    rotation += (1.0f/125.0f);
+    _entityData.rotation = {rotation, 0.0f, 0.0f};
+    rand_x += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
+    rand_y += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
+    Vector3 offset{rand_x, rand_y, 0.0f};
+    cout << "rand_x : " << rand_x << " rand_y : " << rand_y << endl;
+
+    // view.setColour(c1);
+    view.clear(&c1);
+    tex.paint(offset);
     view.render();
+
+    SDL_Delay(1000/25);
   }
   cout << "!!!OK - " << ++test_count << " => Painting texture. " << endl;
-  SDL_Delay(1000);
-  view.setFullscreen(false);
+  // SDL_Delay(1000);
+  //view.setFullscreen(false);
 
   SDLBackEnd::quitGraphicSystem();
 

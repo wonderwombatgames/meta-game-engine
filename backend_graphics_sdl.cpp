@@ -5,6 +5,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <iostream>
 
 #include "backend.hpp"
 #include "context_sdl.hpp"
@@ -176,25 +177,39 @@ using namespace std;
 
   // TEXTURE
   template <>
+  void Texture< SDLContext >::init()
+  {
+    // defines the anchor within the boudaries
+    // values between 0.0 - 1.0 (in relation to entity size | UV)
+    _component->anchor = {0.0f, 0.0f, 0.0f};
+
+    // size - between 0.0 - 1.0 (in relation to viewport size)
+    _component->textureSize = {0.0f, 0.0f, 0.0f};
+
+    // texture data pointer
+    _component->texture = this;
+
+    // nth frame in within the texture atlas
+    _component->animationFrame = 0;
+
+    // colour parameters
+    _component->colourTint.kind = RGB;
+    _component->colourTint.rgb = {0.0f, 0.0f, 0.0f};
+    _component->alphaMode = 0.0f;
+    _component->blendingMode = 0;
+
+    // whether to show the entity or not
+    _component->isVisible = true;
+
+  }
+
+  template <>
   Texture< SDLContext >::Texture(GraphicComponent & component)
       :_component(&component)
       ,_data(new Context)
   {
-    _component->texture = this;
+    this->init();
   }
-
-  template <>
-  Texture< SDLContext >::Texture(GraphicComponent & component, const string & filepath, const string & atlas)
-      :_component(&component)
-      ,_data(new Context)
-  {
-    _component->texture = this;
-    _data->_image.reset(new SDLTexture(filepath, _data->_view->_renderer));
-  }
-
-  template <>
-  Texture< SDLContext >::~Texture()
-  {}
 
   template <>
   bool Texture< SDLContext >::isLoaded()
@@ -203,40 +218,122 @@ using namespace std;
   }
 
   template <>
-  bool Texture< SDLContext >::loadFromFile(const string & filepath, const string & atlas)
+  bool Texture< SDLContext >::loadFromFile(const string & filepath)
   {
     _data->_image.reset(new SDLTexture(filepath, _data->_view->_renderer));
+
+    // query texture
+    uint format;
+    int access;
+    int tw;
+    int th;
+    SDL_QueryTexture(_data->_image->_buffer, &format, &access, &tw, &th);
+
+    // query window
+    int rw;
+    int rh;
+    SDL_GetWindowSize(_data->_view->_window, &rw, &rh);
+
+    float w = static_cast<float>(tw) / static_cast<float>(rw);
+    float h = static_cast<float>(th) / static_cast<float>(rh);
+
+    // size - between 0.0 - 1.0 (in relation to viewport size)
+    _component->textureSize = {w, h, 0.0f};
+
     return this->isLoaded();
   }
 
   template <>
-  void Texture< SDLContext >::paint(const Vector3 & offset)
+  Texture< SDLContext >::Texture(GraphicComponent & component, const string & filepath)
+      :_component(&component)
+      ,_data(new Context)
   {
-    // FIXME: the coordinates have to be changed
-    // use: int SDL_RenderCopyEx(SDL_Renderer* renderer,
-    //                  SDL_Texture*           texture,
-    //                  const SDL_Rect*        srcrect,
-    //                  const SDL_Rect*        dstrect,
-    //                  const double           angle,
-    //                  const SDL_Point*       center,
-    //                  const SDL_RendererFlip flip);
-    // need to get
-    // void SDL_GetWindowSize(SDL_Window* window,
-    //                   int*        w,
-    //                   int*        h);
-    // void SDL_RenderGetLogicalSize(SDL_Renderer* renderer,
-    //                   int*        w,
-    //                   int*        h);
-    // then calculate the actual position.
-    // CAVEAT: origin will be changed from topleft to bottonleft!
-
-    if(_data->_view->_renderer && this->isLoaded())
-    {
-      SDL_RenderCopy(_data->_view->_renderer, _data->_image->_buffer, NULL, NULL);
-    }
-    else
-      assert(false);
+    this->init();
+    this->loadFromFile(filepath);
   }
 
+  template <>
+  Texture< SDLContext >::~Texture()
+  {}
+
+
+  template <>
+  void Texture< SDLContext >::paint(const Vector3 & offset)
+  {
+    // query window
+    int rw;
+    int rh;
+    SDL_RenderGetLogicalSize(_data->_view->_renderer, &rw, &rh);
+
+    // compute texture parameters in px
+    int tw  = static_cast<int>(_component->textureSize.w * rw);
+    int th  = static_cast<int>(_component->textureSize.h * rh);
+    int tx  = 0;
+    int ty  = 0;
+    float sx  = 1.0f;
+    float sy  = 1.0f;
+    float rot = 0.0f;
+
+    if (nullptr != _component->entityData)
+    {
+      tx  = static_cast<int>(_component->entityData->position.x);
+      ty  = static_cast<int>(_component->entityData->position.y);
+      sx  = _component->entityData->scale.x;
+      sy  = _component->entityData->scale.y;
+      rot = _component->entityData->rotation.angleXY;
+    }
+
+    float ax  = _component->anchor.x;
+    float ay  = _component->anchor.y;
+    int w = static_cast<int>(tw * fabs(sx));
+    int h = static_cast<int>(th * fabs(sy));
+    int cx = static_cast<int>(ax * w);
+    int cy = static_cast<int>(ay * h);
+    int x = tx - cx - static_cast<int>(offset.x);
+    int y = ty - cy - static_cast<int>(offset.y);
+
+    if(x >= 0 && y >= 0 && x <= rw && y <= rh)
+    {
+      // calculate  src and dst rectangles
+      SDL_Rect src_rect;
+      src_rect.x = 0;
+      src_rect.y = 0;
+      src_rect.w = tw;
+      src_rect.h = th;
+
+      SDL_Rect dst_rect;
+      dst_rect.x = x;
+      dst_rect.y = y;
+      dst_rect.w = w;
+      dst_rect.h = h;
+
+      SDL_RendererFlip flip = SDL_FLIP_NONE;
+      if (sx < 0.0)
+      {
+        flip = static_cast<SDL_RendererFlip>( flip | SDL_FLIP_HORIZONTAL);
+      }
+      if (sy < 0.0)
+      {
+        flip = static_cast<SDL_RendererFlip>( flip | SDL_FLIP_VERTICAL);
+      }
+
+      double angle = fmod((rot * 360.0), 360.0);
+      SDL_Point center = {cx, cy};
+
+      if(_data->_view->_renderer && this->isLoaded())
+      {
+        // FIXME: set the alpha, blend and color modes!!!
+        SDL_RenderCopyEx(_data->_view->_renderer,
+                         _data->_image->_buffer,
+                         &src_rect,
+                         &dst_rect,
+                         angle,
+                         &center,
+                         flip);
+      }
+      else
+        assert(false);
+    }
+  }
 
 } // end namespace Engine

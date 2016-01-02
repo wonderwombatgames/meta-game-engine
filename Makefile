@@ -6,6 +6,8 @@ sourcesfiles=entities_manager.cpp \
 		unit_tests.cpp
 
 buildflags=`pkg-config --cflags --libs sdl2`
+buildflags+=`pkg-config --cflags --libs SDL2_image`
+
 
 all: tests #sdl
 

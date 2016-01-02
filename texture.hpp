@@ -19,16 +19,16 @@ class Texture : public IGraphic
 {
 public:
   Texture(GraphicComponent & component);
-  Texture(GraphicComponent & component, const string & filepath, const string & atlas = "");
+  Texture(GraphicComponent & component, const string & filepath);
   Texture() = delete;
   Texture(Texture & other) = delete;
   virtual ~Texture();
 
-  bool loadFromFile(const string & filepath, const string & atlas = "");
+  bool loadFromFile(const string & filepath);
   bool loadFromAtlas();
   bool isLoaded();
 
-  virtual void paint(const Vector3 & offset = {0.0, 0.0, 0.0}) override;
+  virtual void paint(const Vector3 & offset = {0.0f, 0.0f, 0.0f}) override;
 
 #if 0
  void setPosition(const Vector3 & p);
@@ -54,6 +54,8 @@ protected:
 
   GraphicComponent * _component;
   unique_ptr< Context > _data;
+
+  void init();
 };
 
 

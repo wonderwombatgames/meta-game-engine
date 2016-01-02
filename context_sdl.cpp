@@ -1,4 +1,5 @@
 #include <cassert>
+#include <SDL2/SDL_image.h>
 #include "context_sdl.hpp"
 #include "basic_types.hpp"
 #include "backend.hpp"
@@ -255,8 +256,7 @@ namespace SDLBackEnd
   // wrapper around texture
   SDLTexture::SDLTexture(const string & filepath, SDL_Renderer * renderer)
   {
-    /// FIXME: use SDL IMAGE to load tex
-    SDL_Surface * surface = SDL_LoadBMP(filepath.c_str());
+    SDL_Surface * surface = IMG_Load(filepath.c_str());
     if (!surface) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create surface from image: %s", SDL_GetError());
           assert(false);

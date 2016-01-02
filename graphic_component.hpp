@@ -21,7 +21,7 @@ class IGraphic
 public:
   IGraphic(){}
   virtual ~IGraphic(){}
-  virtual void paint(const Vector3 & offset) = 0;
+  virtual void paint(const Vector3 & offset = {0.0f, 0.0f, 0.0f}) = 0;
 };
 
 struct GraphicComponent
@@ -34,7 +34,7 @@ struct GraphicComponent
   Vector3 anchor;
 
   // size - between 0.0 - 1.0 (in relation to viewport size)
-  Vector3 textureSize;
+  Dimension3 textureSize;
 
   // texture data pointer
   IGraphic * texture;
@@ -43,7 +43,7 @@ struct GraphicComponent
   unsigned short animationFrame;
 
   // colour parameters
-  Colour colourMode;
+  Colour colourTint;
   ColourComponent alphaMode;
   BlendingMode blendingMode;
 
