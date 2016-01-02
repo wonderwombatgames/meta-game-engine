@@ -140,6 +140,8 @@ using namespace std;
       SDL_RenderSetViewport(_data->_view->_renderer, &rect);
       SDL_RenderSetClipRect(_data->_view->_renderer, &rect);
       this->setColour(this->_background);
+
+      _data->_view->_resolution = res;
     }
   }
 
@@ -217,25 +219,45 @@ using namespace std;
     return (_data->_image && _data->_image->_buffer);
   }
 
+  inline void getWindowSize(int & w, int & h)
+  {
+
+  }
+
+  template <>
+  inline void Texture< SDLContext >::getWindowSize(int & w, int & h)
+  {
+    w = _data->_view->_resolution.w;
+    h = _data->_view->_resolution.h;
+  }
+
+  template <>
+  inline void Texture< SDLContext >::getTextureSize(int & w, int & h)
+  {
+    w = _data->_image->_rect.size.w;
+    h = _data->_image->_rect.size.h;
+  }
+
   template <>
   bool Texture< SDLContext >::loadFromFile(const string & filepath)
   {
-    _data->_image.reset(new SDLTexture(filepath, _data->_view->_renderer));
-
-    // query texture
-    uint format;
-    int access;
-    int tw;
-    int th;
-    SDL_QueryTexture(_data->_image->_buffer, &format, &access, &tw, &th);
+    _data->_image.reset(SDLTexture::createSDLTexture(filepath, _data->_view->_renderer));
 
     // query window
-    int rw;
-    int rh;
-    SDL_GetWindowSize(_data->_view->_window, &rw, &rh);
+    int rw = 0;
+    int rh = 0;
+    this->getWindowSize(rw, rh);
 
-    float w = static_cast<float>(tw) / static_cast<float>(rw);
-    float h = static_cast<float>(th) / static_cast<float>(rh);
+    // query texture
+    int tw = 0;
+    int th = 0;
+    this->getTextureSize(tw, th);
+
+    // compute the relative size
+    SpatialDimention w =
+    static_cast<SpatialDimention>(tw) / static_cast<SpatialDimention>(rw);
+    SpatialDimention h =
+    static_cast<SpatialDimention>(th) / static_cast<SpatialDimention>(rh);
 
     // size - between 0.0 - 1.0 (in relation to viewport size)
     _component->textureSize = {w, h, 0.0f};
@@ -260,10 +282,9 @@ using namespace std;
   template <>
   void Texture< SDLContext >::paint(const Vector3 & offset)
   {
-    // query window
-    int rw;
-    int rh;
-    SDL_RenderGetLogicalSize(_data->_view->_renderer, &rw, &rh);
+    int rw = 0;
+    int rh = 0;
+    this->getWindowSize(rw, rh);
 
     // compute texture parameters in px
     int tw  = static_cast<int>(_component->textureSize.w * rw);

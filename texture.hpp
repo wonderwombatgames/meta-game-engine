@@ -56,6 +56,8 @@ protected:
   unique_ptr< Context > _data;
 
   void init();
+  void getWindowSize(int & w, int & h);
+  void getTextureSize(int & w, int & h);
 };
 
 

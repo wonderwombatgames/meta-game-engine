@@ -1,4 +1,5 @@
 #include <cassert>
+#include <unordered_map>
 #include <SDL2/SDL_image.h>
 #include "context_sdl.hpp"
 #include "basic_types.hpp"
@@ -7,6 +8,9 @@
 
 namespace // anonymous
 {
+  // holds pointers to loaded textures to avoid reloading textures more than once.
+  static std::unordered_map<std::string, Engine::SDLTexture * > textures;
+
   // this anonymous (restricted) namespace contains a
   // singleton class that inits SDL and its subsystems
 
@@ -222,6 +226,7 @@ namespace SDLBackEnd
   // wrapper around window and renderer
 
   // only one instance of the window is allowed
+  Dimension3 SDLRenderer::_resolution = {640.0, 480.0};
   SDL_Window * SDLRenderer::_window = nullptr;
   SDL_Renderer * SDLRenderer::_renderer = nullptr;
 
@@ -230,8 +235,8 @@ namespace SDLBackEnd
     if(SDL_WasInit(SDL_INIT_VIDEO) && nullptr == this->_window &&  nullptr == this->_renderer)
     {
       if (  SDL_CreateWindowAndRenderer(
-                640,
-                480,
+                static_cast<int>(_resolution.w),
+                static_cast<int>(_resolution.h),
                 SDL_WINDOW_OPENGL,
                 &this->_window,
                 &this->_renderer) )
@@ -267,9 +272,29 @@ namespace SDLBackEnd
       if (!this->_buffer) {
           SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create texture from surface: %s", SDL_GetError());
       }
+      _rect.topLeft = {0.0f, 0.0f};
+      _rect.size = {static_cast<SpatialDimention>(surface->w),
+                    static_cast<SpatialDimention>(surface->h)};
       SDL_FreeSurface(surface);
     }
     assert(this->_buffer);
+  }
+
+  SDLTexture * SDLTexture::createSDLTexture(const string & filepath, SDL_Renderer * renderer)
+  {
+    SDLTexture * texPtr = nullptr;
+
+    auto sdlTexIt = textures.find(filepath);
+    if(sdlTexIt != textures.end())
+    {
+      texPtr = sdlTexIt->second;
+    }
+    else
+    {
+      texPtr = new SDLTexture(filepath, renderer);
+      textures[filepath] = texPtr;
+    }
+    return texPtr;
   }
 
   SDLTexture::~SDLTexture()

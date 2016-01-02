@@ -105,13 +105,17 @@ int main(int argc, char *argv[])
   // whether or not this entity is active
   _entityData.isActive = true;
 
+  GraphicComponent sprite_;
+  Texture< SDLContext > tex1(sprite_);
+  string filename("img/sample.png");
+  tex1.loadFromFile(filename);
+
   GraphicComponent sprite;
-  Texture< SDLContext > tex(sprite);
+  Texture< SDLContext > tex2(sprite);
+  tex2.loadFromFile(filename);
+
   sprite.entityData = &_entityData;
   sprite.anchor = {0.5f, 0.5f, 0.5f};
-
-  string filename("img/sample.png");
-  tex.loadFromFile(filename);
 
   Colour c1;
   c1.kind = RGB;
@@ -145,7 +149,7 @@ int main(int argc, char *argv[])
 
     // view.setColour(c1);
     view.clear(&c1);
-    tex.paint(offset);
+    tex2.paint(offset);
     view.render();
 
     SDL_Delay(1000/25);

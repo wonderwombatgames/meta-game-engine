@@ -20,6 +20,7 @@ using namespace std;
   {
     SDLRenderer();
     ~SDLRenderer();
+    static Dimension3 _resolution;
     static SDL_Window * _window;
     static SDL_Renderer * _renderer;
   };
@@ -27,9 +28,12 @@ using namespace std;
   // wrapper around texture
   struct SDLTexture
   {
-    SDLTexture(const string & filepath, SDL_Renderer * renderer);
+    static SDLTexture * createSDLTexture(const string & filepath, SDL_Renderer * renderer);
     ~SDLTexture();
     SDL_Texture * _buffer;
+    BoxBoundXYWH _rect;
+  private:
+    SDLTexture(const string & filepath, SDL_Renderer * renderer);
   };
 
   // context used by viewport and texture
