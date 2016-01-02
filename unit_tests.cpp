@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
     rand_x += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
     rand_y += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
     Vector3 offset{rand_x, rand_y, 0.0f};
-    cout << "rand_x : " << rand_x << " rand_y : " << rand_y << endl;
+    //cout << "rand_x : " << rand_x << " rand_y : " << rand_y << endl;
 
     // view.setColour(c1);
     view.clear(&c1);

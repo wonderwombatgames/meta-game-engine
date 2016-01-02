@@ -58,6 +58,7 @@ protected:
   void init();
   void getWindowSize(int & w, int & h);
   void getTextureSize(int & w, int & h);
+  void computeClipRects(BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector3 & center);
 };
 
 

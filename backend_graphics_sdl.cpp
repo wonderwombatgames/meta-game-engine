@@ -56,6 +56,14 @@ using namespace std;
   //   return 0;
   // }
 
+  inline void BoxBoundXYWH2SDLRect(const BoxBoundXYWH & box, SDL_Rect & rect)
+  {
+    rect.x = static_cast<int>(box.topLeft.x);
+    rect.y = static_cast<int>(box.topLeft.y);
+    rect.w = static_cast<int>(box.size.w);
+    rect.h = static_cast<int>(box.size.h);
+  }
+
   // VIEWPORT
   template <>
   void ViewPort< SDLContext >::render()
@@ -278,9 +286,9 @@ using namespace std;
   Texture< SDLContext >::~Texture()
   {}
 
-
   template <>
-  void Texture< SDLContext >::paint(const Vector3 & offset)
+  void Texture< SDLContext >::computeClipRects(
+      BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector3 & center)
   {
     int rw = 0;
     int rh = 0;
@@ -293,7 +301,6 @@ using namespace std;
     int ty  = 0;
     float sx  = 1.0f;
     float sy  = 1.0f;
-    float rot = 0.0f;
 
     if (nullptr != _component->entityData)
     {
@@ -301,7 +308,6 @@ using namespace std;
       ty  = static_cast<int>(_component->entityData->position.y);
       sx  = _component->entityData->scale.x;
       sy  = _component->entityData->scale.y;
-      rot = _component->entityData->rotation.angleXY;
     }
 
     float ax  = _component->anchor.x;
@@ -310,23 +316,61 @@ using namespace std;
     int h = static_cast<int>(th * fabs(sy));
     int cx = static_cast<int>(ax * w);
     int cy = static_cast<int>(ay * h);
-    int x = tx - cx - static_cast<int>(offset.x);
-    int y = ty - cy - static_cast<int>(offset.y);
+    int x = tx - cx;
+    int y = ty - cy;
 
-    if(x >= 0 && y >= 0 && x <= rw && y <= rh)
+    src.topLeft.x = 0;
+    src.topLeft.y = 0;
+    src.size.w = tw;
+    src.size.h = th;
+
+    dst.topLeft.x = x;
+    dst.topLeft.y = y;
+    dst.size.w = w;
+    dst.size.h = h;
+
+    center.x = cx;
+    center.y = cy;
+  }
+
+  template <>
+  void Texture< SDLContext >::paint(const Vector3 & offset)
+  {
+    int rw = 0;
+    int rh = 0;
+    this->getWindowSize(rw, rh);
+
+    BoxBoundXYWH src;
+    BoxBoundXYWH dst;
+    Vector3 center;
+
+    this->computeClipRects(src, dst, center);
+
+    dst.topLeft.x -= static_cast<int>(offset.x);
+    dst.topLeft.y -= static_cast<int>(offset.y);
+
+    float rot = 0.0f;
+    float sx  = 1.0f;
+    float sy  = 1.0f;
+    if (nullptr != _component->entityData)
+    {
+      sx  = _component->entityData->scale.x;
+      sy  = _component->entityData->scale.y;
+      rot = _component->entityData->rotation.angleXY;
+    }
+
+    double angle = fmod((rot * 360.0), 360.0);
+    SDL_Point sdl_center = {static_cast<int>(center.x), static_cast<int>(center.y)};
+
+    if(dst.topLeft.x >= 0.0 && dst.topLeft.y >= 0.0 &&
+      dst.topLeft.x <= rw && dst.topLeft.y <= rh)
     {
       // calculate  src and dst rectangles
       SDL_Rect src_rect;
-      src_rect.x = 0;
-      src_rect.y = 0;
-      src_rect.w = tw;
-      src_rect.h = th;
+      BoxBoundXYWH2SDLRect(src, src_rect);
 
       SDL_Rect dst_rect;
-      dst_rect.x = x;
-      dst_rect.y = y;
-      dst_rect.w = w;
-      dst_rect.h = h;
+      BoxBoundXYWH2SDLRect(dst, dst_rect);
 
       SDL_RendererFlip flip = SDL_FLIP_NONE;
       if (sx < 0.0)
@@ -338,9 +382,6 @@ using namespace std;
         flip = static_cast<SDL_RendererFlip>( flip | SDL_FLIP_VERTICAL);
       }
 
-      double angle = fmod((rot * 360.0), 360.0);
-      SDL_Point center = {cx, cy};
-
       if(_data->_view->_renderer && this->isLoaded())
       {
         // FIXME: set the alpha, blend and color modes!!!
@@ -349,7 +390,7 @@ using namespace std;
                          &src_rect,
                          &dst_rect,
                          angle,
-                         &center,
+                         &sdl_center,
                          flip);
       }
       else
