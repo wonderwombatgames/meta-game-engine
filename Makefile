@@ -2,7 +2,7 @@ sourcesfiles=entities_manager.cpp \
 		backend_audio_null.cpp \
 		backend_physic_null.cpp \
 		backend_graphics_sdl.cpp \
-		sdl_context.cpp	\
+		context_sdl.cpp	\
 		unit_tests.cpp
 
 buildflags=`pkg-config --cflags --libs sdl2`

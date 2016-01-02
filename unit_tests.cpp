@@ -10,7 +10,7 @@
 #include "system_interface.hpp"
 #include "backend.hpp"
 #include "viewport.hpp"
-#include "sdl_context.hpp"
+#include "context_sdl.hpp"
 //#include "graphic_system.hpp"
 
 
@@ -80,8 +80,8 @@ int main(int argc, char *argv[])
   assert(em->refreshEntities() == 0);
   cout << "!!!OK - " << ++test_count << " => Destroied All Entities" << endl;
 
-  initGraphicSystem();
-  BoxBoundary bb{{0.0,0.0,0.0}, {320.0, 240.0, 0.0}};
+  SDLBackEnd::initGraphicSystem();
+  BoxBoundXYWH bb{{0.0,0.0,0.0}, {320.0, 240.0, 0.0}};
   ViewPort< SDLContext > view(bb);
   cout << "!!!OK - " << ++test_count << " => Created a viewport. " << endl;
 
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
   Colour c1;
   c1.kind = RGB;
   c1.rgb = {0.5, 0.5, 0.5};
-  Vector3 r{640.0, 480.0, 0.0};
+  Dimension3 r{640.0, 480.0, 0.0};
 
   view.setResolution(r);
   view.setFullscreen(true);
@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
   SDL_Delay(1000);
   view.setFullscreen(false);
 
-  quitGraphicSystem();
+  SDLBackEnd::quitGraphicSystem();
 
   return 0;
 }

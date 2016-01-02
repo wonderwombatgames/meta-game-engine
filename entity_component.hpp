@@ -5,7 +5,7 @@
 #ifndef ENTITY_COMPONENT_HPP
 #define ENTITY_COMPONENT_HPP
 
-#include "data_utils.hpp"
+#include "basic_types.hpp"
 
 namespace Engine
 {
@@ -20,7 +20,8 @@ struct EntityComponent
   eSpace kind;
 
   // position
-  // values between 0.0 - 1.0 (in relation to world size)
+  // absolute in pixels (float values)
+  // can contain z-order
   Vector3 position;
 
   // rotation
@@ -29,9 +30,9 @@ struct EntityComponent
 
   // scales
   // <1.0 : smaller | > 1.0 : larger
-  // this attribure i chared by physics and
-  // graphics, but might have application
-  // to the entity behaviour
+  // this attribure is shared by physics and
+  // graphics, and might have application
+  // to the entity behaviour as well
   Vector3 scale;
 
   // whether or not this entity is active

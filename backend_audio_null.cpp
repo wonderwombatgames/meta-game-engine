@@ -10,14 +10,14 @@ namespace Engine
 {
 using namespace std;
 
-bool initAudioSystem(Flags flags)
-{
-  return true;
-}
-
-void quitAudioSystem()
-{
-}
+// bool initAudioSystem(Flags flags)
+// {
+//   return true;
+// }
+//
+// void quitAudioSystem()
+// {
+// }
 
 ErrorCode getAudioHandler(IHandler * handler, const IConfig * data)
 {

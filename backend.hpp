@@ -7,7 +7,7 @@
 #define BACKEND_HPP
 
 #include <cstdint>
-#include "data_utils.hpp"
+#include "basic_types.hpp"
 
 
 namespace Engine
@@ -27,23 +27,23 @@ public:
 
 
 // graphics functions
-bool initGraphicSystem(Flags flags = 0);
-void quitGraphicSystem();
+// bool initGraphicSystem(Flags flags = 0);
+// void quitGraphicSystem();
 ErrorCode getGraphicHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
 // inputs functions
-bool initInputSystem(Flags flags = 0);
-void quitInputSystem();
+// bool initInputSystem(Flags flags = 0);
+// void quitInputSystem();
 ErrorCode getInputHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
 // events functions
-bool initEventSystem(Flags flags = 0);
-void quitEventSystem();
+// bool initEventSystem(Flags flags = 0);
+// void quitEventSystem();
 ErrorCode getEventHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
 // physics functions
-bool initPhysicSystem(Flags flags = 0);
-void quitPhysicSystem();
+// bool initPhysicSystem(Flags flags = 0);
+// void quitPhysicSystem();
 ErrorCode getPhysicHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
 // audio

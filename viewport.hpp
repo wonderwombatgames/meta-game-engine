@@ -9,7 +9,6 @@
 #include <cstdint>
 #include <memory>
 
-#include "data_utils.hpp"
 #include "texture.hpp"
 
 namespace Engine
@@ -21,30 +20,32 @@ class ViewPort
 {
 public:
   ~ViewPort(){};
-  ViewPort(const BoxBoundary & rect, Flags flags = 0);
+  ViewPort(const BoxBoundXYWH & rect, Flags flags = 0);
   ViewPort() = delete;
   ViewPort(ViewPort & other) = delete;
 
   // rendering
   void render();
-  void clear();
+  void clear(const Colour * c = nullptr);
 
   // reseting the viewport
   void setColour(const Colour & c);
+  const Colour & getColour() const;
+  void setResolution(Dimension3 & res);
+  const Dimension3 & getResolution() const;
+  void setViewRect(const BoxBoundXYWH & rect);
+  const BoxBoundXYWH & getViewRect() const;
+  void setTitle(const string & title);
+  const char * getTitle() const;
   void setFullscreen(bool fs);
-  bool isFullscreen() const;
-  void setResolution(Vector3 & res);
-  const Vector3 & getResolution() const;
-  void setViewBox(const BoxBoundary & rect);
-  const BoxBoundary & getViewBox() const;
+  const bool isFullscreen() const;
 
 protected:
   typedef T Context;
 
   //data
   unique_ptr< Context > _data;
-  BoxBoundary _rect;
-  Vector3 _res;
+  BoxBoundXYWH _rect;
   Colour _background;
 };
 

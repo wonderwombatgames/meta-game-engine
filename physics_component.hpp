@@ -1,18 +1,13 @@
 /**
   * structs containing component data
-  * they are POD only
-  *
   *
   */
 
-#ifndef COMPENTS_DATA_HPP
-#define COMPENTS_DATA_HPP
+#ifndef PHYSICS_COMPONENT_HPP
+#define PHYSICS_COMPONENT_HPP
 
-#include "data_utils.hpp"
+#include "basic_types.hpp"
 
-// forward declaration
-class MusicData;
-class SoundFxData;
 
 namespace Engine
 {
@@ -36,32 +31,9 @@ struct PhysicsAndCollisionsComponent
   float elasticity;
 
   // body
-  Boundary bodyContour;
+  Bound bodyContour;
 };
-
-struct SoundEffectsComponent
-{
-  MusicData * music;
-  // values between 0.0 - 1.0
-  float musicVolume;
-  eSoundState musicState;
-  SoundFxData * soudFx;
-  // values between 0.0 - 1.0
-  float soundFxVolume;
-  eSoundState soundFxState;
-};
-
-struct InputAndControllersComponent
-{
-
-};
-
-struct LogicAndStatesComponent
-{
-
-};
-
 
 } // end namespace Engine
 
-#endif // COMPENTS_DATA_HPP
+#endif // PHYSICS_COMPONENT_HPP

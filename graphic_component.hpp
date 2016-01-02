@@ -9,7 +9,6 @@
 
 #include "entity_component.hpp"
 
-
 namespace Engine
 {
 // forward declaration
@@ -17,11 +16,11 @@ namespace Engine
 //class IShaderData;
 //class IParticlesEmitterData;
 
-class IGraphics
+class IGraphic
 {
 public:
-  IGraphics(){}
-  virtual ~IGraphics(){}
+  IGraphic(){}
+  virtual ~IGraphic(){}
   virtual void paint(const Vector3 & offset) = 0;
 };
 
@@ -30,20 +29,26 @@ struct GraphicComponent
   // reference to entity data component
   EntityComponent * entityData;
 
-  // texture data
-  IGraphics * texture;
-  Vector3 textureSize;
-  unsigned short animationFrame;
-
   // defines the anchor within the boudaries
-  // and rendering = drawing pivot
   // values between 0.0 - 1.0 (in relation to entity size | UV)
   Vector3 anchor;
+
+  // size - between 0.0 - 1.0 (in relation to viewport size)
+  Vector3 textureSize;
+
+  // texture data pointer
+  IGraphic * texture;
+
+  // nth frame in within the texture atlas
+  unsigned short animationFrame;
 
   // colour parameters
   Colour colourMode;
   ColourComponent alphaMode;
   BlendingMode blendingMode;
+
+  // whether to show the entity or not
+  bool isVisible;
 
   // special components
   //GraphicEffectsData * effects;

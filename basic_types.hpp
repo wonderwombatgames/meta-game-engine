@@ -5,8 +5,8 @@
   *
   */
 
-#ifndef DATA_UTILS_HPP
-#define DATA_UTILS_HPP
+#ifndef BASIC_TYPES_HPP
+#define BASIC_TYPES_HPP
 
 #include <cstdint>
 
@@ -19,11 +19,13 @@ typedef uint8_t ErrorCode;
 typedef float ColourComponent;
 typedef float SpatialDimention;
 
+
 enum eSpace
 {
   SPACE_2D,
   SPACE_3D,
 };
+
 
 struct Vector3
 {
@@ -35,6 +37,7 @@ struct Vector3
   SpatialDimention z;
 };
 
+
 struct Rotation3
 {
   // rotation
@@ -45,50 +48,77 @@ struct Rotation3
 };
 
 
-enum eBoundary
+struct Dimension3
 {
-  CIRCLE,
-  BOX,
-  POLYGON,
-  MULTIBOX,
+  SpatialDimention w; // width
+  SpatialDimention h; // height
+  SpatialDimention d; // depth
 };
 
-struct CircleBoundary
+
+enum eBound
+{
+  CIRCLE,
+  BOX_TLBR,
+  BOX_XYWH,
+  // MULTICIRCLE,
+  // MULTIBOX,
+  // POLYGON,
+  // HASH,
+};
+
+struct CircleBound
 {
   SpatialDimention radius;
 };
 
-struct BoxBoundary
+struct BoxBoundTLBR
 {
   Vector3 topLeft;
-  Vector3 buttonRight;
+  Vector3 bottonRight;
 };
 
+struct BoxBoundXYWH
+{
+  Vector3 topLeft;
+  Dimension3 size;
+};
+
+
 // #define POLYGON_BOUND_MAX_VERTICES 16
-// struct PolygonBoundary
+// struct PolygonBound
 // {
 //   unsigned char numOfVertice;
 //   Vector3 * vertices[POLYGON_BOUND_MAX_VERTICES];
 // };
 
+// #define MULTICIRCLE_BOUND_MAX_CIRCLES 8
+// struct MultiCircleBound
+// {
+//   unsigned char numOfCircles;
+//   CircleBound * bounds[MULTIBOX_BOUND_MAX_BOXES];
+// };
+
 // #define MULTIBOX_BOUND_MAX_BOXES 8
-// struct MultiBoxBoundary
+// struct MultiBoxBound
 // {
 //   unsigned char numOfBoxes;
-//   Vector3 * topLefts[MULTIBOX_BOUND_MAX_BOXES];
-//   Vector3 * bottomRigths[MULTIBOX_BOUND_MAX_BOXES];
+//   BoxBoundTLBR * bounds[MULTIBOX_BOUND_MAX_BOXES];
 // };
 
 
-struct Boundary
+
+struct Bound
 {
-  eBoundary kind;
+  eBound kind;
   union
   {
-    CircleBoundary  circleBound;
-    BoxBoundary     boxBound;
-    // PolygonBoundary polyBound;
-    // MultiBoxBoundary multiBoxBound;
+    CircleBound  circleBound;
+    BoxBoundTLBR     boxBoundTLBR;
+    BoxBoundXYWH     boxBoundXYWH;
+    // MultiBoxBound multiBoxBound;
+    // MultiCircleBound multiCircleBound;
+    // PolygonBound polyBound;
   };
 };
 
@@ -178,7 +208,7 @@ struct Colour
   };
 };
 
-enum eSoundState
+enum eAudioState
 {
   PLAYING,
   PAUSED,
@@ -187,4 +217,4 @@ enum eSoundState
 
 } // end namespace Engine
 
-#endif // DATA_UTILS_HPP
+#endif // BASIC_TYPES_HPP

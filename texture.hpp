@@ -15,7 +15,7 @@ namespace Engine
 using namespace std;
 
 template <typename T >
-class Texture : public IGraphics
+class Texture : public IGraphic
 {
 public:
   Texture(GraphicComponent & component);
@@ -25,7 +25,8 @@ public:
   virtual ~Texture();
 
   bool loadFromFile(const string & filepath, const string & atlas = "");
-  bool hasImage();
+  bool loadFromAtlas();
+  bool isLoaded();
 
   virtual void paint(const Vector3 & offset = {0.0, 0.0, 0.0}) override;
 
