@@ -6,6 +6,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <algorithm>
 
 #include "backend.hpp"
 #include "context_sdl.hpp"
@@ -204,9 +205,9 @@ using namespace std;
 
     // colour parameters
     _component->colourTint.kind = RGB;
-    _component->colourTint.rgb = {0.0f, 0.0f, 0.0f};
-    _component->alphaMode = 0.0f;
-    _component->blendingMode = 0;
+    _component->colourTint.rgb = {1.0f, 1.0f, 1.0f};
+    _component->alphaMode = 1.0f;
+    _component->blendingMode = SDL_BLENDMODE_BLEND;
 
     // whether to show the entity or not
     _component->isVisible = true;
@@ -312,8 +313,8 @@ using namespace std;
 
     float ax  = _component->anchor.x;
     float ay  = _component->anchor.y;
-    int w = static_cast<int>(tw * fabs(sx));
-    int h = static_cast<int>(th * fabs(sy));
+    int w = static_cast<int>(tw * abs(sx));
+    int h = static_cast<int>(th * abs(sy));
     int cx = static_cast<int>(ax * w);
     int cy = static_cast<int>(ay * h);
     int x = tx - cx;
@@ -336,55 +337,71 @@ using namespace std;
   template <>
   void Texture< SDLContext >::paint(const Vector3 & offset)
   {
-    int rw = 0;
-    int rh = 0;
-    this->getWindowSize(rw, rh);
-
-    BoxBoundXYWH src;
-    BoxBoundXYWH dst;
-    Vector3 center;
-
-    this->computeClipRects(src, dst, center);
-
-    dst.topLeft.x -= static_cast<int>(offset.x);
-    dst.topLeft.y -= static_cast<int>(offset.y);
-
-    float rot = 0.0f;
-    float sx  = 1.0f;
-    float sy  = 1.0f;
-    if (nullptr != _component->entityData)
+    if(_data->_view->_renderer && this->isLoaded() && _component->isVisible)
     {
-      sx  = _component->entityData->scale.x;
-      sy  = _component->entityData->scale.y;
-      rot = _component->entityData->rotation.angleXY;
-    }
+      int rw = 0;
+      int rh = 0;
+      this->getWindowSize(rw, rh);
 
-    double angle = fmod((rot * 360.0), 360.0);
-    SDL_Point sdl_center = {static_cast<int>(center.x), static_cast<int>(center.y)};
+      BoxBoundXYWH src;
+      BoxBoundXYWH dst;
+      Vector3 center;
 
-    if(dst.topLeft.x >= 0.0 && dst.topLeft.y >= 0.0 &&
-      dst.topLeft.x <= rw && dst.topLeft.y <= rh)
-    {
-      // calculate  src and dst rectangles
-      SDL_Rect src_rect;
-      BoxBoundXYWH2SDLRect(src, src_rect);
+      this->computeClipRects(src, dst, center);
 
-      SDL_Rect dst_rect;
-      BoxBoundXYWH2SDLRect(dst, dst_rect);
+      dst.topLeft.x -= static_cast<int>(offset.x);
+      dst.topLeft.y -= static_cast<int>(offset.y);
 
-      SDL_RendererFlip flip = SDL_FLIP_NONE;
-      if (sx < 0.0)
+      float rot = 0.0f;
+      float sx  = 1.0f;
+      float sy  = 1.0f;
+      if (nullptr != _component->entityData)
       {
-        flip = static_cast<SDL_RendererFlip>( flip | SDL_FLIP_HORIZONTAL);
-      }
-      if (sy < 0.0)
-      {
-        flip = static_cast<SDL_RendererFlip>( flip | SDL_FLIP_VERTICAL);
+        sx  = _component->entityData->scale.x;
+        sy  = _component->entityData->scale.y;
+        rot = _component->entityData->rotation.angleXY;
       }
 
-      if(_data->_view->_renderer && this->isLoaded())
+      double angle = fmod((rot * 360.0), 360.0);
+      SDL_Point sdl_center = {static_cast<int>(center.x), static_cast<int>(center.y)};
+
+      if(dst.topLeft.x >= 0.0 && dst.topLeft.y >= 0.0 &&
+        dst.topLeft.x <= rw && dst.topLeft.y <= rh)
       {
-        // FIXME: set the alpha, blend and color modes!!!
+        // calculate  src and dst rectangles
+        SDL_Rect src_rect;
+        BoxBoundXYWH2SDLRect(src, src_rect);
+
+        SDL_Rect dst_rect;
+        BoxBoundXYWH2SDLRect(dst, dst_rect);
+
+        SDL_RendererFlip flip = SDL_FLIP_NONE;
+        if (sx < 0.0)
+        {
+          flip = static_cast<SDL_RendererFlip>( flip | SDL_FLIP_HORIZONTAL);
+        }
+        if (sy < 0.0)
+        {
+          flip = static_cast<SDL_RendererFlip>( flip | SDL_FLIP_VERTICAL);
+        }
+
+        // blending mode
+        SDL_SetTextureBlendMode(_data->_image->_buffer,
+            static_cast<SDL_BlendMode>(_component->blendingMode));
+
+        // color modulation
+        uint8_t r = 0;
+        uint8_t g = 0;
+        uint8_t b = 0;
+        uint8_t a = 0;
+        SDLBackEnd::colour8RGBA(r, g, b, a, _component->colourTint);
+        SDL_SetTextureColorMod(_data->_image->_buffer, r, g, b);
+
+        // alpha mode
+        uint8_t alpha = static_cast<uint8_t>(255 * _component->alphaMode);
+        SDL_SetTextureAlphaMod(_data->_image->_buffer, alpha);
+
+        // paint the texture
         SDL_RenderCopyEx(_data->_view->_renderer,
                          _data->_image->_buffer,
                          &src_rect,

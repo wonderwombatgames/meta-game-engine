@@ -114,13 +114,19 @@ int main(int argc, char *argv[])
   Texture< SDLContext > tex2(sprite);
   tex2.loadFromFile(filename);
 
-  sprite.entityData = &_entityData;
-  sprite.anchor = {0.5f, 0.5f, 0.5f};
-
   Colour c1;
   c1.kind = RGB;
   c1.rgb = {0.5, 0.5, 0.5};
   Dimension3 r{640.0, 480.0, 0.0};
+
+  sprite.entityData = &_entityData;
+  sprite.anchor = {0.5f, 0.5f, 0.5f};
+  sprite.blendingMode = SDL_BLENDMODE_BLEND;
+  sprite.alphaMode = 1.0f;
+  Colour c2;
+  c2.kind = RGB;
+  c2.rgb = {0.1, 0.5, 0.9};
+  //sprite.colourTint = c2;
 
   view.setResolution(r);
   //view.setFullscreen(true);
@@ -145,7 +151,6 @@ int main(int argc, char *argv[])
     rand_x += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
     rand_y += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
     Vector3 offset{rand_x, rand_y, 0.0f};
-    //cout << "rand_x : " << rand_x << " rand_y : " << rand_y << endl;
 
     // view.setColour(c1);
     view.clear(&c1);

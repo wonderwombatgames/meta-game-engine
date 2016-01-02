@@ -174,17 +174,17 @@ namespace SDLBackEnd
     {
       case Engine::RGB:
       {
-        r = (static_cast<uint8_t>(c.rgb.r * 256) % 256);
-        g = (static_cast<uint8_t>(c.rgb.g * 256) % 256);
-        b = (static_cast<uint8_t>(c.rgb.b * 256) % 256);
+        r = (static_cast<uint8_t>(c.rgb.r * 255) % 256);
+        g = (static_cast<uint8_t>(c.rgb.g * 255) % 256);
+        b = (static_cast<uint8_t>(c.rgb.b * 255) % 256);
       }
       break;
       case Engine::RGBA:
       {
-        r = (static_cast<uint8_t>(c.rgba.r * 256) % 256);
-        g = (static_cast<uint8_t>(c.rgba.g * 256) % 256);
-        b = (static_cast<uint8_t>(c.rgba.b * 256) % 256);
-        a = (static_cast<uint8_t>(c.rgba.a * 256) % 256);
+        r = (static_cast<uint8_t>(c.rgba.r * 255) % 256);
+        g = (static_cast<uint8_t>(c.rgba.g * 255) % 256);
+        b = (static_cast<uint8_t>(c.rgba.b * 255) % 256);
+        a = (static_cast<uint8_t>(c.rgba.a * 255) % 256);
       }
       break;
       case Engine::HSL:
