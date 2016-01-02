@@ -12,7 +12,7 @@ buildflags+=`pkg-config --cflags --libs SDL2_image`
 all: tests #sdl
 
 build: unit_tests.cpp ${sourcesfiles} *.hpp
-	g++ -std=c++11 -o unit_tests.x ${sourcesfiles} ${buildflags}
+	g++ -g cgdb unit_tests-std=c++11 -o unit_tests.x ${sourcesfiles} ${buildflags}
 
 clean:
 	rm -f ./*.x 2> /dev/null
