@@ -46,7 +46,7 @@ public:
   // perform one step in the system
   FrameCount update(TimeDimension delta)
   {
-    this->step(delta);
+    this->tick(delta);
     return ++(this->_frames);
   }
 
@@ -63,7 +63,7 @@ public:
   };
 
   // must be overriden in each system (impl. NVI)
-  virtual void step(TimeDimension delta){};
+  virtual void tick(TimeDimension delta){};
   static bool systemRegistrar(ISystem * system, const char * name = nullptr, eRegistrar op = VERIFY);
 
   string _name;

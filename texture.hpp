@@ -14,18 +14,22 @@ namespace Engine
 {
 using namespace std;
 
+// forward declaration
+//class TextureAtlas;
+
 template <typename T >
 class Texture : public IGraphic
 {
 public:
   Texture(GraphicComponent & component);
   Texture(GraphicComponent & component, const string & filepath);
+  //Texture(const TextureAtlas & atlas, const int begin, const int end);
   Texture() = delete;
   Texture(Texture & other) = delete;
   virtual ~Texture();
 
   bool loadFromFile(const string & filepath);
-  bool loadFromAtlas();
+  //bool loadFromAtlas(const TextureAtlas & atlas, const int begin, const int end);
   bool isLoaded();
 
   virtual void paint(const Vector3 & offset = {0.0f, 0.0f, 0.0f}) override;

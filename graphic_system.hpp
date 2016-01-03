@@ -31,7 +31,7 @@ public:
   virtual ~GraphicSystem();
 
 protected:
-  virtual void step(TimeDimension delta) override {};
+  virtual void tick(TimeDimension delta) override {};
   IHandler * _graphicSystemHandler;
 };
 
