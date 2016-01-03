@@ -6,7 +6,6 @@
 #ifndef VIEWPORT_HPP
 #define VIEWPORT_HPP
 
-#include <cstdint>
 #include <memory>
 
 #include "texture.hpp"

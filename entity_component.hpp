@@ -10,8 +10,6 @@
 namespace Engine
 {
 
-typedef int EntityID;
-
 struct EntityComponent
 {
   EntityID entityId;

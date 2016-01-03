@@ -177,7 +177,7 @@ EntityID EntitiesManager::lookUpEntityId(const string& name)
   {
     return entity->second;
   }
-  return InvalidEntityID();
+  return InvalidID;
 }
 
 int EntitiesManager::refreshEntities()
@@ -206,7 +206,7 @@ EntityID EntitiesManager::newId()
   const EntityID maxEntities = EntitiesManager::MAX_ENTITIES_AMOUNT;
   // use current time as seed for random generator
   srand(time(0));
-  EntityID randomId = (rand() * (maxEntities + 1)) % maxEntities;
+  EntityID randomId = 1 + ((rand() * (maxEntities + 1)) % maxEntities);
   int attempts = 0;
   // check that the id was not used yet
   while (this->_entities.count(randomId)>0)

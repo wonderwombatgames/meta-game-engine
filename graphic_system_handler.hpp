@@ -21,8 +21,8 @@ public:
   GraphicSystemHandler();
   virtual ~GraphicSystemHandler();
 
-  ErrorCode startViewPort(ViewPort< Context > * view, BoxBoundary & rect, Flags flags = 0);
-  ErrorCode loadTexture(Texture< Context > * tex, const char * filepath, const char * atlas = nullptr);
+  // ErrorCode startViewPort(ViewPort< Context > * view, BoxBound & rect, Flags flags = 0);
+  // ErrorCode loadTexture(Texture< Context > * tex, const char * filepath, const char * atlas = nullptr);
 };
 
 }// end namespace Engine

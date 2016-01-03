@@ -13,6 +13,9 @@
 namespace Engine
 {
 
+enum { InvalidID = -1 };
+
+typedef int EntityID;
 typedef uint32_t Flags;
 typedef uint16_t BlendingMode;
 typedef uint8_t ErrorCode;

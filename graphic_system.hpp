@@ -14,6 +14,7 @@
 #include <memory>
 
 #include "system_interface.hpp"
+#include "command_interface.hpp"
 #include "graphic_component.hpp"
 #include "graphic_system_handler.hpp"
 
@@ -22,7 +23,7 @@ namespace Engine
 using namespace std;
 
 //
-class GraphicSystem : public ISystem
+class GraphicSystem : public ISystem, public ICommand
 {
 public:
   GraphicSystem(const char * name);
@@ -30,8 +31,11 @@ public:
   GraphicSystem(GraphicSystem & other) = delete;
   virtual ~GraphicSystem();
 
+
 protected:
+  virtual void onCommand(const CommandMsg & cmd) override {};
   virtual void tick(TimeDimension delta) override {};
+
   IHandler * _graphicSystemHandler;
 };
 
@@ -39,12 +43,12 @@ GraphicSystem::GraphicSystem(const char * name)
     :ISystem(name)
     ,_graphicSystemHandler(nullptr)
 {
-  assert(initGraphicSystem(0));
+//  assert(initGraphicSystem(0));
 }
 
 GraphicSystem::~GraphicSystem()
 {
-  quitGraphicSystem();
+//  quitGraphicSystem();
 }
 
 } // end namespace Engine

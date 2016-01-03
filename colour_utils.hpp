@@ -6,7 +6,6 @@
 #ifndef COLOUR_UTIL_HPP
 #define COLOUR_UTIL_HPP
 
-#include <cstdint>
 #include "basic_types.hpp"
 
 

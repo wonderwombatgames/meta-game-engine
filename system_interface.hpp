@@ -51,8 +51,8 @@ public:
   }
 
   // entity related methods
-  void addEntity(EntityComponent & entityId){};
-  void delEntity(EntityComponent & entityId){};
+  void addEntity(EntityComponent & entity){};
+  void delEntity(EntityComponent & entity){};
 
  protected:
   enum eRegistrar

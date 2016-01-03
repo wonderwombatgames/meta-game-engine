@@ -5,8 +5,6 @@
 #ifndef GRAPHIC_COMPONENT_HPP
 #define GRAPHIC_COMPONENT_HPP
 
-#include <cstdint>
-
 #include "entity_component.hpp"
 
 namespace Engine

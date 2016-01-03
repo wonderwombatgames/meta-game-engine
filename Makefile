@@ -4,6 +4,7 @@ sourcesfiles=entities_manager.cpp \
 		backend_graphics_sdl.cpp \
 		context_sdl.cpp	\
 		colour_utils.cpp \
+		command_router.cpp \
 		unit_tests.cpp
 
 buildflags=`pkg-config --cflags --libs sdl2`

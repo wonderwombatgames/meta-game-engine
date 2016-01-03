@@ -19,8 +19,6 @@ namespace Engine
 {
 using namespace std;
 
-constexpr int InvalidEntityID() { return -1; };
-
 //
 class EntitiesManager
 {
