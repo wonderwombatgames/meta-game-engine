@@ -4,6 +4,7 @@
 #include "context_sdl.hpp"
 #include "basic_types.hpp"
 #include "backend.hpp"
+#include "colour_utils.hpp"
 
 
 namespace // anonymous
@@ -177,46 +178,68 @@ namespace SDLBackEnd
         r = (static_cast<uint8_t>(c.rgb.r * 255) % 256);
         g = (static_cast<uint8_t>(c.rgb.g * 255) % 256);
         b = (static_cast<uint8_t>(c.rgb.b * 255) % 256);
+        break;
       }
-      break;
       case Engine::RGBA:
       {
         r = (static_cast<uint8_t>(c.rgba.r * 255) % 256);
         g = (static_cast<uint8_t>(c.rgba.g * 255) % 256);
         b = (static_cast<uint8_t>(c.rgba.b * 255) % 256);
         a = (static_cast<uint8_t>(c.rgba.a * 255) % 256);
+        break;
       }
-      break;
       case Engine::HSL:
       {
-        //  TODO
+        ColourRGB tmp;
+        Hsl2Rgb(c.hsl, tmp);
+        r = (static_cast<uint8_t>(tmp.r * 255) % 256);
+        g = (static_cast<uint8_t>(tmp.g * 255) % 256);
+        b = (static_cast<uint8_t>(tmp.b * 255) % 256);
+        break;
       }
-      break;
       case Engine::HSLA:
       {
-        //  TODO
+        ColourRGB tmp;
+        Hsl2Rgb({c.hsla.h, c.hsla.s, c.hsla.l }, tmp);
+        r = (static_cast<uint8_t>(tmp.r * 255) % 256);
+        g = (static_cast<uint8_t>(tmp.g * 255) % 256);
+        b = (static_cast<uint8_t>(tmp.b * 255) % 256);
+        a = (static_cast<uint8_t>(c.hsla.a * 255) % 256);
       }
       break;
       case Engine::HSV:
       {
-        //  TODO
+        ColourRGB tmp;
+        Hsv2Rgb(c.hsv, tmp);
+        r = (static_cast<uint8_t>(tmp.r * 255) % 256);
+        g = (static_cast<uint8_t>(tmp.g * 255) % 256);
+        b = (static_cast<uint8_t>(tmp.b * 255) % 256);
+        break;
       }
-      break;
       case Engine::HSVA:
       {
-        //  TODO
+        ColourRGB tmp;
+        Hsl2Rgb({c.hsva.h, c.hsva.s, c.hsva.v }, tmp);
+        r = (static_cast<uint8_t>(tmp.r * 255) % 256);
+        g = (static_cast<uint8_t>(tmp.g * 255) % 256);
+        b = (static_cast<uint8_t>(tmp.b * 255) % 256);
+        a = (static_cast<uint8_t>(c.hsva.a * 255) % 256);
       }
       break;
       case Engine::CMYK:
       {
-        //  TODO
+        ColourRGB tmp;
+        Cmyk2Rgb(c.cmyk, tmp);
+        r = (static_cast<uint8_t>(tmp.r * 255) % 256);
+        g = (static_cast<uint8_t>(tmp.g * 255) % 256);
+        b = (static_cast<uint8_t>(tmp.b * 255) % 256);
+        break;
       }
-      break;
       case Engine::HEX:
       {
         //  TODO
+        break;
       }
-      break;
     }
   }
 } // end namespace SDLBackEnd

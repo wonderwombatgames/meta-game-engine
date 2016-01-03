@@ -3,6 +3,7 @@ sourcesfiles=entities_manager.cpp \
 		backend_physic_null.cpp \
 		backend_graphics_sdl.cpp \
 		context_sdl.cpp	\
+		colour_utils.cpp \
 		unit_tests.cpp
 
 buildflags=`pkg-config --cflags --libs sdl2`
