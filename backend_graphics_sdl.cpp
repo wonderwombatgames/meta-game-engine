@@ -250,7 +250,7 @@ using namespace std;
   template <>
   bool Texture< SDLContext >::loadFromFile(const string & filepath)
   {
-    _data->_image.reset(SDLTexture::createSDLTexture(filepath, _data->_view->_renderer));
+    _data->_image = SDLTexture::createSDLTexture(filepath, _data->_view->_renderer);
 
     // query window
     int rw = 0;

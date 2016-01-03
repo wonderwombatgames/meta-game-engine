@@ -28,7 +28,9 @@ using namespace std;
   // wrapper around texture
   struct SDLTexture
   {
-    static SDLTexture * createSDLTexture(const string & filepath, SDL_Renderer * renderer);
+    static shared_ptr< SDLTexture > createSDLTexture(
+        const string & filepath,
+        SDL_Renderer * renderer);
     ~SDLTexture();
     SDL_Texture * _buffer;
     BoxBoundXYWH _rect;
@@ -42,7 +44,7 @@ using namespace std;
     SDLContext();
 
     unique_ptr< SDLRenderer > _view;
-    unique_ptr< SDLTexture > _image;
+    shared_ptr< SDLTexture > _image;
   };
 
 namespace SDLBackEnd

@@ -10,7 +10,8 @@
 namespace // anonymous
 {
   // holds pointers to loaded textures to avoid reloading textures more than once.
-  static std::unordered_map<std::string, Engine::SDLTexture * > textures;
+  static
+  std::unordered_map< std::string, std::shared_ptr< Engine::SDLTexture > > textures;
 
   // this anonymous (restricted) namespace contains a
   // singleton class that inits SDL and its subsystems
@@ -303,9 +304,11 @@ namespace SDLBackEnd
     assert(this->_buffer);
   }
 
-  SDLTexture * SDLTexture::createSDLTexture(const string & filepath, SDL_Renderer * renderer)
+  shared_ptr< SDLTexture > SDLTexture::createSDLTexture(
+      const string & filepath,
+      SDL_Renderer * renderer)
   {
-    SDLTexture * texPtr = nullptr;
+    shared_ptr< SDLTexture > texPtr(nullptr);
 
     auto sdlTexIt = textures.find(filepath);
     if(sdlTexIt != textures.end())
@@ -314,7 +317,8 @@ namespace SDLBackEnd
     }
     else
     {
-      texPtr = new SDLTexture(filepath, renderer);
+
+      texPtr.reset(new SDLTexture(filepath, renderer));
       textures[filepath] = texPtr;
     }
     return texPtr;
@@ -322,8 +326,12 @@ namespace SDLBackEnd
 
   SDLTexture::~SDLTexture()
   {
-    SDL_DestroyTexture(_buffer);
-    this->_buffer = nullptr;
+    // if this texture was shared it might have been destroye already!
+    if(nullptr != this->_buffer)
+    {
+      SDL_DestroyTexture(this->_buffer);
+      this->_buffer = nullptr;
+    }
   }
 
   // context used by viewport and texture
