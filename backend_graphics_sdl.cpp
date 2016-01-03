@@ -10,52 +10,14 @@
 
 #include "backend.hpp"
 #include "context_sdl.hpp"
-#include "viewport.hpp"
-//#include "graphic_system_handler.hpp"
+
 
 
 namespace Engine
 {
 using namespace std;
+using namespace SDLBackEnd;
 
-  // // implement handler interface using SDL
-  // //template< class Impl >
-  // template<>
-  // ErrorCode
-  // GraphicSystemHandler< SDLContext >::CreateViewPort(ViewPort< SDLContext > * view, BoxBoundXYWH & rect, Flags flags)
-  // {
-  //   bool wasInit = SDL_WasInit(SDL_INIT_VIDEO);
-  //   if (wasInit)
-  //   {
-  //
-  //   }
-  //   return -1;
-  // }
-  //
-  // template< class Impl >
-  //   ErrorCode
-  //   GraphicSystemHandler< Impl >::LoadTexture(Texture* tex, const char * filepath, const char * atlas)
-  // {
-  //   return 0;
-  // }
-
-  // graphic functions
-  ErrorCode getGraphicHandler(IHandler * handler, const IConfig * data)
-  {
-    return 0;
-  }
-  //
-  // // inputs functions
-  // ErrorCode getInputHandler(IHandler * handler, const IConfig * data)
-  // {
-  //   return 0;
-  // }
-  //
-  // // events functions
-  // ErrorCode getEventHandler(IHandler * handler, const IConfig * data)
-  // {
-  //   return 0;
-  // }
 
   inline void BoxBoundXYWH2SDLRect(const BoxBoundXYWH & box, SDL_Rect & rect)
   {
@@ -414,5 +376,53 @@ using namespace std;
         assert(false);
     }
   }
+
+
+  template<>
+  GraphicSystemHandler< SDLContext >::GraphicSystemHandler()
+  {
+    SDLBackEnd::initGraphicSystem();
+  }
+
+  template<>
+  GraphicSystemHandler< SDLContext >::~GraphicSystemHandler()
+  {
+    SDLBackEnd::quitGraphicSystem();
+  }
+
+  template<>
+  unique_ptr< ViewPort< SDLContext > > GraphicSystemHandler< SDLContext >::getViewPort()
+  {
+    return unique_ptr< ViewPort< SDLContext > >(
+        new SDL::ViewPort({{0.0,0.0,0.0}, {640.0, 480.0, 0.0}}) );
+  }
+
+  // graphic functions
+  ErrorCode getGraphicHandler(IHandler * handler, const IConfig * data)
+  {
+    handler = new GraphicSystemHandler< SDLContext >();
+    if(nullptr != handler)
+    {
+      return 0;
+    }
+    else
+    {
+      return -1;
+    }
+  }
+
+  //
+  // // inputs functions
+  // ErrorCode getInputHandler(IHandler * handler, const IConfig * data)
+  // {
+  //   return 0;
+  // }
+  //
+  // // events functions
+  // ErrorCode getEventHandler(IHandler * handler, const IConfig * data)
+  // {
+  //   return 0;
+  // }
+
 
 } // end namespace Engine

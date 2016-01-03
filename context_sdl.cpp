@@ -1,17 +1,17 @@
 #include <cassert>
 #include <unordered_map>
 #include <SDL2/SDL_image.h>
-#include "context_sdl.hpp"
+#include "colour_utils.hpp"
 #include "basic_types.hpp"
 #include "backend.hpp"
-#include "colour_utils.hpp"
+#include "context_sdl.hpp"
 
 
 namespace // anonymous
 {
   // holds pointers to loaded textures to avoid reloading textures more than once.
   static
-  std::unordered_map< std::string, std::shared_ptr< Engine::SDLTexture > > textures;
+  std::unordered_map< std::string, std::shared_ptr< Engine::SDLBackEnd::SDLTexture > > textures;
 
   // this anonymous (restricted) namespace contains a
   // singleton class that inits SDL and its subsystems
@@ -243,7 +243,6 @@ namespace SDLBackEnd
       }
     }
   }
-} // end namespace SDLBackEnd
 
   // here we define classes related to SDL Context;
 
@@ -341,5 +340,6 @@ namespace SDLBackEnd
       ,_image(nullptr)
   {}
 
+} // end namespace SDLBackEnd
 
 } // end namespace Engine

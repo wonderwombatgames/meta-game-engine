@@ -10,9 +10,9 @@
 #include "entities_manager.hpp"
 #include "system_interface.hpp"
 #include "backend.hpp"
-#include "viewport.hpp"
+// #include "viewport.hpp"
 #include "context_sdl.hpp"
-//#include "graphic_system.hpp"
+#include "graphic_system_handler.hpp"
 
 
 using namespace Engine;
@@ -81,9 +81,14 @@ int main(int argc, char *argv[])
   assert(em->refreshEntities() == 0);
   cout << "!!!OK - " << ++test_count << " => Destroied All Entities" << endl;
 
-  SDLBackEnd::initGraphicSystem();
-  BoxBoundXYWH bb{{0.0,0.0,0.0}, {320.0, 240.0, 0.0}};
-  ViewPort< SDLContext > view(bb);
+  //GraphicSystemHandler< Engine::SDLBackEnd::SDLContext > graphics;
+  //SDLBackEnd::initGraphicSystem();
+  //BoxBoundXYWH bb{{0.0,0.0,0.0}, {320.0, 240.0, 0.0}};
+  //ViewPort< Engine::SDLBackEnd::SDLContext > view(bb);
+
+  SDL::GraphicSysHandler graphics;
+  SDL::ViewPortPtr view = std::move(graphics.getViewPort());
+  //SDL::ViewPort view({{0.0,0.0,0.0}, {320.0, 240.0, 0.0}});
   cout << "!!!OK - " << ++test_count << " => Created a viewport. " << endl;
 
   EntityComponent _entityData;
@@ -108,12 +113,14 @@ int main(int argc, char *argv[])
   _transformData.scale = {1.0f, 1.0f, 1.0f};
 
   GraphicComponent sprite_;
-  Texture< SDLContext > tex1(sprite_);
+  //Texture< Engine::SDLBackEnd::SDLContext > tex1(sprite_);
+  SDL::Texture tex1(sprite_);
   string filename("img/sample.png");
   tex1.loadFromFile(filename);
 
   GraphicComponent sprite;
-  Texture< SDLContext > tex2(sprite);
+  //Texture< Engine::SDLBackEnd::SDLContext > tex2(sprite);
+  SDL::Texture tex2(sprite);
   tex2.loadFromFile(filename);
 
   Colour c1;
@@ -130,7 +137,7 @@ int main(int argc, char *argv[])
   c2.rgb = {0.1, 0.5, 0.9};
   //sprite.colourTint = c2;
 
-  view.setResolution(r);
+  view->setResolution(r);
   //view.setFullscreen(true);
 
   float rotation = 0.0f;
@@ -155,9 +162,9 @@ int main(int argc, char *argv[])
     Vector3 offset{rand_x, rand_y, 0.0f};
 
     // view.setColour(c1);
-    view.clear(&c1);
+    view->clear(&c1);
     tex2.paint(offset);
-    view.render();
+    view->render();
 
     SDL_Delay(1000/25);
   }
@@ -165,7 +172,7 @@ int main(int argc, char *argv[])
   // SDL_Delay(1000);
   //view.setFullscreen(false);
 
-  SDLBackEnd::quitGraphicSystem();
+  //SDLBackEnd::quitGraphicSystem();
 
   return 0;
 }

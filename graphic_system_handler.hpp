@@ -6,6 +6,8 @@
 #ifndef GRAPHIC_SYSTEM_HANDLER_HPP
 #define GRAPHIC_SYSTEM_HANDLER_HPP
 
+#include <memory>
+
 #include "backend.hpp"
 #include "viewport.hpp"
 #include "texture.hpp"
@@ -21,6 +23,7 @@ public:
   GraphicSystemHandler();
   virtual ~GraphicSystemHandler();
 
+  unique_ptr< ViewPort< Context > > getViewPort();
   // ErrorCode startViewPort(ViewPort< Context > * view, BoxBound & rect, Flags flags = 0);
   // ErrorCode loadTexture(Texture< Context > * tex, const char * filepath, const char * atlas = nullptr);
 };

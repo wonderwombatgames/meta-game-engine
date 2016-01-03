@@ -43,12 +43,12 @@ GraphicSystem::GraphicSystem(const char * name)
     :ISystem(name)
     ,_graphicSystemHandler(nullptr)
 {
-//  assert(initGraphicSystem(0));
+  //assert(0 == getGraphicHandler(_graphicSystemHandler, nullptr));
 }
 
 GraphicSystem::~GraphicSystem()
 {
-//  quitGraphicSystem();
+  //delete _graphicSystemHandler;
 }
 
 } // end namespace Engine

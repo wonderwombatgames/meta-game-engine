@@ -9,11 +9,15 @@
 #include <memory>
 #include <SDL2/SDL.h>
 #include "basic_types.hpp"
-
+#include "viewport.hpp"
+#include "graphic_system_handler.hpp"
 
 namespace Engine
 {
 using namespace std;
+
+namespace SDLBackEnd
+{
 
   // wrapper around window and renderer
   struct SDLRenderer
@@ -47,9 +51,6 @@ using namespace std;
     shared_ptr< SDLTexture > _image;
   };
 
-namespace SDLBackEnd
-{
-
   // graphic functions
   bool initGraphicSystem(Flags flags = 0);
   void quitGraphicSystem();
@@ -60,5 +61,14 @@ namespace SDLBackEnd
 } // end namespace SDLBackEnd
 
 } // end namespace Engine
+
+
+namespace SDL
+{
+typedef Engine::GraphicSystemHandler< Engine::SDLBackEnd::SDLContext > GraphicSysHandler;
+typedef Engine::ViewPort< Engine::SDLBackEnd::SDLContext > ViewPort;
+typedef std::unique_ptr< Engine::ViewPort< Engine::SDLBackEnd::SDLContext > > ViewPortPtr;
+typedef Engine::Texture< Engine::SDLBackEnd::SDLContext > Texture;
+}
 
 #endif // SDL_CONTEXT_HPP
