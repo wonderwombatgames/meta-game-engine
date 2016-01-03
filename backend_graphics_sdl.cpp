@@ -303,12 +303,12 @@ using namespace std;
     float sx  = 1.0f;
     float sy  = 1.0f;
 
-    if (nullptr != _component->entityData)
+    if (nullptr != _component->transformData)
     {
-      tx  = static_cast<int>(_component->entityData->position.x);
-      ty  = static_cast<int>(_component->entityData->position.y);
-      sx  = _component->entityData->scale.x;
-      sy  = _component->entityData->scale.y;
+      tx  = static_cast<int>(_component->transformData->position.x);
+      ty  = static_cast<int>(_component->transformData->position.y);
+      sx  = _component->transformData->scale.x;
+      sy  = _component->transformData->scale.y;
     }
 
     float ax  = _component->anchor.x;
@@ -355,11 +355,11 @@ using namespace std;
       float rot = 0.0f;
       float sx  = 1.0f;
       float sy  = 1.0f;
-      if (nullptr != _component->entityData)
+      if (nullptr != _component->transformData)
       {
-        sx  = _component->entityData->scale.x;
-        sy  = _component->entityData->scale.y;
-        rot = _component->entityData->rotation.angleXY;
+        sx  = _component->transformData->scale.x;
+        sy  = _component->transformData->scale.y;
+        rot = _component->transformData->rotation.angleXY;
       }
 
       double angle = fmod((rot * 360.0), 360.0);

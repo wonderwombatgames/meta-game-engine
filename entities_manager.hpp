@@ -15,6 +15,7 @@
 #include <memory>
 #include "system_interface.hpp"
 
+
 namespace Engine
 {
 using namespace std;
@@ -33,8 +34,8 @@ public:
     IEntity(IEntity & other) = delete;
     virtual ~IEntity();
 
-    const string & getName();
-    bool isActive();
+    const string & getName() const;
+    bool isActive() const;
     bool suspend();
     bool resume();
     void destroy(bool mustDestroy);
@@ -54,9 +55,12 @@ public:
     // data
     bool _destroy;
     string _name;
+
     set< ISystem * > _componentSystems;
     // this POD is to be used by the component systems
     EntityComponent _entityData;
+    // contains spatial information
+    TransformComponent _transformData;
   };
 
   static EntitiesManager * instance();
@@ -113,12 +117,12 @@ inline int EntitiesManager::count()
   return this->_count;
 }
 
-inline const string & EntitiesManager::IEntity::getName()
+inline const string & EntitiesManager::IEntity::getName() const
 {
   return this->_name;
 }
 
-inline bool EntitiesManager::IEntity::isActive()
+inline bool EntitiesManager::IEntity::isActive() const
 {
   return this->_entityData.isActive;
 }

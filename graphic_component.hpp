@@ -5,7 +5,7 @@
 #ifndef GRAPHIC_COMPONENT_HPP
 #define GRAPHIC_COMPONENT_HPP
 
-#include "entity_component.hpp"
+#include "transform_component.hpp"
 
 namespace Engine
 {
@@ -25,7 +25,7 @@ public:
 struct GraphicComponent
 {
   // reference to entity data component
-  EntityComponent * entityData;
+  TransformComponent * transformData;
 
   // defines the anchor within the boudaries
   // values between 0.0 - 1.0 (in relation to entity size | UV)

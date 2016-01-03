@@ -23,25 +23,25 @@ EntitiesManager::IEntity::IEntity(EntityID id, const char * name):
   // defaults
   this->_entityData.entityId = id;
 
+  // whether or not this entity is active
+  this->_entityData.isActive = true;
+
   // kind of space 2D/3D
-  this->_entityData.kind = SPACE_2D;
+  this->_transformData.kind = SPACE_2D;
 
   // position
   // absolute in pixels (float values)
   // can contain z-order
-  this->_entityData.position = {0.0f, 0.0f, 0.0f};
+  this->_transformData.position = {0.0f, 0.0f, 0.0f};
 
   // rotation
   // values between 0.0 - 1.0  (= 0 - 360)
-  this->_entityData.rotation = {0.0f, 0.0f, 0.0f};
+  this->_transformData.rotation = {0.0f, 0.0f, 0.0f};
 
   // scales
   // <1.0 : smaller | > 1.0 : larger
   // <0.0 : mirror
-  this->_entityData.scale = {1.0f, 1.0f, 1.0f};
-
-  // whether or not this entity is active
-  this->_entityData.isActive = true;
+  this->_transformData.scale = {1.0f, 1.0f, 1.0f};
 
 }
 
@@ -88,7 +88,7 @@ void EntitiesManager::IEntity::addComponent(ISystem & system)
   if (ISystem::isValid(system))
   {
     this->_componentSystems.insert(&system);
-    system.addEntity(this->_entityData);
+    system.addEntity(this->_entityData, this->_transformData);
   }
 }
 

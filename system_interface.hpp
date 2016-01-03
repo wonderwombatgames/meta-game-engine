@@ -14,6 +14,7 @@
 #include <cassert>
 
 #include "entity_component.hpp"
+#include "transform_component.hpp"
 
 namespace Engine
 {
@@ -51,7 +52,7 @@ public:
   }
 
   // entity related methods
-  void addEntity(EntityComponent & entity){};
+  void addEntity(EntityComponent & entity, const TransformComponent transform){};
   void delEntity(EntityComponent & entity){};
 
  protected:

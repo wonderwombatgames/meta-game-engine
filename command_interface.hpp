@@ -45,7 +45,14 @@ namespace Engine
     friend class CommandRouter;
     virtual ~ICommand(){}
 
+    const CommandType & getType() const
+    {
+      return _type;
+    }
+
   protected:
+    CommandType _type;
+
     void run(const CommandMsg & cmd)
     {
       onCommand(cmd);

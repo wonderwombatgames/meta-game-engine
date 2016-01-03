@@ -89,21 +89,23 @@ int main(int argc, char *argv[])
   EntityComponent _entityData;
   // defaults
   _entityData.entityId = 0;
+  // whether or not this entity is active
+  _entityData.isActive = true;
+
+  TransformComponent _transformData;
   // kind of space 2D/3D
-  _entityData.kind = SPACE_2D;
+  _transformData.kind = SPACE_2D;
   // position
   // absolute in pixels (float values)
   // can contain z-order
-  _entityData.position = {320.0f, 240.0f, 0.0f};
+  _transformData.position = {320.0f, 240.0f, 0.0f};
   // rotation
   // values between 0.0 - 1.0  (= 0 - 360)
-  _entityData.rotation = {0.0f, 0.0f, 0.0f};
+  _transformData.rotation = {0.0f, 0.0f, 0.0f};
   // scales
   // <1.0 : smaller | > 1.0 : larger
   // <0.0 : mirror
-  _entityData.scale = {1.0f, 1.0f, 1.0f};
-  // whether or not this entity is active
-  _entityData.isActive = true;
+  _transformData.scale = {1.0f, 1.0f, 1.0f};
 
   GraphicComponent sprite_;
   Texture< SDLContext > tex1(sprite_);
@@ -119,7 +121,7 @@ int main(int argc, char *argv[])
   c1.rgb = {0.5, 0.5, 0.5};
   Dimension3 r{640.0, 480.0, 0.0};
 
-  sprite.entityData = &_entityData;
+  sprite.transformData = &_transformData;
   sprite.anchor = {0.5f, 0.5f, 0.5f};
   sprite.blendingMode = SDL_BLENDMODE_BLEND;
   sprite.alphaMode = 1.0f;
@@ -147,7 +149,7 @@ int main(int argc, char *argv[])
       }
     }
     rotation += (1.0f/125.0f);
-    _entityData.rotation = {rotation, 0.0f, 0.0f};
+    _transformData.rotation = {rotation, 0.0f, 0.0f};
     rand_x += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
     rand_y += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
     Vector3 offset{rand_x, rand_y, 0.0f};

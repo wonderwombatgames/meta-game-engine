@@ -10,33 +10,18 @@
 namespace Engine
 {
 
-struct EntityComponent
-{
-  EntityID entityId;
+  struct EntityComponent
+  {
+    // entity unique identifier
+    EntityID entityId;
 
-  // kind of space 2D/3D
-  eSpace kind;
+    // define to what class entity belongs
+    TypeID typeId;
 
-  // position
-  // absolute in pixels (float values)
-  // can contain z-order
-  Vector3 position;
+    // whether or not this entity is active
+    bool isActive;
 
-  // rotation
-  // values between 0.0 - 1.0  (= 0 - 360)
-  Rotation3 rotation;
-
-  // scales
-  // <1.0 : smaller | > 1.0 : larger
-  // <0.0 : mirror
-  // this attribure is shared by physics and
-  // graphics, and might have application
-  // to the entity behaviour as well
-  Vector3 scale;
-
-  // whether or not this entity is active
-  bool isActive;
-};
+  };
 
 } // end namespace Engine
 
