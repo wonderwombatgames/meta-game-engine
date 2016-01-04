@@ -11,7 +11,10 @@ namespace Engine
 {
 using namespace Utils;
 
-  struct TransformComponent
+namespace Component
+{
+
+  struct Transform
   {
     // kind of space 2D/3D
     eSpace kind;
@@ -33,6 +36,8 @@ using namespace Utils;
     // to the entity behaviour as well
     Vector3 scale;
   };
+
+} // namespace Component
 
 } // end namespace Engine
 

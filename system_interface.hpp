@@ -52,8 +52,8 @@ public:
   }
 
   // entity related methods
-  void addEntity(EntityComponent & entity, const TransformComponent transform){};
-  void delEntity(EntityComponent & entity){};
+  void addEntity(Component::Entity & entity, const Component::Transform transform){};
+  void delEntity(Component::Entity & entity){};
 
  protected:
   enum eRegistrar

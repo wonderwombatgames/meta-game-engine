@@ -24,7 +24,7 @@ public:
   GraphicSystemHandler();
   virtual ~GraphicSystemHandler();
 
-  unique_ptr< ViewPort< Context > > getViewPort();
+  std::unique_ptr< Component::ViewPort< Context > > getViewPort();
   // ErrorCode startViewPort(ViewPort< Context > * view, BoxBound & rect, Flags flags = 0);
   // ErrorCode loadTexture(Texture< Context > * tex, const char * filepath, const char * atlas = nullptr);
 };

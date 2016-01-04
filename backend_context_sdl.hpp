@@ -69,10 +69,10 @@ namespace SDL2
 
 namespace SDL2BackEnd
 {
-typedef Engine::GraphicSystemHandler< Engine::BackEnd::SDL2::Context > GraphicSysHandler;
-typedef Engine::ViewPort< Engine::BackEnd::SDL2::Context > ViewPort;
-typedef std::unique_ptr< Engine::ViewPort< Engine::BackEnd::SDL2::Context > > ViewPortPtr;
-typedef Engine::Texture< Engine::BackEnd::SDL2::Context > Texture;
+typedef GraphicSystemHandler< BackEnd::SDL2::Context > GraphicSysHandler;
+typedef Component::ViewPort< BackEnd::SDL2::Context > ViewPort;
+typedef std::unique_ptr< Component::ViewPort< Engine::BackEnd::SDL2::Context > > ViewPortPtr;
+typedef Component::Texture< BackEnd::SDL2::Context > Texture;
 }
 
 } // end namespace Engine

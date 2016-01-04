@@ -13,27 +13,32 @@ namespace Engine
 {
 using namespace Utils;
 
-struct PhysicsAndCollisionsComponent
+namespace Component
 {
-  // values between 0.0 - 1.0 (in relation to world size) / t / t
-  Vector3 linVelocity;
-  Vector3 linAcceleration;
-  Rotation3 angVelocity;
-  Rotation3 angAcceleration;
 
-  // arbritary value in relation to other entities
-  float mass;
+  struct Physics
+  {
+    // values between 0.0 - 1.0 (in relation to world size) / t / t
+    Vector3 linVelocity;
+    Vector3 linAcceleration;
+    Rotation3 angVelocity;
+    Rotation3 angAcceleration;
 
-  // defines the center of the body
-  // values between 0.0 - 1.0 (in relation to entity Contour)
-  Vector3 centerOfMass;
+    // arbritary value in relation to other entities
+    float mass;
 
-  // values between 0.0 - 1.0
-  float elasticity;
+    // defines the center of the body
+    // values between 0.0 - 1.0 (in relation to entity Contour)
+    Vector3 centerOfMass;
 
-  // body
-  Bound bodyContour;
-};
+    // values between 0.0 - 1.0
+    float elasticity;
+
+    // body
+    Bound bodyContour;
+  };
+
+} // namespace Component
 
 } // end namespace Engine
 

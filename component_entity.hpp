@@ -11,7 +11,10 @@ namespace Engine
 {
 using namespace Utils;
 
-  struct EntityComponent
+namespace Component
+{
+
+  struct Entity
   {
     // entity unique identifier
     EntityID entityId;
@@ -23,6 +26,8 @@ using namespace Utils;
     bool isActive;
 
   };
+
+} // namespace Component
 
 } // end namespace Engine
 

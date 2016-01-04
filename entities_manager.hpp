@@ -58,9 +58,9 @@ public:
 
     set< ISystem * > _componentSystems;
     // this POD is to be used by the component systems
-    EntityComponent _entityData;
+    Component::Entity _entityData;
     // contains spatial information
-    TransformComponent _transformData;
+    Component::Transform _transformData;
   };
 
   static EntitiesManager * instance();

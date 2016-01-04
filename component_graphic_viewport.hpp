@@ -15,40 +15,44 @@ namespace Engine
 using namespace std;
 using namespace Utils;
 
-template < typename T >
-class ViewPort
+namespace Component
 {
-public:
-  ~ViewPort(){};
-  ViewPort(const BoxBoundXYWH & rect, Flags flags = 0);
-  ViewPort() = delete;
-  ViewPort(ViewPort & other) = delete;
 
-  // rendering
-  void render();
-  void clear(const Colour * c = nullptr);
+  template < typename T >
+  class ViewPort
+  {
+  public:
+    ~ViewPort(){};
+    ViewPort(const BoxBoundXYWH & rect, Flags flags = 0);
+    ViewPort() = delete;
+    ViewPort(ViewPort & other) = delete;
 
-  // reseting the viewport
-  void setColour(const Colour & c);
-  const Colour & getColour() const;
-  void setResolution(Dimension3 & res);
-  const Dimension3 & getResolution() const;
-  void setViewRect(const BoxBoundXYWH & rect);
-  const BoxBoundXYWH & getViewRect() const;
-  void setTitle(const string & title);
-  const char * getTitle() const;
-  void setFullscreen(bool fs);
-  const bool isFullscreen() const;
+    // rendering
+    void render();
+    void clear(const Colour * c = nullptr);
 
-protected:
-  typedef T Context;
+    // reseting the viewport
+    void setColour(const Colour & c);
+    const Colour & getColour() const;
+    void setResolution(Dimension3 & res);
+    const Dimension3 & getResolution() const;
+    void setViewRect(const BoxBoundXYWH & rect);
+    const BoxBoundXYWH & getViewRect() const;
+    void setTitle(const string & title);
+    const char * getTitle() const;
+    void setFullscreen(bool fs);
+    const bool isFullscreen() const;
 
-  //data
-  unique_ptr< Context > _data;
-  BoxBoundXYWH _rect;
-  Colour _background;
-};
+  protected:
+    typedef T Context;
 
+    //data
+    unique_ptr< Context > _data;
+    BoxBoundXYWH _rect;
+    Colour _background;
+  };
+
+} // end namespace Component
 
 } // end namespace Engine
 

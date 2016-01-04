@@ -19,54 +19,58 @@ using namespace Utils;
 //class TextureAtlas;
 //class AtlasKey;
 
-template <typename T >
-class Texture : public IGraphic
+namespace Component
 {
-public:
-  Texture(GraphicComponent & component);
-  Texture(GraphicComponent & component, const string & filepath);
-  //Texture(const TextureAtlas & atlas, vector<AtlasKey> keys);
-  Texture() = delete;
-  Texture(Texture & other) = delete;
-  virtual ~Texture();
 
-  bool loadFromFile(const string & filepath);
-  //bool loadFromAtlas(const TextureAtlas & atlas, vector<AtlasKey> keys)
-  bool isLoaded();
+  template <typename T >
+  class Texture : public IGraphic
+  {
+  public:
+    Texture(Graphic & component);
+    Texture(Graphic & component, const string & filepath);
+    //Texture(const TextureAtlas & atlas, vector<AtlasKey> keys);
+    Texture() = delete;
+    Texture(Texture & other) = delete;
+    virtual ~Texture();
 
-  virtual void paint(const Vector3 & offset = {0.0f, 0.0f, 0.0f}) override;
+    bool loadFromFile(const string & filepath);
+    //bool loadFromAtlas(const TextureAtlas & atlas, vector<AtlasKey> keys)
+    bool isLoaded();
 
-#if 0
- void setPosition(const Vector3 & p);
- const Vector3 & getPosition();
-  void setScale(const Vector3 & s);
-  const Vector3 & getScale();
-  void setAnchor(const Vector3 & a);
-  const Vector3 & getAnchor();
-  void setRotation(const Rotation3 & r);
-  const Rotation3 & getRotation();
-  void setTinting();
-  const Colour & getTinting();
-  void setAlpha(const ColourComponent & a);
-  const ColourComponent & getAlpha();
-  void setBlendMode(const BlendingMode & b);
-  const BlendingMode & getBlendMode();
-  void setAtlasFrame(const unsigned short & frame);
-  const unsigned short & getAtlasFrame();
-#endif
+    virtual void paint(const Vector3 & offset = {0.0f, 0.0f, 0.0f}) override;
 
-protected:
-  typedef T Context;
+  #if 0
+   void setPosition(const Vector3 & p);
+   const Vector3 & getPosition();
+    void setScale(const Vector3 & s);
+    const Vector3 & getScale();
+    void setAnchor(const Vector3 & a);
+    const Vector3 & getAnchor();
+    void setRotation(const Rotation3 & r);
+    const Rotation3 & getRotation();
+    void setTinting();
+    const Colour & getTinting();
+    void setAlpha(const ColourComponent & a);
+    const ColourComponent & getAlpha();
+    void setBlendMode(const BlendingMode & b);
+    const BlendingMode & getBlendMode();
+    void setAtlasFrame(const unsigned short & frame);
+    const unsigned short & getAtlasFrame();
+  #endif
 
-  GraphicComponent * _component;
-  unique_ptr< Context > _data;
+  protected:
+    typedef T Context;
 
-  void init();
-  void getWindowSize(int & w, int & h);
-  void getTextureSize(int & w, int & h);
-  void computeClipRects(BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector3 & center);
-};
+    Graphic * _component;
+    unique_ptr< Context > _data;
 
+    void init();
+    void getWindowSize(int & w, int & h);
+    void getTextureSize(int & w, int & h);
+    void computeClipRects(BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector3 & center);
+  };
+
+} // end namespace Component
 
 } // end namespace Engine
 

@@ -33,7 +33,9 @@ namespace Engine
 using namespace std;
 using namespace BackEnd;
 
-  // VIEWPORT
+namespace Component
+{
+  // ViewPort
   template <>
   void ViewPort< SDL2::Context >::render()
   {
@@ -154,7 +156,7 @@ using namespace BackEnd;
     this->setViewRect(rect);
   }
 
-  // TEXTURE
+  // Texture
   template <>
   void Texture< SDL2::Context >::init()
   {
@@ -162,13 +164,13 @@ using namespace BackEnd;
     // values between 0.0 - 1.0 (in relation to entity size | UV)
     _component->anchor = {0.0f, 0.0f, 0.0f};
 
-    // size - between 0.0 - 1.0 (in relation to viewport size)
+    // size - between 0.0 - 1.0 (in relation to ViewPort size)
     _component->textureSize = {0.0f, 0.0f, 0.0f};
 
-    // texture data pointer
+    // Texture data pointer
     _component->texture = this;
 
-    // nth frame in within the texture atlas
+    // nth frame in within the Texture atlas
     _component->animationFrame = 0;
 
     // colour parameters
@@ -183,7 +185,7 @@ using namespace BackEnd;
   }
 
   template <>
-  Texture< SDL2::Context >::Texture(GraphicComponent & component)
+  Texture< SDL2::Context >::Texture(Component::Graphic & component)
       :_component(&component)
       ,_data(new Context)
   {
@@ -220,7 +222,7 @@ using namespace BackEnd;
     int rh = 0;
     this->getWindowSize(rw, rh);
 
-    // query texture
+    // query Texture
     int tw = 0;
     int th = 0;
     this->getTextureSize(tw, th);
@@ -231,14 +233,14 @@ using namespace BackEnd;
     SpatialDimention h =
     static_cast<SpatialDimention>(th) / static_cast<SpatialDimention>(rh);
 
-    // size - between 0.0 - 1.0 (in relation to viewport size)
+    // size - between 0.0 - 1.0 (in relation to ViewPort size)
     _component->textureSize = {w, h, 0.0f};
 
     return this->isLoaded();
   }
 
   template <>
-  Texture< SDL2::Context >::Texture(GraphicComponent & component, const string & filepath)
+  Texture< SDL2::Context >::Texture(Component::Graphic & component, const string & filepath)
       :_component(&component)
       ,_data(new Context)
   {
@@ -258,7 +260,7 @@ using namespace BackEnd;
     int rh = 0;
     this->getWindowSize(rw, rh);
 
-    // compute texture parameters in px
+    // compute Texture parameters in px
     int tw  = static_cast<int>(_component->textureSize.w * rw);
     int th  = static_cast<int>(_component->textureSize.h * rh);
     int tx  = 0;
@@ -364,7 +366,7 @@ using namespace BackEnd;
         uint8_t alpha = static_cast<uint8_t>(255 * _component->alphaMode);
         SDL_SetTextureAlphaMod(_data->_image->_buffer, alpha);
 
-        // paint the texture
+        // paint the Texture
         SDL_RenderCopyEx(_data->_view->_renderer,
                          _data->_image->_buffer,
                          &src_rect,
@@ -378,6 +380,7 @@ using namespace BackEnd;
     }
   }
 
+} // end namespace Component
 
   template<>
   GraphicSystemHandler< SDL2::Context >::GraphicSystemHandler()
@@ -397,6 +400,7 @@ using namespace BackEnd;
     return SDL2BackEnd::ViewPortPtr(
         new SDL2BackEnd::ViewPort({{0.0,0.0,0.0}, {640.0, 480.0, 0.0}}) );
   }
+
 
 namespace BackEnd
 {

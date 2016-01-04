@@ -11,50 +11,55 @@ namespace Engine
 {
 using namespace Utils;
 
+namespace Component
+{
+
 // forward declaration
 //class IGraphicEffectsData;
 //class IShaderData;
 //class IParticlesEmitterData;
 
-class IGraphic
-{
-public:
-  IGraphic(){}
-  virtual ~IGraphic(){}
-  virtual void paint(const Vector3 & offset = {0.0f, 0.0f, 0.0f}) = 0;
-};
+  class IGraphic
+  {
+  public:
+    IGraphic(){}
+    virtual ~IGraphic(){}
+    virtual void paint(const Vector3 & offset = {0.0f, 0.0f, 0.0f}) = 0;
+  };
 
-struct GraphicComponent
-{
-  // reference to entity data component
-  TransformComponent * transformData;
+  struct Graphic
+  {
+    // reference to entity data component
+    Transform * transformData;
 
-  // defines the anchor within the boudaries
-  // values between 0.0 - 1.0 (in relation to entity size | UV)
-  Vector3 anchor;
+    // defines the anchor within the boudaries
+    // values between 0.0 - 1.0 (in relation to entity size | UV)
+    Vector3 anchor;
 
-  // size - between 0.0 - 1.0 (in relation to viewport size)
-  Dimension3 textureSize;
+    // size - between 0.0 - 1.0 (in relation to viewport size)
+    Dimension3 textureSize;
 
-  // texture data pointer
-  IGraphic * texture;
+    // texture data pointer
+    IGraphic * texture;
 
-  // nth frame in within the texture atlas
-  unsigned short animationFrame;
+    // nth frame in within the texture atlas
+    unsigned short animationFrame;
 
-  // colour parameters
-  Colour colourTint;
-  ColourComponent alphaMode;
-  BlendingMode blendingMode;
+    // colour parameters
+    Colour colourTint;
+    ColourComponent alphaMode;
+    BlendingMode blendingMode;
 
-  // whether to show the entity or not
-  bool isVisible;
+    // whether to show the entity or not
+    bool isVisible;
 
-  // special components
-  //GraphicEffectsData * effects;
-  //ShaderData * shader;
-  //ParticlesEmitterData * emitter;
-};
+    // special components
+    //GraphicEffectsData * effects;
+    //ShaderData * shader;
+    //ParticlesEmitterData * emitter;
+  };
+
+} // namespace Component
 
 } // end namespace Engine
 

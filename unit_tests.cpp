@@ -91,13 +91,13 @@ int main(int argc, char *argv[])
   //SDL::ViewPort view({{0.0,0.0,0.0}, {320.0, 240.0, 0.0}});
   cout << "!!!OK - " << ++test_count << " => Created a viewport. " << endl;
 
-  EntityComponent _entityData;
+  Component::Entity _entityData;
   // defaults
   _entityData.entityId = 0;
   // whether or not this entity is active
   _entityData.isActive = true;
 
-  TransformComponent _transformData;
+  Component::Transform _transformData;
   // kind of space 2D/3D
   _transformData.kind = SPACE_2D;
   // position
@@ -112,13 +112,13 @@ int main(int argc, char *argv[])
   // <0.0 : mirror
   _transformData.scale = {1.0f, 1.0f, 1.0f};
 
-  GraphicComponent sprite_;
+  Component::Graphic sprite_;
   //Texture< Engine::SDLBackEnd::SDLContext > tex1(sprite_);
   SDL2BackEnd::Texture tex1(sprite_);
   string filename("img/sample.png");
   tex1.loadFromFile(filename);
 
-  GraphicComponent sprite;
+  Component::Graphic sprite;
   //Texture< Engine::SDLBackEnd::SDLContext > tex2(sprite);
   SDL2BackEnd::Texture tex2(sprite);
   tex2.loadFromFile(filename);
