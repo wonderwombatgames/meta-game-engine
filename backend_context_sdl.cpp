@@ -4,14 +4,17 @@
 #include "utils_colour.hpp"
 #include "utils_types.hpp"
 #include "backend.hpp"
-#include "context_sdl.hpp"
+#include "backend_context_sdl.hpp"
 
 
 namespace // anonymous
 {
   // holds pointers to loaded textures to avoid reloading textures more than once.
+  using namespace std;
+  using namespace Engine::BackEnd;
+
   static
-  std::unordered_map< std::string, std::shared_ptr< Engine::SDLBackEnd::SDLTexture > > textures;
+  std::unordered_map< string, shared_ptr< SDL2::Texture > > textures;
 
   // this anonymous (restricted) namespace contains a
   // singleton class that inits SDL and its subsystems
@@ -130,40 +133,11 @@ namespace Engine
 using namespace std;
 using namespace Utils;
 
-namespace SDLBackEnd
+namespace BackEnd
 {
-  // graphic functions
-  bool initGraphicSystem(Flags flags)
-  {
-    return SDLWrapper::instance()->initVideo();
-  }
 
-  void quitGraphicSystem()
-  {
-    SDLWrapper::instance()->quitVideo();
-  }
-
-  // // inputs functions
-  // bool initInputSystem(Flags flags)
-  // {
-  //   return SDLWrapper::instance()->initInput();
-  // }
-  //
-  // void quitInputSystem()
-  // {
-  //   SDLWrapper::instance()->quitInput();
-  // }
-  //
-  // // events functions
-  // bool initEventSystem(Flags flags)
-  // {
-  //   return SDLWrapper::instance()->initEvents();
-  // }
-  //
-  // void quitEventSystem()
-  // {
-  //   SDLWrapper::instance()->quitEvents();
-  // }
+namespace SDL2
+{
 
   // converts the float values from Colour into SDL RGB8
   void colour8RGBA(uint8_t & r, uint8_t & g, uint8_t & b, uint8_t & a, const Engine::Colour & c)
@@ -250,11 +224,11 @@ namespace SDLBackEnd
   // wrapper around window and renderer
 
   // only one instance of the window is allowed
-  Dimension3 SDLRenderer::_resolution = {640.0, 480.0};
-  SDL_Window * SDLRenderer::_window = nullptr;
-  SDL_Renderer * SDLRenderer::_renderer = nullptr;
+  Dimension3 Renderer::_resolution = {640.0, 480.0};
+  SDL_Window * Renderer::_window = nullptr;
+  SDL_Renderer * Renderer::_renderer = nullptr;
 
-  SDLRenderer::SDLRenderer()
+  Renderer::Renderer()
   {
     if(SDL_WasInit(SDL_INIT_VIDEO) && nullptr == this->_window &&  nullptr == this->_renderer)
     {
@@ -271,7 +245,7 @@ namespace SDLBackEnd
     assert(this->_window && this->_renderer);
   }
 
-  SDLRenderer::~SDLRenderer()
+  Renderer::~Renderer()
   {
     if(SDL_WasInit(SDL_INIT_VIDEO) && nullptr == this->_window &&  nullptr == this->_renderer)
     {
@@ -283,7 +257,7 @@ namespace SDLBackEnd
   }
 
   // wrapper around texture
-  SDLTexture::SDLTexture(const string & filepath, SDL_Renderer * renderer)
+  Texture::Texture(const string & filepath, SDL_Renderer * renderer)
   {
     SDL_Surface * surface = IMG_Load(filepath.c_str());
     if (!surface) {
@@ -304,11 +278,11 @@ namespace SDLBackEnd
     assert(this->_buffer);
   }
 
-  shared_ptr< SDLTexture > SDLTexture::createSDLTexture(
+  shared_ptr< Texture > Texture::createTexture(
       const string & filepath,
       SDL_Renderer * renderer)
   {
-    shared_ptr< SDLTexture > texPtr(nullptr);
+    shared_ptr< Texture > texPtr(nullptr);
 
     auto sdlTexIt = textures.find(filepath);
     if(sdlTexIt != textures.end())
@@ -318,13 +292,13 @@ namespace SDLBackEnd
     else
     {
 
-      texPtr.reset(new SDLTexture(filepath, renderer));
+      texPtr.reset(new Texture(filepath, renderer));
       textures[filepath] = texPtr;
     }
     return texPtr;
   }
 
-  SDLTexture::~SDLTexture()
+  Texture::~Texture()
   {
     // if this texture was shared it might have been destroye already!
     if(nullptr != this->_buffer)
@@ -336,11 +310,46 @@ namespace SDLBackEnd
 
   // context used by viewport and texture
 
-  SDLContext::SDLContext()
-      :_view(new SDLRenderer())
+  Context::Context()
+      :_view(new Renderer())
       ,_image(nullptr)
   {}
 
-} // end namespace SDLBackEnd
+  // graphic functions
+  bool initGraphicSystem(Flags flags)
+  {
+    return SDLWrapper::instance()->initVideo();
+  }
+
+  void quitGraphicSystem()
+  {
+    SDLWrapper::instance()->quitVideo();
+  }
+
+} // end namespace SDL2
+
+// // inputs functions
+// bool initInputSystem(Flags flags)
+// {
+//   return SDLWrapper::instance()->initInput();
+// }
+//
+// void quitInputSystem()
+// {
+//   SDLWrapper::instance()->quitInput();
+// }
+//
+// // events functions
+// bool initEventSystem(Flags flags)
+// {
+//   return SDLWrapper::instance()->initEvents();
+// }
+//
+// void quitEventSystem()
+// {
+//   SDLWrapper::instance()->quitEvents();
+// }
+
+} // end namespace BackEnd
 
 } // end namespace Engine

@@ -9,15 +9,13 @@
 #include <algorithm>
 
 #include "backend.hpp"
-#include "context_sdl.hpp"
+#include "backend_context_sdl.hpp"
 
 
-
-namespace Engine
+namespace
 {
-using namespace std;
-using namespace SDLBackEnd;
-
+using namespace Engine;
+using namespace Utils;
 
   inline void BoxBoundXYWH2SDLRect(const BoxBoundXYWH & box, SDL_Rect & rect)
   {
@@ -27,46 +25,54 @@ using namespace SDLBackEnd;
     rect.h = static_cast<int>(box.size.h);
   }
 
+}
+
+
+namespace Engine
+{
+using namespace std;
+using namespace BackEnd;
+
   // VIEWPORT
   template <>
-  void ViewPort< SDLContext >::render()
+  void ViewPort< SDL2::Context >::render()
   {
     SDL_RenderPresent(_data->_view->_renderer);
   }
 
   template <>
-  void ViewPort< SDLContext >::setColour(const Colour & c)
+  void ViewPort< SDL2::Context >::setColour(const Colour & c)
   {
     this->_background = c;
     uint8_t r = 0;
     uint8_t g = 0;
     uint8_t b = 0;
     uint8_t a = 0;
-    SDLBackEnd::colour8RGBA(r, g, b, a, c);
+    SDL2::colour8RGBA(r, g, b, a, c);
 
     SDL_SetRenderDrawColor(_data->_view->_renderer, r, g, b, a);
   }
 
   template <>
-  const Colour & ViewPort< SDLContext >::getColour() const
+  const Colour & ViewPort< SDL2::Context >::getColour() const
   {
     return this->_background;
   }
 
   template <>
-  void ViewPort< SDLContext >::setTitle(const string & title)
+  void ViewPort< SDL2::Context >::setTitle(const string & title)
   {
     SDL_SetWindowTitle(_data->_view->_window, title.c_str());
   }
 
   template <>
-  const char * ViewPort< SDLContext >::getTitle() const
+  const char * ViewPort< SDL2::Context >::getTitle() const
   {
     return SDL_GetWindowTitle(_data->_view->_window);
   }
 
   template <>
-  void ViewPort< SDLContext >::clear(const Colour * c)
+  void ViewPort< SDL2::Context >::clear(const Colour * c)
   {
     if(nullptr != c)
     {
@@ -76,7 +82,7 @@ using namespace SDLBackEnd;
   }
 
   template <>
-  void ViewPort< SDLContext >::setFullscreen(bool fs)
+  void ViewPort< SDL2::Context >::setFullscreen(bool fs)
   {
     if(fs)
     {
@@ -86,13 +92,13 @@ using namespace SDLBackEnd;
   }
 
   template <>
-  const bool ViewPort< SDLContext >::isFullscreen() const
+  const bool ViewPort< SDL2::Context >::isFullscreen() const
   {
     return (SDL_GetWindowFlags(_data->_view->_window) == SDL_WINDOW_FULLSCREEN);
   }
 
   template <>
-  void ViewPort< SDLContext >::setResolution(Dimension3 & res)
+  void ViewPort< SDL2::Context >::setResolution(Dimension3 & res)
   {
     // only update if different
     if(_rect.size.w != res.w || _rect.size.h != res.h )
@@ -117,13 +123,13 @@ using namespace SDLBackEnd;
   }
 
   template <>
-  const Dimension3 & ViewPort< SDLContext >::getResolution() const
+  const Dimension3 & ViewPort< SDL2::Context >::getResolution() const
   {
     return _rect.size;
   }
 
   template <>
-  void ViewPort< SDLContext >::setViewRect(const BoxBoundXYWH & rect)
+  void ViewPort< SDL2::Context >::setViewRect(const BoxBoundXYWH & rect)
   {
     _rect = rect;
 
@@ -132,13 +138,13 @@ using namespace SDLBackEnd;
   }
 
   template <>
-  const BoxBoundXYWH & ViewPort< SDLContext >::getViewRect() const
+  const BoxBoundXYWH & ViewPort< SDL2::Context >::getViewRect() const
   {
     return _rect;
   }
 
   template <>
-  ViewPort< SDLContext >::ViewPort(const BoxBoundXYWH & rect, Flags flags)
+  ViewPort< SDL2::Context >::ViewPort(const BoxBoundXYWH & rect, Flags flags)
       :_data(new Context)
       ,_rect(rect)
   {
@@ -150,7 +156,7 @@ using namespace SDLBackEnd;
 
   // TEXTURE
   template <>
-  void Texture< SDLContext >::init()
+  void Texture< SDL2::Context >::init()
   {
     // defines the anchor within the boudaries
     // values between 0.0 - 1.0 (in relation to entity size | UV)
@@ -177,7 +183,7 @@ using namespace SDLBackEnd;
   }
 
   template <>
-  Texture< SDLContext >::Texture(GraphicComponent & component)
+  Texture< SDL2::Context >::Texture(GraphicComponent & component)
       :_component(&component)
       ,_data(new Context)
   {
@@ -185,34 +191,29 @@ using namespace SDLBackEnd;
   }
 
   template <>
-  bool Texture< SDLContext >::isLoaded()
+  bool Texture< SDL2::Context >::isLoaded()
   {
     return (_data->_image && _data->_image->_buffer);
   }
 
-  inline void getWindowSize(int & w, int & h)
-  {
-
-  }
-
   template <>
-  inline void Texture< SDLContext >::getWindowSize(int & w, int & h)
+  inline void Texture< SDL2::Context >::getWindowSize(int & w, int & h)
   {
     w = _data->_view->_resolution.w;
     h = _data->_view->_resolution.h;
   }
 
   template <>
-  inline void Texture< SDLContext >::getTextureSize(int & w, int & h)
+  inline void Texture< SDL2::Context >::getTextureSize(int & w, int & h)
   {
     w = _data->_image->_rect.size.w;
     h = _data->_image->_rect.size.h;
   }
 
   template <>
-  bool Texture< SDLContext >::loadFromFile(const string & filepath)
+  bool Texture< SDL2::Context >::loadFromFile(const string & filepath)
   {
-    _data->_image = SDLTexture::createSDLTexture(filepath, _data->_view->_renderer);
+    _data->_image = SDL2::Texture::createTexture(filepath, _data->_view->_renderer);
 
     // query window
     int rw = 0;
@@ -237,7 +238,7 @@ using namespace SDLBackEnd;
   }
 
   template <>
-  Texture< SDLContext >::Texture(GraphicComponent & component, const string & filepath)
+  Texture< SDL2::Context >::Texture(GraphicComponent & component, const string & filepath)
       :_component(&component)
       ,_data(new Context)
   {
@@ -246,11 +247,11 @@ using namespace SDLBackEnd;
   }
 
   template <>
-  Texture< SDLContext >::~Texture()
+  Texture< SDL2::Context >::~Texture()
   {}
 
   template <>
-  void Texture< SDLContext >::computeClipRects(
+  void Texture< SDL2::Context >::computeClipRects(
       BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector3 & center)
   {
     int rw = 0;
@@ -297,7 +298,7 @@ using namespace SDLBackEnd;
   }
 
   template <>
-  void Texture< SDLContext >::paint(const Vector3 & offset)
+  void Texture< SDL2::Context >::paint(const Vector3 & offset)
   {
     if(_data->_view->_renderer && this->isLoaded() && _component->isVisible)
     {
@@ -356,7 +357,7 @@ using namespace SDLBackEnd;
         uint8_t g = 0;
         uint8_t b = 0;
         uint8_t a = 0;
-        SDLBackEnd::colour8RGBA(r, g, b, a, _component->colourTint);
+        SDL2::colour8RGBA(r, g, b, a, _component->colourTint);
         SDL_SetTextureColorMod(_data->_image->_buffer, r, g, b);
 
         // alpha mode
@@ -379,22 +380,22 @@ using namespace SDLBackEnd;
 
 
   template<>
-  GraphicSystemHandler< SDLContext >::GraphicSystemHandler()
+  GraphicSystemHandler< SDL2::Context >::GraphicSystemHandler()
   {
-    SDLBackEnd::initGraphicSystem();
+    SDL2::initGraphicSystem();
   }
 
   template<>
-  GraphicSystemHandler< SDLContext >::~GraphicSystemHandler()
+  GraphicSystemHandler< SDL2::Context >::~GraphicSystemHandler()
   {
-    SDLBackEnd::quitGraphicSystem();
+    SDL2::quitGraphicSystem();
   }
 
   template<>
-  unique_ptr< ViewPort< SDLContext > > GraphicSystemHandler< SDLContext >::getViewPort()
+  SDL2BackEnd::ViewPortPtr GraphicSystemHandler< SDL2::Context >::getViewPort()
   {
-    return unique_ptr< ViewPort< SDLContext > >(
-        new SDL::ViewPort({{0.0,0.0,0.0}, {640.0, 480.0, 0.0}}) );
+    return SDL2BackEnd::ViewPortPtr(
+        new SDL2BackEnd::ViewPort({{0.0,0.0,0.0}, {640.0, 480.0, 0.0}}) );
   }
 
 namespace BackEnd
@@ -403,7 +404,7 @@ namespace BackEnd
   // graphic functions
   ErrorCode getGraphicHandler(IHandler * handler, const IConfig * data)
   {
-    handler = new GraphicSystemHandler< SDLContext >();
+    handler = new SDL2BackEnd::GraphicSysHandler();
     if(nullptr != handler)
     {
       return 0;

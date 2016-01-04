@@ -11,7 +11,7 @@
 #include "system_interface.hpp"
 #include "backend.hpp"
 // #include "viewport.hpp"
-#include "context_sdl.hpp"
+#include "backend_context_sdl.hpp"
 #include "graphic_system_handler.hpp"
 
 
@@ -86,8 +86,8 @@ int main(int argc, char *argv[])
   //BoxBoundXYWH bb{{0.0,0.0,0.0}, {320.0, 240.0, 0.0}};
   //ViewPort< Engine::SDLBackEnd::SDLContext > view(bb);
 
-  SDL::GraphicSysHandler graphics;
-  SDL::ViewPortPtr view = std::move(graphics.getViewPort());
+  SDL2BackEnd::GraphicSysHandler graphics;
+  SDL2BackEnd::ViewPortPtr view = std::move(graphics.getViewPort());
   //SDL::ViewPort view({{0.0,0.0,0.0}, {320.0, 240.0, 0.0}});
   cout << "!!!OK - " << ++test_count << " => Created a viewport. " << endl;
 
@@ -114,13 +114,13 @@ int main(int argc, char *argv[])
 
   GraphicComponent sprite_;
   //Texture< Engine::SDLBackEnd::SDLContext > tex1(sprite_);
-  SDL::Texture tex1(sprite_);
+  SDL2BackEnd::Texture tex1(sprite_);
   string filename("img/sample.png");
   tex1.loadFromFile(filename);
 
   GraphicComponent sprite;
   //Texture< Engine::SDLBackEnd::SDLContext > tex2(sprite);
-  SDL::Texture tex2(sprite);
+  SDL2BackEnd::Texture tex2(sprite);
   tex2.loadFromFile(filename);
 
   Colour c1;

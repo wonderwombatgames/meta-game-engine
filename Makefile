@@ -2,7 +2,7 @@ sourcesfiles=entities_manager.cpp \
 		backend_audio_null.cpp \
 		backend_physic_null.cpp \
 		backend_graphic_sdl.cpp \
-		context_sdl.cpp	\
+		backend_context_sdl.cpp	\
 		utils_colour.cpp \
 		command_router.cpp \
 		unit_tests.cpp
