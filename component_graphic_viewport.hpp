@@ -3,8 +3,8 @@
   *
   */
 
-#ifndef VIEWPORT_HPP
-#define VIEWPORT_HPP
+#ifndef COMPONENT_DISPLAY_HPP
+#define COMPONENT_DISPLAY_HPP
 
 #include <memory>
 
@@ -19,13 +19,13 @@ namespace Component
 {
 
   template < typename T >
-  class ViewPort
+  class Display
   {
   public:
-    ~ViewPort(){};
-    ViewPort(const BoxBoundXYWH & rect, Flags flags = 0);
-    ViewPort() = delete;
-    ViewPort(ViewPort & other) = delete;
+    ~Display(){};
+    Display(const BoxBoundXYWH & rect, Flags flags = 0);
+    Display() = delete;
+    Display(Display & other) = delete;
 
     // rendering
     void render();
@@ -44,10 +44,10 @@ namespace Component
     const bool isFullscreen() const;
 
   protected:
-    typedef T Context;
+    typedef T _HANDLER;
 
     //data
-    unique_ptr< Context > _data;
+    unique_ptr< _HANDLER > _data;
     BoxBoundXYWH _rect;
     Colour _background;
   };
@@ -56,4 +56,4 @@ namespace Component
 
 } // end namespace Engine
 
-#endif // VIEWPORT_HPP
+#endif // COMPONENT_DISPLAY_HPP

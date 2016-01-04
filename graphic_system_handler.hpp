@@ -17,16 +17,16 @@ namespace Engine
 using namespace std;
 using namespace BackEnd;
 
-template< class Context >
+template< typename T >
 class GraphicSystemHandler : public IHandler
 {
 public:
   GraphicSystemHandler();
   virtual ~GraphicSystemHandler();
 
-  std::unique_ptr< Component::ViewPort< Context > > getViewPort();
-  // ErrorCode startViewPort(ViewPort< Context > * view, BoxBound & rect, Flags flags = 0);
-  // ErrorCode loadTexture(Texture< Context > * tex, const char * filepath, const char * atlas = nullptr);
+  std::unique_ptr< Component::Display< T > > getDisplay();
+  // ErrorCode startDisplay(Display< T > * view, BoxBound & rect, Flags flags = 0);
+  // ErrorCode loadTexture(Texture< T > * tex, const char * filepath, const char * atlas = nullptr);
 };
 
 }// end namespace Engine

@@ -16,25 +16,25 @@ using namespace std;
 using namespace Utils;
 
 // forward declaration
-//class TextureAtlas;
+//class ImageAtlas;
 //class AtlasKey;
 
 namespace Component
 {
 
   template <typename T >
-  class Texture : public IGraphic
+  class Image : public IGraphic
   {
   public:
-    Texture(Graphic & component);
-    Texture(Graphic & component, const string & filepath);
-    //Texture(const TextureAtlas & atlas, vector<AtlasKey> keys);
-    Texture() = delete;
-    Texture(Texture & other) = delete;
-    virtual ~Texture();
+    Image(Graphic & component);
+    Image(Graphic & component, const string & filepath);
+    //Image(const ImageAtlas & atlas, vector<AtlasKey> keys);
+    Image() = delete;
+    Image(Image & other) = delete;
+    virtual ~Image();
 
     bool loadFromFile(const string & filepath);
-    //bool loadFromAtlas(const TextureAtlas & atlas, vector<AtlasKey> keys)
+    //bool loadFromAtlas(const ImageAtlas & atlas, vector<AtlasKey> keys)
     bool isLoaded();
 
     virtual void paint(const Vector3 & offset = {0.0f, 0.0f, 0.0f}) override;
@@ -59,14 +59,14 @@ namespace Component
   #endif
 
   protected:
-    typedef T Context;
+    typedef T _HANDLER;
 
     Graphic * _component;
-    unique_ptr< Context > _data;
+    unique_ptr< _HANDLER > _data;
 
     void init();
     void getWindowSize(int & w, int & h);
-    void getTextureSize(int & w, int & h);
+    void getImageSize(int & w, int & h);
     void computeClipRects(BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector3 & center);
   };
 

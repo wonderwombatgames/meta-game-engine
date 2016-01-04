@@ -47,9 +47,9 @@ namespace SDL2
   };
 
   // context used by viewport and texture
-  struct Context
+  struct Handler
   {
-    Context();
+    Handler();
 
     unique_ptr< Renderer > _view;
     shared_ptr< Texture > _image;
@@ -69,10 +69,10 @@ namespace SDL2
 
 namespace SDL2BackEnd
 {
-typedef GraphicSystemHandler< BackEnd::SDL2::Context > GraphicSysHandler;
-typedef Component::ViewPort< BackEnd::SDL2::Context > ViewPort;
-typedef std::unique_ptr< Component::ViewPort< Engine::BackEnd::SDL2::Context > > ViewPortPtr;
-typedef Component::Texture< BackEnd::SDL2::Context > Texture;
+typedef GraphicSystemHandler< BackEnd::SDL2::Handler > GraphicSysHandler;
+typedef Component::Display< BackEnd::SDL2::Handler > Display;
+typedef std::unique_ptr< Component::Display< Engine::BackEnd::SDL2::Handler > > DisplayPtr;
+typedef Component::Image< BackEnd::SDL2::Handler > Image;
 }
 
 } // end namespace Engine

@@ -4,7 +4,7 @@
 #include "utils_colour.hpp"
 #include "utils_types.hpp"
 #include "backend.hpp"
-#include "backend_context_sdl.hpp"
+#include "backend_handler_sdl.hpp"
 
 
 namespace // anonymous
@@ -219,7 +219,7 @@ namespace SDL2
     }
   }
 
-  // here we define classes related to SDL Context;
+  // here we define classes related to SDL Handler;
 
   // wrapper around window and renderer
 
@@ -310,7 +310,7 @@ namespace SDL2
 
   // context used by viewport and texture
 
-  Context::Context()
+  Handler::Handler()
       :_view(new Renderer())
       ,_image(nullptr)
   {}

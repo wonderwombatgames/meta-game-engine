@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #include "backend.hpp"
-#include "backend_context_sdl.hpp"
+#include "backend_handler_sdl.hpp"
 
 
 namespace
@@ -35,15 +35,15 @@ using namespace BackEnd;
 
 namespace Component
 {
-  // ViewPort
+  // Display
   template <>
-  void ViewPort< SDL2::Context >::render()
+  void Display< SDL2::Handler >::render()
   {
     SDL_RenderPresent(_data->_view->_renderer);
   }
 
   template <>
-  void ViewPort< SDL2::Context >::setColour(const Colour & c)
+  void Display< SDL2::Handler >::setColour(const Colour & c)
   {
     this->_background = c;
     uint8_t r = 0;
@@ -56,25 +56,25 @@ namespace Component
   }
 
   template <>
-  const Colour & ViewPort< SDL2::Context >::getColour() const
+  const Colour & Display< SDL2::Handler >::getColour() const
   {
     return this->_background;
   }
 
   template <>
-  void ViewPort< SDL2::Context >::setTitle(const string & title)
+  void Display< SDL2::Handler >::setTitle(const string & title)
   {
     SDL_SetWindowTitle(_data->_view->_window, title.c_str());
   }
 
   template <>
-  const char * ViewPort< SDL2::Context >::getTitle() const
+  const char * Display< SDL2::Handler >::getTitle() const
   {
     return SDL_GetWindowTitle(_data->_view->_window);
   }
 
   template <>
-  void ViewPort< SDL2::Context >::clear(const Colour * c)
+  void Display< SDL2::Handler >::clear(const Colour * c)
   {
     if(nullptr != c)
     {
@@ -84,7 +84,7 @@ namespace Component
   }
 
   template <>
-  void ViewPort< SDL2::Context >::setFullscreen(bool fs)
+  void Display< SDL2::Handler >::setFullscreen(bool fs)
   {
     if(fs)
     {
@@ -94,13 +94,13 @@ namespace Component
   }
 
   template <>
-  const bool ViewPort< SDL2::Context >::isFullscreen() const
+  const bool Display< SDL2::Handler >::isFullscreen() const
   {
     return (SDL_GetWindowFlags(_data->_view->_window) == SDL_WINDOW_FULLSCREEN);
   }
 
   template <>
-  void ViewPort< SDL2::Context >::setResolution(Dimension3 & res)
+  void Display< SDL2::Handler >::setResolution(Dimension3 & res)
   {
     // only update if different
     if(_rect.size.w != res.w || _rect.size.h != res.h )
@@ -125,13 +125,13 @@ namespace Component
   }
 
   template <>
-  const Dimension3 & ViewPort< SDL2::Context >::getResolution() const
+  const Dimension3 & Display< SDL2::Handler >::getResolution() const
   {
     return _rect.size;
   }
 
   template <>
-  void ViewPort< SDL2::Context >::setViewRect(const BoxBoundXYWH & rect)
+  void Display< SDL2::Handler >::setViewRect(const BoxBoundXYWH & rect)
   {
     _rect = rect;
 
@@ -140,14 +140,14 @@ namespace Component
   }
 
   template <>
-  const BoxBoundXYWH & ViewPort< SDL2::Context >::getViewRect() const
+  const BoxBoundXYWH & Display< SDL2::Handler >::getViewRect() const
   {
     return _rect;
   }
 
   template <>
-  ViewPort< SDL2::Context >::ViewPort(const BoxBoundXYWH & rect, Flags flags)
-      :_data(new Context)
+  Display< SDL2::Handler >::Display(const BoxBoundXYWH & rect, Flags flags)
+      :_data(new _HANDLER)
       ,_rect(rect)
   {
     this->_background.kind = RGB;
@@ -156,21 +156,21 @@ namespace Component
     this->setViewRect(rect);
   }
 
-  // Texture
+  // Image
   template <>
-  void Texture< SDL2::Context >::init()
+  void Image< SDL2::Handler >::init()
   {
     // defines the anchor within the boudaries
     // values between 0.0 - 1.0 (in relation to entity size | UV)
     _component->anchor = {0.0f, 0.0f, 0.0f};
 
-    // size - between 0.0 - 1.0 (in relation to ViewPort size)
+    // size - between 0.0 - 1.0 (in relation to Display size)
     _component->textureSize = {0.0f, 0.0f, 0.0f};
 
-    // Texture data pointer
+    // Image data pointer
     _component->texture = this;
 
-    // nth frame in within the Texture atlas
+    // nth frame in within the Image atlas
     _component->animationFrame = 0;
 
     // colour parameters
@@ -185,35 +185,35 @@ namespace Component
   }
 
   template <>
-  Texture< SDL2::Context >::Texture(Component::Graphic & component)
+  Image< SDL2::Handler >::Image(Component::Graphic & component)
       :_component(&component)
-      ,_data(new Context)
+      ,_data(new _HANDLER)
   {
     this->init();
   }
 
   template <>
-  bool Texture< SDL2::Context >::isLoaded()
+  bool Image< SDL2::Handler >::isLoaded()
   {
     return (_data->_image && _data->_image->_buffer);
   }
 
   template <>
-  inline void Texture< SDL2::Context >::getWindowSize(int & w, int & h)
+  inline void Image< SDL2::Handler >::getWindowSize(int & w, int & h)
   {
     w = _data->_view->_resolution.w;
     h = _data->_view->_resolution.h;
   }
 
   template <>
-  inline void Texture< SDL2::Context >::getTextureSize(int & w, int & h)
+  inline void Image< SDL2::Handler >::getImageSize(int & w, int & h)
   {
     w = _data->_image->_rect.size.w;
     h = _data->_image->_rect.size.h;
   }
 
   template <>
-  bool Texture< SDL2::Context >::loadFromFile(const string & filepath)
+  bool Image< SDL2::Handler >::loadFromFile(const string & filepath)
   {
     _data->_image = SDL2::Texture::createTexture(filepath, _data->_view->_renderer);
 
@@ -222,10 +222,10 @@ namespace Component
     int rh = 0;
     this->getWindowSize(rw, rh);
 
-    // query Texture
+    // query Image
     int tw = 0;
     int th = 0;
-    this->getTextureSize(tw, th);
+    this->getImageSize(tw, th);
 
     // compute the relative size
     SpatialDimention w =
@@ -233,34 +233,34 @@ namespace Component
     SpatialDimention h =
     static_cast<SpatialDimention>(th) / static_cast<SpatialDimention>(rh);
 
-    // size - between 0.0 - 1.0 (in relation to ViewPort size)
+    // size - between 0.0 - 1.0 (in relation to Display size)
     _component->textureSize = {w, h, 0.0f};
 
     return this->isLoaded();
   }
 
   template <>
-  Texture< SDL2::Context >::Texture(Component::Graphic & component, const string & filepath)
+  Image< SDL2::Handler >::Image(Component::Graphic & component, const string & filepath)
       :_component(&component)
-      ,_data(new Context)
+      ,_data(new _HANDLER)
   {
     this->init();
     this->loadFromFile(filepath);
   }
 
   template <>
-  Texture< SDL2::Context >::~Texture()
+  Image< SDL2::Handler >::~Image()
   {}
 
   template <>
-  void Texture< SDL2::Context >::computeClipRects(
+  void Image< SDL2::Handler >::computeClipRects(
       BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector3 & center)
   {
     int rw = 0;
     int rh = 0;
     this->getWindowSize(rw, rh);
 
-    // compute Texture parameters in px
+    // compute Image parameters in px
     int tw  = static_cast<int>(_component->textureSize.w * rw);
     int th  = static_cast<int>(_component->textureSize.h * rh);
     int tx  = 0;
@@ -300,7 +300,7 @@ namespace Component
   }
 
   template <>
-  void Texture< SDL2::Context >::paint(const Vector3 & offset)
+  void Image< SDL2::Handler >::paint(const Vector3 & offset)
   {
     if(_data->_view->_renderer && this->isLoaded() && _component->isVisible)
     {
@@ -366,7 +366,7 @@ namespace Component
         uint8_t alpha = static_cast<uint8_t>(255 * _component->alphaMode);
         SDL_SetTextureAlphaMod(_data->_image->_buffer, alpha);
 
-        // paint the Texture
+        // paint the Image
         SDL_RenderCopyEx(_data->_view->_renderer,
                          _data->_image->_buffer,
                          &src_rect,
@@ -383,22 +383,22 @@ namespace Component
 } // end namespace Component
 
   template<>
-  GraphicSystemHandler< SDL2::Context >::GraphicSystemHandler()
+  GraphicSystemHandler< SDL2::Handler >::GraphicSystemHandler()
   {
     SDL2::initGraphicSystem();
   }
 
   template<>
-  GraphicSystemHandler< SDL2::Context >::~GraphicSystemHandler()
+  GraphicSystemHandler< SDL2::Handler >::~GraphicSystemHandler()
   {
     SDL2::quitGraphicSystem();
   }
 
   template<>
-  SDL2BackEnd::ViewPortPtr GraphicSystemHandler< SDL2::Context >::getViewPort()
+  SDL2BackEnd::DisplayPtr GraphicSystemHandler< SDL2::Handler >::getDisplay()
   {
-    return SDL2BackEnd::ViewPortPtr(
-        new SDL2BackEnd::ViewPort({{0.0,0.0,0.0}, {640.0, 480.0, 0.0}}) );
+    return SDL2BackEnd::DisplayPtr(
+        new SDL2BackEnd::Display({{0.0,0.0,0.0}, {640.0, 480.0, 0.0}}) );
   }
 
 
