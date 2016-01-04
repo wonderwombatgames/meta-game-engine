@@ -8,7 +8,7 @@
 
 #include <memory>
 
-#include "component_graphic_texture.hpp"
+#include "component_graphic_image.hpp"
 
 namespace Engine
 {

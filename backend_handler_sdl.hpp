@@ -9,7 +9,7 @@
 #include <memory>
 #include <SDL2/SDL.h>
 #include "utils_types.hpp"
-#include "component_graphic_viewport.hpp"
+#include "component_graphic_display.hpp"
 #include "graphic_system_handler.hpp"
 
 namespace Engine

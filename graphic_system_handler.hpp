@@ -9,8 +9,8 @@
 #include <memory>
 
 #include "backend.hpp"
-#include "component_graphic_viewport.hpp"
-#include "component_graphic_texture.hpp"
+#include "component_graphic_display.hpp"
+#include "component_graphic_image.hpp"
 
 namespace Engine
 {
