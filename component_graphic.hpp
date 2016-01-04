@@ -5,7 +5,7 @@
 #ifndef GRAPHIC_COMPONENT_HPP
 #define GRAPHIC_COMPONENT_HPP
 
-#include "transform_component.hpp"
+#include "component_transform.hpp"
 
 namespace Engine
 {

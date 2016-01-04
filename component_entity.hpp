@@ -5,7 +5,7 @@
 #ifndef ENTITY_COMPONENT_HPP
 #define ENTITY_COMPONENT_HPP
 
-#include "basic_types.hpp"
+#include "utils_types.hpp"
 
 namespace Engine
 {

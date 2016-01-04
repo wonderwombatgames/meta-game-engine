@@ -13,8 +13,8 @@
 #include <string>
 #include <cassert>
 
-#include "entity_component.hpp"
-#include "transform_component.hpp"
+#include "component_entity.hpp"
+#include "component_transform.hpp"
 
 namespace Engine
 {

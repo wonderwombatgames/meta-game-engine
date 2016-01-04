@@ -15,7 +15,7 @@
 
 #include "system_interface.hpp"
 #include "command_interface.hpp"
-#include "graphic_component.hpp"
+#include "component_graphic.hpp"
 #include "graphic_system_handler.hpp"
 
 namespace Engine

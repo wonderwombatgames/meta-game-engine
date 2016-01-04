@@ -6,7 +6,7 @@
 #ifndef COLOUR_UTIL_HPP
 #define COLOUR_UTIL_HPP
 
-#include "basic_types.hpp"
+#include "utils_types.hpp"
 
 
 namespace Engine

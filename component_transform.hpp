@@ -5,7 +5,7 @@
 #ifndef TRANSFORM_COMPONENT_HPP
 #define TRANSFORM_COMPONENT_HPP
 
-#include "basic_types.hpp"
+#include "utils_types.hpp"
 
 namespace Engine
 {
