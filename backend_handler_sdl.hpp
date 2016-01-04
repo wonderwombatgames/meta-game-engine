@@ -10,7 +10,6 @@
 #include <SDL2/SDL.h>
 #include "utils_types.hpp"
 #include "component_graphic_display.hpp"
-#include "graphic_system_handler.hpp"
 
 namespace Engine
 {
@@ -69,7 +68,6 @@ namespace SDL2
 
 namespace SDL2BackEnd
 {
-typedef GraphicSystemHandler< BackEnd::SDL2::Handler > GraphicSysHandler;
 typedef Component::Display< BackEnd::SDL2::Handler > Display;
 typedef std::unique_ptr< Component::Display< Engine::BackEnd::SDL2::Handler > > DisplayPtr;
 typedef Component::Image< BackEnd::SDL2::Handler > Image;

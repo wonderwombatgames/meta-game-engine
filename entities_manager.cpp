@@ -11,6 +11,7 @@
 namespace Engine
 {
 using namespace std;
+using namespace System;
 
 //
 // IEntity Methods
@@ -75,7 +76,7 @@ void EntitiesManager::IEntity::tearDownComponents()
 {
   for(auto system : this->_componentSystems)
   {
-    if (ISystem::isValid(*system))
+    if (BaseInterface::isValid(*system))
     {
       system->delEntity(this->_entityData);
     }
@@ -83,9 +84,9 @@ void EntitiesManager::IEntity::tearDownComponents()
 }
 
 // add one more component to the entity
-void EntitiesManager::IEntity::addComponent(ISystem & system)
+void EntitiesManager::IEntity::addComponent(BaseInterface & system)
 {
-  if (ISystem::isValid(system))
+  if (BaseInterface::isValid(system))
   {
     this->_componentSystems.insert(&system);
     system.addEntity(this->_entityData, this->_transformData);
@@ -106,7 +107,7 @@ EntitiesManager * EntitiesManager::instance()
   return s_instance;
 }
 
-bool EntitiesManager::addComponent(EntityID entitityId, ISystem & system)
+bool EntitiesManager::addComponent(EntityID entitityId, BaseInterface & system)
 {
   auto entity = this->_entities.find(entitityId);
   if(entity != this->_entities.end())

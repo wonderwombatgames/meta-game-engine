@@ -25,102 +25,106 @@ class IManagedEntity;
 typedef unsigned long long int FrameCount;
 typedef float TimeDimension;
 
-//
-class ISystem
+namespace System
 {
-public:
-  ISystem() = delete;
-  ISystem(ISystem & other) = delete;
-  ISystem(const char * name): _name(name), _frames(0)
-  {
-    assert(ISystem::systemRegistrar(this, name, REGISTER));
-  }
-  virtual ~ISystem()
-  {
-    assert(ISystem::systemRegistrar(this, _name.c_str(), UNREGISTER));
-  }
 
-  // get system name
-  const string & getName() { return this->_name;  }
-  // check if the pointer actually points to a system
-  static bool isValid(ISystem & system);
-  // perform one step in the system
-  FrameCount update(TimeDimension delta)
+  class BaseInterface
   {
-    this->tick(delta);
-    return ++(this->_frames);
-  }
+  public:
+    BaseInterface() = delete;
+    BaseInterface(BaseInterface & other) = delete;
+    BaseInterface(const char * name): _name(name), _frames(0)
+    {
+      assert(BaseInterface::systemRegistrar(this, name, REGISTER));
+    }
+    virtual ~BaseInterface()
+    {
+      assert(BaseInterface::systemRegistrar(this, _name.c_str(), UNREGISTER));
+    }
 
-  // entity related methods
-  void addEntity(Component::Entity & entity, const Component::Transform transform){};
-  void delEntity(Component::Entity & entity){};
+    // get system name
+    const string & getName() { return this->_name;  }
+    // check if the pointer actually points to a system
+    static bool isValid(BaseInterface & system);
+    // perform one step in the system
+    FrameCount update(TimeDimension delta)
+    {
+      this->tick(delta);
+      return ++(this->_frames);
+    }
 
- protected:
-  enum eRegistrar
-  {
-    REGISTER,
-    UNREGISTER,
-    VERIFY,
+    // entity related methods
+    void addEntity(Component::Entity & entity, const Component::Transform transform){};
+    void delEntity(Component::Entity & entity){};
+
+   protected:
+    enum eRegistrar
+    {
+      REGISTER,
+      UNREGISTER,
+      VERIFY,
+    };
+
+    // must be overriden in each system (impl. NVI)
+    virtual void tick(TimeDimension delta){};
+    static bool systemRegistrar(BaseInterface * system, const char * name = nullptr, eRegistrar op = VERIFY);
+
+    string _name;
+    FrameCount _frames;
   };
 
-  // must be overriden in each system (impl. NVI)
-  virtual void tick(TimeDimension delta){};
-  static bool systemRegistrar(ISystem * system, const char * name = nullptr, eRegistrar op = VERIFY);
-
-  string _name;
-  FrameCount _frames;
-};
-
-inline bool ISystem::isValid(ISystem & system)
-{
-  return ISystem::systemRegistrar(&system, nullptr, VERIFY);
-}
-
-inline bool ISystem::systemRegistrar(
-    ISystem * system,
-    const char * name,
-    eRegistrar op)
-{
-  static map< string, ISystem * > s_systems;
-
-  string searchName;
-  if (nullptr != name)
+  inline bool BaseInterface::isValid(BaseInterface & system)
   {
-    searchName = name;
-  }
-  else if (nullptr != system)
-  {
-    searchName = system->getName();
+    return BaseInterface::systemRegistrar(&system, nullptr, VERIFY);
   }
 
-  if(op == REGISTER)
+  inline bool BaseInterface::systemRegistrar(
+      BaseInterface * system,
+      const char * name,
+      eRegistrar op)
   {
-    if (nullptr != system)
+    static map< string, BaseInterface * > s_systems;
+
+    string searchName;
+    if (nullptr != name)
     {
-      s_systems[searchName] = system;
-      return true;
+      searchName = name;
     }
-    else
+    else if (nullptr != system)
     {
-      return false;
+      searchName = system->getName();
     }
-  }
-  else if(op == UNREGISTER || op == VERIFY)
-  {
-    for (auto s: s_systems)
+
+    if(op == REGISTER)
     {
-      if(s.second->getName() == searchName)
+      if (nullptr != system)
       {
-        if(op == UNREGISTER)
-        {
-          s_systems.erase(string(name));
-        }
+        s_systems[searchName] = system;
         return true;
       }
+      else
+      {
+        return false;
+      }
     }
+    else if(op == UNREGISTER || op == VERIFY)
+    {
+      for (auto s: s_systems)
+      {
+        if(s.second->getName() == searchName)
+        {
+          if(op == UNREGISTER)
+          {
+            s_systems.erase(string(name));
+          }
+          return true;
+        }
+      }
+    }
+    return false;
   }
-  return false;
-}
+
+} // end namespace System
 
 } // end namespace Engine
 

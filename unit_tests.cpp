@@ -9,10 +9,9 @@
 
 #include "entities_manager.hpp"
 #include "system_interface.hpp"
-#include "backend.hpp"
-// #include "viewport.hpp"
+#include "component_graphic_display.hpp"
 #include "backend_handler_sdl.hpp"
-#include "graphic_system_handler.hpp"
+#include "system_graphics.hpp"
 
 
 using namespace Engine;
@@ -35,12 +34,12 @@ int main(int argc, char *argv[])
   assert(em->refreshEntities() == 2);
   cout << "!!!OK - " << ++test_count << " => Created 2 Entities" << endl;
 
-  ISystem dummySystem1("dummy1");
-  assert(ISystem::isValid(dummySystem1));
+  BaseInterface dummySystem1("dummy1");
+  assert(BaseInterface::isValid(dummySystem1));
   cout << "!!!OK - " << ++test_count << " => Created first Dummy System" << endl;
 
-  ISystem dummySystem2("dummy2");
-  assert(ISystem::isValid(dummySystem2));
+  BaseInterface dummySystem2("dummy2");
+  assert(BaseInterface::isValid(dummySystem2));
   cout << "!!!OK - " << ++test_count << " => Created second Dummy System" << endl;
 
   assert(em->addComponent(id2, dummySystem1));
@@ -86,9 +85,12 @@ int main(int argc, char *argv[])
   //BoxBoundXYWH bb{{0.0,0.0,0.0}, {320.0, 240.0, 0.0}};
   //Display< Engine::SDLBackEnd::SDLContext > view(bb);
 
-  SDL2BackEnd::GraphicSysHandler graphics;
-  SDL2BackEnd::DisplayPtr view = std::move(graphics.getDisplay());
+  //SDL2BackEnd::GraphicSysHandler graphics;
+  //SDL2BackEnd::DisplayPtr view = std::move(graphics.getDisplay());
   //SDL::Display view({{0.0,0.0,0.0}, {320.0, 240.0, 0.0}});
+
+  System::Graphics graphics("window1");
+  SDL2BackEnd::Display view({{0.0,0.0,0.0}, {320.0, 240.0, 0.0}});
   cout << "!!!OK - " << ++test_count << " => Created a viewport. " << endl;
 
   Component::Entity _entityData;
@@ -137,7 +139,7 @@ int main(int argc, char *argv[])
   c2.rgb = {0.1, 0.5, 0.9};
   //sprite.colourTint = c2;
 
-  view->setResolution(r);
+  view.setResolution(r);
   //view.setFullscreen(true);
 
   float rotation = 0.0f;
@@ -162,9 +164,9 @@ int main(int argc, char *argv[])
     Vector3 offset{rand_x, rand_y, 0.0f};
 
     // view.setColour(c1);
-    view->clear(&c1);
+    view.clear(&c1);
     tex2.paint(offset);
-    view->render();
+    view.render();
 
     SDL_Delay(1000/25);
   }

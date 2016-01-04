@@ -19,8 +19,9 @@
 namespace Engine
 {
 using namespace std;
+using namespace System;
 
-//
+
 class EntitiesManager
 {
 public:
@@ -40,7 +41,7 @@ public:
     bool resume();
     void destroy(bool mustDestroy);
     bool destroy();
-    bool hasComponent(ISystem & system);
+    bool hasComponent(BaseInterface & system);
 
   protected:
     // can be used to register components into systems from constructor
@@ -50,13 +51,13 @@ public:
     void tearDownComponents();
 
     // add one more component to the entity
-    void addComponent(ISystem & system);
+    void addComponent(BaseInterface & system);
 
     // data
     bool _destroy;
     string _name;
 
-    set< ISystem * > _componentSystems;
+    set< BaseInterface * > _componentSystems;
     // this POD is to be used by the component systems
     Component::Entity _entityData;
     // contains spatial information
@@ -78,7 +79,7 @@ public:
   int  refreshEntities();
 
   // component related methods
-  bool addComponent(EntityID entitityId, ISystem & system);
+  bool addComponent(EntityID entitityId, BaseInterface & system);
 
 protected:
   enum {  MAX_ENTITIES_AMOUNT = 10000  };
@@ -137,7 +138,7 @@ inline bool EntitiesManager::IEntity::destroy()
   return this->_destroy;
 }
 
-inline bool EntitiesManager::IEntity::hasComponent(ISystem & system)
+inline bool EntitiesManager::IEntity::hasComponent(BaseInterface & system)
 {
   return (0 < this->_componentSystems.count(&system));
 }

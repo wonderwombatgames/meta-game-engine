@@ -8,8 +8,8 @@
 #include <iostream>
 #include <algorithm>
 
-#include "backend.hpp"
 #include "backend_handler_sdl.hpp"
+#include "system_graphics.hpp"
 
 
 namespace
@@ -382,58 +382,75 @@ namespace Component
 
 } // end namespace Component
 
-  template<>
-  GraphicSystemHandler< SDL2::Handler >::GraphicSystemHandler()
+  // template<>
+  // GraphicSystemHandler< SDL2::Handler >::GraphicSystemHandler()
+  // {
+  //   SDL2::initGraphicSystem();
+  // }
+  //
+  // template<>
+  // GraphicSystemHandler< SDL2::Handler >::~GraphicSystemHandler()
+  // {
+  //   SDL2::quitGraphicSystem();
+  // }
+  //
+  // template<>
+  // SDL2BackEnd::DisplayPtr GraphicSystemHandler< SDL2::Handler >::getDisplay()
+  // {
+  //   return SDL2BackEnd::DisplayPtr(
+  //       new SDL2BackEnd::Display({{0.0,0.0,0.0}, {640.0, 480.0, 0.0}}) );
+  // }
+
+namespace System
+{
+
+  Graphics::Graphics(const char * name)
+      :BaseInterface(name)
+      //,_graphicSystemHandler(nullptr)
   {
     SDL2::initGraphicSystem();
   }
 
-  template<>
-  GraphicSystemHandler< SDL2::Handler >::~GraphicSystemHandler()
+  Graphics::~Graphics()
   {
     SDL2::quitGraphicSystem();
   }
 
-  template<>
-  SDL2BackEnd::DisplayPtr GraphicSystemHandler< SDL2::Handler >::getDisplay()
-  {
-    return SDL2BackEnd::DisplayPtr(
-        new SDL2BackEnd::Display({{0.0,0.0,0.0}, {640.0, 480.0, 0.0}}) );
-  }
+} // end namespace System
 
 
-namespace BackEnd
-{
-
-  // graphic functions
-  ErrorCode getGraphicHandler(IHandler * handler, const IConfig * data)
-  {
-    handler = new SDL2BackEnd::GraphicSysHandler();
-    if(nullptr != handler)
-    {
-      return 0;
-    }
-    else
-    {
-      return -1;
-    }
-  }
-
-  //
-  // // inputs functions
-  // ErrorCode getInputHandler(IHandler * handler, const IConfig * data)
-  // {
-  //   return 0;
-  // }
-  //
-  // // events functions
-  // ErrorCode getEventHandler(IHandler * handler, const IConfig * data)
-  // {
-  //   return 0;
-  // }
-
-
-} // end namespace BackEnd
+// namespace BackEnd
+// {
+//
+//   // graphic functions
+//   ErrorCode getGraphicHandler(IHandler * handler, const IConfig * data)
+//   {
+//     handler = new SDL2BackEnd::GraphicSysHandler();
+//     if(nullptr != handler)
+//     {
+//       return 0;
+//     }
+//     else
+//     {
+//       return -1;
+//     }
+//   }
+//
+//   //
+//   // // inputs functions
+//   // ErrorCode getInputHandler(IHandler * handler, const IConfig * data)
+//   // {
+//   //   return 0;
+//   // }
+//   //
+//   // // events functions
+//   // ErrorCode getEventHandler(IHandler * handler, const IConfig * data)
+//   // {
+//   //   return 0;
+//   // }
+//
+//
+// } // end namespace BackEnd
 
 
 } // end namespace Engine

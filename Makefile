@@ -1,6 +1,6 @@
 sourcesfiles=entities_manager.cpp \
 		backend_audio_null.cpp \
-		backend_physic_null.cpp \
+		backend_physics_null.cpp \
 		backend_graphic_sdl.cpp \
 		backend_handler_sdl.cpp	\
 		utils_colour.cpp \

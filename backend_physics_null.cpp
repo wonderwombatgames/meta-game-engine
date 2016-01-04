@@ -4,11 +4,10 @@
   */
 
 
-#include "backend.hpp"
 
 namespace Engine
 {
-using namespace std;
+//using namespace std;
 
 namespace BackEnd
 {
@@ -22,10 +21,10 @@ namespace BackEnd
 // {
 // }
 
-ErrorCode getPhysicHandler(IHandler * handler, const IConfig * data)
-{
-  return 0;
-}
+// ErrorCode getPhysicHandler(IHandler * handler, const IConfig * data)
+// {
+//   return 0;
+// }
 
 } // end namespace BackEnd
 

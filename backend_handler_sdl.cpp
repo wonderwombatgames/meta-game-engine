@@ -3,7 +3,6 @@
 #include <SDL2/SDL_image.h>
 #include "utils_colour.hpp"
 #include "utils_types.hpp"
-#include "backend.hpp"
 #include "backend_handler_sdl.hpp"
 
 
