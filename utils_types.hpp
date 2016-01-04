@@ -5,12 +5,15 @@
   *
   */
 
-#ifndef BASIC_TYPES_HPP
-#define BASIC_TYPES_HPP
+#ifndef UTILS_TYPES_HPP
+#define UTILS_TYPES_HPP
 
 #include <cstdint>
 
 namespace Engine
+{
+
+namespace Utils
 {
 
 enum { InvalidID = -1 };
@@ -219,6 +222,8 @@ enum eAudioState
   STOPED,
 };
 
+} // end namespace Utils
+
 } // end namespace Engine
 
-#endif // BASIC_TYPES_HPP
+#endif // UTILS_TYPES_HPP

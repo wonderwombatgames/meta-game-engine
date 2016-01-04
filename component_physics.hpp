@@ -11,6 +11,7 @@
 
 namespace Engine
 {
+using namespace Utils;
 
 struct PhysicsAndCollisionsComponent
 {

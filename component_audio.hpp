@@ -10,6 +10,8 @@
 
 namespace Engine
 {
+using namespace Utils;
+
 
 // forward declaration
 class MusicData;

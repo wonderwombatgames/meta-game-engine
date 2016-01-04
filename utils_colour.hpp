@@ -3,13 +3,15 @@
   *
   */
 
-#ifndef COLOUR_UTIL_HPP
-#define COLOUR_UTIL_HPP
+#ifndef UTILS_COLOUR_HPP
+#define UTILS_COLOUR_HPP
 
 #include "utils_types.hpp"
 
-
 namespace Engine
+{
+
+namespace Utils
 {
 
 void Hex2Rgb (const ColourHex  & in, ColourRGB  & out);
@@ -31,6 +33,8 @@ void Cmyk2Rgb(const ColourCMYK & in, ColourRGB  & out);
 void Cmyk2Hsl(const ColourCMYK & in, ColourHSL  & out);
 void Cmyk2Hsv(const ColourCMYK & in, ColourHSV  & out);
 
+} // end namespace Utils
+
 } // end namespace Engine
 
-#endif // COLOUR_UTIL_HPP
+#endif // UTILS_COLOUR_HPP

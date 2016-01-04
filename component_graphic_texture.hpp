@@ -13,6 +13,7 @@
 namespace Engine
 {
 using namespace std;
+using namespace Utils;
 
 // forward declaration
 //class TextureAtlas;

@@ -11,6 +11,10 @@
 
 namespace Engine
 {
+using namespace Utils;
+
+namespace BackEnd
+{
 
 class IHandler
 {
@@ -46,10 +50,11 @@ ErrorCode getEventHandler(IHandler * handler = nullptr, const IConfig * data = n
 ErrorCode getPhysicHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
 // audio
-bool initAudioSystem(Flags flags = 0);
-void quitAudioSystem();
+// bool initAudioSystem(Flags flags = 0);
+// void quitAudioSystem();
 ErrorCode getAudioHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
+} // end namespace BackEnd
 
 } // end namespace Engine
 

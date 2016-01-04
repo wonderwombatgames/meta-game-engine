@@ -15,6 +15,7 @@
 namespace Engine
 {
 using namespace std;
+using namespace BackEnd;
 
 template< class Context >
 class GraphicSystemHandler : public IHandler

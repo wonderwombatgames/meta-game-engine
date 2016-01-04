@@ -5,6 +5,10 @@ namespace Engine
 {
 using namespace std;
 
+namespace Utils
+{
+
+
 inline uint8_t hexChar2Val(const char * ch)
 {
   uint8_t val = 0;
@@ -334,5 +338,7 @@ void Cmyk2Hsv(const ColourCMYK & in, ColourHSV  & out)
   Cmyk2Rgb(in, tmp);
   Rgb2Hsv(tmp, out);
 }
+
+} // end namespace Utils
 
 } // end namespace Engine

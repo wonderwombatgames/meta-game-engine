@@ -9,6 +9,7 @@
 
 namespace Engine
 {
+using namespace Utils;
 
   struct TransformComponent
   {

@@ -15,6 +15,7 @@
 namespace Engine
 {
 using namespace std;
+using namespace Utils;
 
 namespace SDLBackEnd
 {

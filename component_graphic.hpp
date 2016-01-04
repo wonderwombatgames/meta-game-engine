@@ -9,6 +9,8 @@
 
 namespace Engine
 {
+using namespace Utils;
+
 // forward declaration
 //class IGraphicEffectsData;
 //class IShaderData;

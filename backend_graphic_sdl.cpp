@@ -397,6 +397,9 @@ using namespace SDLBackEnd;
         new SDL::ViewPort({{0.0,0.0,0.0}, {640.0, 480.0, 0.0}}) );
   }
 
+namespace BackEnd
+{
+
   // graphic functions
   ErrorCode getGraphicHandler(IHandler * handler, const IConfig * data)
   {
@@ -423,6 +426,9 @@ using namespace SDLBackEnd;
   // {
   //   return 0;
   // }
+
+
+} // end namespace BackEnd
 
 
 } // end namespace Engine
