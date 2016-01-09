@@ -1,4 +1,5 @@
 sourcesfiles=entities_manager.cpp \
+		base_entity.cpp \
 		backend_audio_null.cpp \
 		backend_physics_null.cpp \
 		backend_graphic_sdl.cpp \

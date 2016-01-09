@@ -21,7 +21,7 @@ namespace Engine
 using namespace std;
 
 // forward declare entity type interface
-class IManagedEntity;
+class BaseEntity;
 typedef unsigned long long int FrameCount;
 typedef float TimeDimension;
 
@@ -54,7 +54,7 @@ namespace System
     }
 
     // entity related methods
-    void addEntity(const Component::EntityPod & entity, Component::TransformPod transform);
+    void addEntity(const Component::EntityPod & entity, Component::TransformPod * transform);
     void delEntity(const Component::EntityPod & entity);
 
    protected:
@@ -67,7 +67,7 @@ namespace System
 
     // must be overriden in each system (impl. NVI)
     virtual void tick(TimeDimension delta){}
-    virtual void add(const Component::EntityPod & entity, Component::TransformPod transform){}
+    virtual void add(const Component::EntityPod & entity, Component::TransformPod * transform){}
     virtual void del(const Component::EntityPod & entity){}
     static bool systemRegistrar(SystemsInterface * system, const char * name = nullptr, eRegistrar op = VERIFY);
 
@@ -75,7 +75,7 @@ namespace System
     FrameCount _frames;
   };
 
-  inline void SystemsInterface::addEntity(const Component::EntityPod & entity, const Component::TransformPod transform)
+  inline void SystemsInterface::addEntity(const Component::EntityPod & entity, Component::TransformPod * transform)
   {
     this->add(entity, transform);
   }

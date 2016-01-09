@@ -80,7 +80,7 @@ namespace System
     bool setEntityAsset(Component::EntityPod entity, int assetId);
 
   protected:
-    virtual void add(const Component::EntityPod & entity, Component::TransformPod transform) override;
+    virtual void add(const Component::EntityPod & entity, Component::TransformPod * transform) override;
     virtual void del(const Component::EntityPod & entity) override;
     virtual void tick(TimeDimension delta) override {};
 

@@ -37,6 +37,23 @@ namespace Component
     Vector3 scale;
   };
 
+    // // kind of space 2D/3D
+    // this->_transformData.kind = SPACE_2D;
+    //
+    // // position
+    // // absolute in pixels (float values)
+    // // can contain z-order
+    // this->_transformData.position = {0.0f, 0.0f, 0.0f};
+    //
+    // // rotation
+    // // values between 0.0 - 1.0  (= 0 - 360)
+    // this->_transformData.rotation = {0.0f, 0.0f, 0.0f};
+    //
+    // // scales
+    // // <1.0 : smaller | > 1.0 : larger
+    // // <0.0 : mirror
+    // this->_transformData.scale = {1.0f, 1.0f, 1.0f};
+
 } // namespace Component
 
 } // end namespace Engine

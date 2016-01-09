@@ -279,7 +279,10 @@ namespace Component
   template <>
   void Image< SDL2::Handler >::paint(const GraphicPod & component, const Vector3 & offset)
   {
-    if(_data->_view->_renderer && this->isLoaded() && component.isVisible)
+    if( _data->_view->_renderer &&
+        this->isLoaded() &&
+        component.isVisible &&
+        component.transformData != nullptr)
     {
       int rw = _data->_view->_resolution.w;
       int rh = _data->_view->_resolution.h;
@@ -400,14 +403,14 @@ namespace System
     return false;
   }
 
-  void Graphics::add(const Component::EntityPod & entity, Component::TransformPod transform)
+  void Graphics::add(const Component::EntityPod & entity, Component::TransformPod * transform)
   {
     Colour c;
     c.kind = RGBA;
     c.rgba = {0.0f, 0.0f, 0.0f, 1.0f};
     Component::GraphicPod pod{
             // reference to entity transform component
-            &transform,
+            transform,
             // defines the anchor within the boudaries
             // values between 0.0 - 1.0 (in relation to entity size | UV)
             {0.5f, 0.5f, 0.0f},
