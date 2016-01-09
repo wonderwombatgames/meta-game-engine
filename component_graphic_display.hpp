@@ -8,7 +8,7 @@
 
 #include <memory>
 
-#include "component_graphic_image.hpp"
+#include "utils_types.hpp"
 
 namespace Engine
 {
@@ -29,7 +29,8 @@ namespace Component
 
     // rendering
     void render();
-    void clear(const Colour * c = nullptr);
+    void clear();
+    void clear(const Colour & c);
 
     // reseting the viewport
     void setColour(const Colour & c);

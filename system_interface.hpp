@@ -54,8 +54,8 @@ namespace System
     }
 
     // entity related methods
-    void addEntity(Component::Entity & entity, const Component::Transform transform){};
-    void delEntity(Component::Entity & entity){};
+    void addEntity(Component::EntityPod & entity, const Component::TransformPod transform){};
+    void delEntity(Component::EntityPod & entity){};
 
    protected:
     enum eRegistrar

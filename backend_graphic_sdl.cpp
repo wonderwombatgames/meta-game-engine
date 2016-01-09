@@ -74,23 +74,34 @@ namespace Component
   }
 
   template <>
-  void Display< SDL2::Handler >::clear(const Colour * c)
+  void Display< SDL2::Handler >::clear(const Colour & c)
   {
-    if(nullptr != c)
-    {
-      setColour(*c);
-    }
+    this->setColour(c);
     SDL_RenderClear(_data->_view->_renderer);
   }
 
   template <>
+  void Display< SDL2::Handler >::clear()
+  {
+    Colour c;
+    c.kind = RGBA;
+    c.rgba = {0.0f, 0.0f, 0.0f, 1.0f};
+    setColour(c);
+    SDL_RenderClear(_data->_view->_renderer);
+  }
+
+
+  template <>
   void Display< SDL2::Handler >::setFullscreen(bool fs)
   {
+    int flag = 0;
     if(fs)
     {
-      SDL_SetWindowFullscreen(_data->_view->_window, SDL_WINDOW_FULLSCREEN);
-      this->setColour(this->_background);
+      flag = SDL_WINDOW_FULLSCREEN;
     }
+
+    SDL_SetWindowFullscreen(_data->_view->_window, flag);
+    this->setColour(this->_background);
   }
 
   template <>
@@ -158,58 +169,9 @@ namespace Component
 
   // Image
   template <>
-  void Image< SDL2::Handler >::init()
-  {
-    // defines the anchor within the boudaries
-    // values between 0.0 - 1.0 (in relation to entity size | UV)
-    _component->anchor = {0.0f, 0.0f, 0.0f};
-
-    // size - between 0.0 - 1.0 (in relation to Display size)
-    _component->textureSize = {0.0f, 0.0f, 0.0f};
-
-    // Image data pointer
-    _component->texture = this;
-
-    // nth frame in within the Image atlas
-    _component->animationFrame = 0;
-
-    // colour parameters
-    _component->colourTint.kind = RGB;
-    _component->colourTint.rgb = {1.0f, 1.0f, 1.0f};
-    _component->alphaMode = 1.0f;
-    _component->blendingMode = SDL_BLENDMODE_BLEND;
-
-    // whether to show the entity or not
-    _component->isVisible = true;
-
-  }
-
-  template <>
-  Image< SDL2::Handler >::Image(Component::Graphic & component)
-      :_component(&component)
-      ,_data(new _HANDLER)
-  {
-    this->init();
-  }
-
-  template <>
   bool Image< SDL2::Handler >::isLoaded()
   {
     return (_data->_image && _data->_image->_buffer);
-  }
-
-  template <>
-  inline void Image< SDL2::Handler >::getWindowSize(int & w, int & h)
-  {
-    w = _data->_view->_resolution.w;
-    h = _data->_view->_resolution.h;
-  }
-
-  template <>
-  inline void Image< SDL2::Handler >::getImageSize(int & w, int & h)
-  {
-    w = _data->_image->_rect.size.w;
-    h = _data->_image->_rect.size.h;
   }
 
   template <>
@@ -218,14 +180,12 @@ namespace Component
     _data->_image = SDL2::Texture::createTexture(filepath, _data->_view->_renderer);
 
     // query window
-    int rw = 0;
-    int rh = 0;
-    this->getWindowSize(rw, rh);
+    int rw = _data->_view->_resolution.w;
+    int rh = _data->_view->_resolution.h;
 
     // query Image
-    int tw = 0;
-    int th = 0;
-    this->getImageSize(tw, th);
+    int tw = _data->_image->_rect.size.w;
+    int th = _data->_image->_rect.size.h;
 
     // compute the relative size
     SpatialDimention w =
@@ -234,50 +194,60 @@ namespace Component
     static_cast<SpatialDimention>(th) / static_cast<SpatialDimention>(rh);
 
     // size - between 0.0 - 1.0 (in relation to Display size)
-    _component->textureSize = {w, h, 0.0f};
+    _textureSize = {w, h, 0.0f};
 
     return this->isLoaded();
   }
 
+
   template <>
-  Image< SDL2::Handler >::Image(Component::Graphic & component, const string & filepath)
-      :_component(&component)
-      ,_data(new _HANDLER)
+  Image< SDL2::Handler >::Image(const string & filepath)
+      :_data(new _HANDLER)
   {
-    this->init();
     this->loadFromFile(filepath);
   }
+
+  template <>
+  Image< SDL2::Handler >::Image()
+      :_data(new _HANDLER)
+  {}
 
   template <>
   Image< SDL2::Handler >::~Image()
   {}
 
   template <>
-  void Image< SDL2::Handler >::computeClipRects(
-      BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector3 & center)
+  bool Image< SDL2::Handler >::setParameter(
+      const char * paramName,
+      const float & paramValue)
   {
-    int rw = 0;
-    int rh = 0;
-    this->getWindowSize(rw, rh);
+    return true;
+  }
+
+  template <>
+  void Image< SDL2::Handler >::computeClipRects(const GraphicPod & component, BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector3 & center)
+  {
+    int rw = _data->_view->_resolution.w;
+    int rh = _data->_view->_resolution.h;
 
     // compute Image parameters in px
-    int tw  = static_cast<int>(_component->textureSize.w * rw);
-    int th  = static_cast<int>(_component->textureSize.h * rh);
+    int tw  = static_cast<int>(_textureSize.w * rw);
+    int th  = static_cast<int>(_textureSize.h * rh);
     int tx  = 0;
     int ty  = 0;
     float sx  = 1.0f;
     float sy  = 1.0f;
 
-    if (nullptr != _component->transformData)
+    if (nullptr != component.transformData)
     {
-      tx  = static_cast<int>(_component->transformData->position.x);
-      ty  = static_cast<int>(_component->transformData->position.y);
-      sx  = _component->transformData->scale.x;
-      sy  = _component->transformData->scale.y;
+      tx  = static_cast<int>(component.transformData->position.x);
+      ty  = static_cast<int>(component.transformData->position.y);
+      sx  = component.transformData->scale.x;
+      sy  = component.transformData->scale.y;
     }
 
-    float ax  = _component->anchor.x;
-    float ay  = _component->anchor.y;
+    float ax  = component.anchor.x;
+    float ay  = component.anchor.y;
     int w = static_cast<int>(tw * abs(sx));
     int h = static_cast<int>(th * abs(sy));
     int cx = static_cast<int>(ax * w);
@@ -300,19 +270,18 @@ namespace Component
   }
 
   template <>
-  void Image< SDL2::Handler >::paint(const Vector3 & offset)
+  void Image< SDL2::Handler >::paint(const GraphicPod & component, const Vector3 & offset)
   {
-    if(_data->_view->_renderer && this->isLoaded() && _component->isVisible)
+    if(_data->_view->_renderer && this->isLoaded() && component.isVisible)
     {
-      int rw = 0;
-      int rh = 0;
-      this->getWindowSize(rw, rh);
+      int rw = _data->_view->_resolution.w;
+      int rh = _data->_view->_resolution.h;
 
       BoxBoundXYWH src;
       BoxBoundXYWH dst;
       Vector3 center;
 
-      this->computeClipRects(src, dst, center);
+      this->computeClipRects(component, src, dst, center);
 
       dst.topLeft.x -= static_cast<int>(offset.x);
       dst.topLeft.y -= static_cast<int>(offset.y);
@@ -320,11 +289,11 @@ namespace Component
       float rot = 0.0f;
       float sx  = 1.0f;
       float sy  = 1.0f;
-      if (nullptr != _component->transformData)
+      if (nullptr != component.transformData)
       {
-        sx  = _component->transformData->scale.x;
-        sy  = _component->transformData->scale.y;
-        rot = _component->transformData->rotation.angleXY;
+        sx  = component.transformData->scale.x;
+        sy  = component.transformData->scale.y;
+        rot = component.transformData->rotation.angleXY;
       }
 
       double angle = fmod((rot * 360.0), 360.0);
@@ -352,18 +321,18 @@ namespace Component
 
         // blending mode
         SDL_SetTextureBlendMode(_data->_image->_buffer,
-            static_cast<SDL_BlendMode>(_component->blendingMode));
+            static_cast<SDL_BlendMode>(component.blendingMode));
 
         // color modulation
         uint8_t r = 0;
         uint8_t g = 0;
         uint8_t b = 0;
         uint8_t a = 0;
-        SDL2::colour8RGBA(r, g, b, a, _component->colourTint);
+        SDL2::colour8RGBA(r, g, b, a, component.colourTint);
         SDL_SetTextureColorMod(_data->_image->_buffer, r, g, b);
 
         // alpha mode
-        uint8_t alpha = static_cast<uint8_t>(255 * _component->alphaMode);
+        uint8_t alpha = static_cast<uint8_t>(255 * component.alphaMode);
         SDL_SetTextureAlphaMod(_data->_image->_buffer, alpha);
 
         // paint the Image
@@ -382,31 +351,12 @@ namespace Component
 
 } // end namespace Component
 
-  // template<>
-  // GraphicSystemHandler< SDL2::Handler >::GraphicSystemHandler()
-  // {
-  //   SDL2::initGraphicSystem();
-  // }
-  //
-  // template<>
-  // GraphicSystemHandler< SDL2::Handler >::~GraphicSystemHandler()
-  // {
-  //   SDL2::quitGraphicSystem();
-  // }
-  //
-  // template<>
-  // SDL2BackEnd::DisplayPtr GraphicSystemHandler< SDL2::Handler >::getDisplay()
-  // {
-  //   return SDL2BackEnd::DisplayPtr(
-  //       new SDL2BackEnd::Display({{0.0,0.0,0.0}, {640.0, 480.0, 0.0}}) );
-  // }
 
 namespace System
 {
 
   Graphics::Graphics(const char * name)
       :BaseInterface(name)
-      //,_graphicSystemHandler(nullptr)
   {
     SDL2::initGraphicSystem();
   }
@@ -417,40 +367,6 @@ namespace System
   }
 
 } // end namespace System
-
-
-// namespace BackEnd
-// {
-//
-//   // graphic functions
-//   ErrorCode getGraphicHandler(IHandler * handler, const IConfig * data)
-//   {
-//     handler = new SDL2BackEnd::GraphicSysHandler();
-//     if(nullptr != handler)
-//     {
-//       return 0;
-//     }
-//     else
-//     {
-//       return -1;
-//     }
-//   }
-//
-//   //
-//   // // inputs functions
-//   // ErrorCode getInputHandler(IHandler * handler, const IConfig * data)
-//   // {
-//   //   return 0;
-//   // }
-//   //
-//   // // events functions
-//   // ErrorCode getEventHandler(IHandler * handler, const IConfig * data)
-//   // {
-//   //   return 0;
-//   // }
-//
-//
-// } // end namespace BackEnd
 
 
 } // end namespace Engine

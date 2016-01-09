@@ -16,7 +16,7 @@ using namespace Utils;
 namespace Component
 {
 
-  struct Physics
+  struct PhysicsPod
   {
     // values between 0.0 - 1.0 (in relation to world size) / t / t
     Vector3 linVelocity;

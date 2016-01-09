@@ -14,7 +14,7 @@ using namespace Utils;
 namespace Component
 {
 
-  struct Entity
+  struct EntityPod
   {
     // entity unique identifier
     EntityID entityId;

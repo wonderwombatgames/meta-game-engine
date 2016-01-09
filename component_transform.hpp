@@ -14,7 +14,7 @@ using namespace Utils;
 namespace Component
 {
 
-  struct Transform
+  struct TransformPod
   {
     // kind of space 2D/3D
     eSpace kind;

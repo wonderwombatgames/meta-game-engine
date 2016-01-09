@@ -59,9 +59,9 @@ public:
 
     set< BaseInterface * > _componentSystems;
     // this POD is to be used by the component systems
-    Component::Entity _entityData;
+    Component::EntityPod _entityData;
     // contains spatial information
-    Component::Transform _transformData;
+    Component::TransformPod _transformData;
   };
 
   static EntitiesManager * instance();

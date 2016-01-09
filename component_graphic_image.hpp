@@ -3,11 +3,13 @@
   *
   */
 
-#ifndef TEXTURE_HPP
-#define TEXTURE_HPP
+#ifndef COMPONENT_GRAPHIC_IMAGE_HPP
+#define COMPONENT_GRAPHIC_IMAGE_HPP
 
 #include <memory>
 #include <string>
+#include <vector>
+
 #include "component_graphic.hpp"
 
 namespace Engine
@@ -15,63 +17,52 @@ namespace Engine
 using namespace std;
 using namespace Utils;
 
+// TODO:
 // forward declaration
-//class ImageAtlas;
-//class AtlasKey;
+// class ImageAtlas;
+// class AtlasKey;
+// class NetworkResource;
 
 namespace Component
 {
 
   template <typename T >
-  class Image : public IGraphic
+  class Image : public GraphicInterface
   {
   public:
-    Image(Graphic & component);
-    Image(Graphic & component, const string & filepath);
-    //Image(const ImageAtlas & atlas, vector<AtlasKey> keys);
-    Image() = delete;
     Image(Image & other) = delete;
+    Image();
+    Image(const string & filepath);
+    // TODO:
+    // Image(const ImageAtlas & atlas, vector<AtlasKey> keys);
+    // Image(const NetworkResource & netRes);
     virtual ~Image();
 
-    bool loadFromFile(const string & filepath);
-    //bool loadFromAtlas(const ImageAtlas & atlas, vector<AtlasKey> keys)
     bool isLoaded();
+    bool loadFromFile(const string & filepath);
+    // TODO:
+    // bool loadFromAtlas(const ImageAtlas & atlas, vector<AtlasKey> keys);
+    // bool loadFromNet(const NetworkResource & netRes);
 
-    virtual void paint(const Vector3 & offset = {0.0f, 0.0f, 0.0f}) override;
-
-  #if 0
-   void setPosition(const Vector3 & p);
-   const Vector3 & getPosition();
-    void setScale(const Vector3 & s);
-    const Vector3 & getScale();
-    void setAnchor(const Vector3 & a);
-    const Vector3 & getAnchor();
-    void setRotation(const Rotation3 & r);
-    const Rotation3 & getRotation();
-    void setTinting();
-    const Colour & getTinting();
-    void setAlpha(const ColourComponent & a);
-    const ColourComponent & getAlpha();
-    void setBlendMode(const BlendingMode & b);
-    const BlendingMode & getBlendMode();
-    void setAtlasFrame(const unsigned short & frame);
-    const unsigned short & getAtlasFrame();
-  #endif
+    virtual void paint(
+        const GraphicPod & component,
+        const Vector3 & offset = {0.0f, 0.0f, 0.0f}) override;
+    virtual bool setParameter(
+        const char * paramName,
+        const float & paramValue = 0.0f) override;
 
   protected:
     typedef T _HANDLER;
-
-    Graphic * _component;
     unique_ptr< _HANDLER > _data;
 
-    void init();
-    void getWindowSize(int & w, int & h);
-    void getImageSize(int & w, int & h);
-    void computeClipRects(BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector3 & center);
+    // size - between 0.0 - 1.0 (in relation to viewport size)
+    Dimension3 _textureSize;
+
+    void computeClipRects(const GraphicPod & component, BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector3 & center);
   };
 
 } // end namespace Component
 
 } // end namespace Engine
 
-#endif // TEXTURE_HPP
+#endif // COMPONENT_GRAPHIC_IMAGE_HPP

@@ -80,26 +80,17 @@ int main(int argc, char *argv[])
   assert(em->refreshEntities() == 0);
   cout << "!!!OK - " << ++test_count << " => Destroied All Entities" << endl;
 
-  //GraphicSystemHandler< Engine::SDLBackEnd::SDLContext > graphics;
-  //SDLBackEnd::initGraphicSystem();
-  //BoxBoundXYWH bb{{0.0,0.0,0.0}, {320.0, 240.0, 0.0}};
-  //Display< Engine::SDLBackEnd::SDLContext > view(bb);
-
-  //SDL2BackEnd::GraphicSysHandler graphics;
-  //SDL2BackEnd::DisplayPtr view = std::move(graphics.getDisplay());
-  //SDL::Display view({{0.0,0.0,0.0}, {320.0, 240.0, 0.0}});
-
   System::Graphics graphics("window1");
   SDL2BackEnd::Display view({{0.0,0.0,0.0}, {320.0, 240.0, 0.0}});
   cout << "!!!OK - " << ++test_count << " => Created a viewport. " << endl;
 
-  Component::Entity _entityData;
+  Component::EntityPod _entityData;
   // defaults
   _entityData.entityId = 0;
   // whether or not this entity is active
   _entityData.isActive = true;
 
-  Component::Transform _transformData;
+  Component::TransformPod _transformData;
   // kind of space 2D/3D
   _transformData.kind = SPACE_2D;
   // position
@@ -114,33 +105,36 @@ int main(int argc, char *argv[])
   // <0.0 : mirror
   _transformData.scale = {1.0f, 1.0f, 1.0f};
 
-  Component::Graphic sprite_;
-  //Image< Engine::SDLBackEnd::SDLContext > tex1(sprite_);
-  SDL2BackEnd::Image tex1(sprite_);
+  SDL2BackEnd::Image tex1;
   string filename("img/sample.png");
   tex1.loadFromFile(filename);
+  cout << "!!!OK - " << ++test_count << " => Created 1 texture. " << endl;
 
-  Component::Graphic sprite;
-  //Image< Engine::SDLBackEnd::SDLContext > tex2(sprite);
-  SDL2BackEnd::Image tex2(sprite);
+  SDL2BackEnd::Image tex2;
   tex2.loadFromFile(filename);
+  cout << "!!!OK - " << ++test_count << " => Created another texture with same asset. " << endl;
 
-  Colour c1;
-  c1.kind = RGB;
-  c1.rgb = {0.5, 0.5, 0.5};
-  Dimension3 r{640.0, 480.0, 0.0};
-
+  Component::GraphicPod sprite;
   sprite.transformData = &_transformData;
+  sprite.isVisible = true;
   sprite.anchor = {0.5f, 0.5f, 0.5f};
   sprite.blendingMode = SDL_BLENDMODE_BLEND;
   sprite.alphaMode = 1.0f;
   Colour c2;
   c2.kind = RGB;
   c2.rgb = {0.1, 0.5, 0.9};
-  //sprite.colourTint = c2;
+  sprite.colourTint = c2;
+  cout << "!!!OK - " << ++test_count << " => set the sprite on the world: " << sprite.transformData->position.x << " - " << sprite.transformData->position.y << endl;
 
+
+  Dimension3 r{640.0, 480.0, 0.0};
   view.setResolution(r);
+  cout << "!!!OK - " << ++test_count << " => reset resolution " << endl;
   //view.setFullscreen(true);
+
+  Colour c1;
+  c1.kind = RGB;
+  c1.rgb = {0.5, 0.5, 0.5};
 
   float rotation = 0.0f;
   float rand_x = 0;
@@ -163,18 +157,15 @@ int main(int argc, char *argv[])
     rand_y += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
     Vector3 offset{rand_x, rand_y, 0.0f};
 
-    // view.setColour(c1);
-    view.clear(&c1);
-    tex2.paint(offset);
+    view.clear(c1);
+    tex2.paint(sprite, offset);
     view.render();
 
     SDL_Delay(1000/25);
   }
   cout << "!!!OK - " << ++test_count << " => Painting texture. " << endl;
   // SDL_Delay(1000);
-  //view.setFullscreen(false);
-
-  //SDLBackEnd::quitGraphicSystem();
+  // view.setFullscreen(false);
 
   return 0;
 }

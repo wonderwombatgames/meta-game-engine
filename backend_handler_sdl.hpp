@@ -10,6 +10,8 @@
 #include <SDL2/SDL.h>
 #include "utils_types.hpp"
 #include "component_graphic_display.hpp"
+#include "component_graphic_image.hpp"
+
 
 namespace Engine
 {
@@ -50,7 +52,7 @@ namespace SDL2
   {
     Handler();
 
-    unique_ptr< Renderer > _view;
+    shared_ptr< Renderer > _view;
     shared_ptr< Texture > _image;
   };
 

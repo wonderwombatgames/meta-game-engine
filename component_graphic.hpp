@@ -15,35 +15,19 @@ namespace Component
 {
 
 // forward declaration
-//class IGraphicEffectsData;
-//class IShaderData;
-//class IParticlesEmitterData;
+  class GraphicInterface;
 
-  class IGraphic
-  {
-  public:
-    IGraphic(){}
-    virtual ~IGraphic(){}
-    virtual void paint(const Vector3 & offset = {0.0f, 0.0f, 0.0f}) = 0;
-  };
-
-  struct Graphic
+  struct GraphicPod
   {
     // reference to entity data component
-    Transform * transformData;
+    TransformPod * transformData;
 
     // defines the anchor within the boudaries
     // values between 0.0 - 1.0 (in relation to entity size | UV)
     Vector3 anchor;
 
-    // size - between 0.0 - 1.0 (in relation to viewport size)
-    Dimension3 textureSize;
-
-    // texture data pointer
-    IGraphic * texture;
-
-    // nth frame in within the texture atlas
-    unsigned short animationFrame;
+    // graphic element data pointer
+    GraphicInterface * element;
 
     // colour parameters
     Colour colourTint;
@@ -53,10 +37,16 @@ namespace Component
     // whether to show the entity or not
     bool isVisible;
 
-    // special components
-    //GraphicEffectsData * effects;
-    //ShaderData * shader;
-    //ParticlesEmitterData * emitter;
+  };
+
+  class GraphicInterface
+  {
+  public:
+    GraphicInterface(){}
+    virtual ~GraphicInterface(){}
+    virtual void
+      paint(const GraphicPod & component, const Vector3 & offset = {0.0f, 0.0f, 0.0f}) = 0;
+    virtual bool setParameter(const char * paramName, const float & paramValue = 0.0f) = 0;
   };
 
 } // namespace Component

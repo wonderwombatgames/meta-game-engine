@@ -85,6 +85,8 @@ struct BoxBoundTLBR
   Vector3 bottonRight;
 };
 
+typedef BoxBoundTLBR BoxBoundAABB;
+
 struct BoxBoundXYWH
 {
   Vector3 topLeft;
@@ -98,20 +100,7 @@ struct BoxBoundXYWH
 //   unsigned char numOfVertice;
 //   Vector3 * vertices[POLYGON_BOUND_MAX_VERTICES];
 // };
-
-// #define MULTICIRCLE_BOUND_MAX_CIRCLES 8
-// struct MultiCircleBound
-// {
-//   unsigned char numOfCircles;
-//   CircleBound * bounds[MULTIBOX_BOUND_MAX_BOXES];
-// };
-
-// #define MULTIBOX_BOUND_MAX_BOXES 8
-// struct MultiBoxBound
-// {
-//   unsigned char numOfBoxes;
-//   BoxBoundTLBR * bounds[MULTIBOX_BOUND_MAX_BOXES];
-// };
+;
 
 
 
@@ -124,8 +113,6 @@ struct Bound
     BoxBoundTLBR     boxBoundTLBR;
     BoxBoundXYWH     boxBoundXYWH;
     // MultiBoxBound multiBoxBound;
-    // MultiCircleBound multiCircleBound;
-    // PolygonBound polyBound;
   };
 };
 

@@ -62,16 +62,25 @@ namespace // anonymous
 
   inline void SDLWrapper::init()
   {
-    int initResult = SDL_Init(SDL_INIT_NOPARACHUTE);
-    if (initResult < 0)
+    int initSdl = SDL_Init(SDL_INIT_NOPARACHUTE);
+    if (initSdl < 0)
     {
       SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
     }
-    assert(initResult == 0);
+    assert(initSdl == 0);
+
+    int flags = IMG_INIT_PNG;
+    int initImg = IMG_Init(flags);
+    if (initImg < 0)
+    {
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL Image: %s", SDL_GetError());
+    }
+    assert(initImg == flags);
   }
 
   inline void SDLWrapper::quit()
   {
+    IMG_Quit();
     SDL_Quit();
   }
 
@@ -327,27 +336,6 @@ namespace SDL2
 
 } // end namespace SDL2
 
-// // inputs functions
-// bool initInputSystem(Flags flags)
-// {
-//   return SDLWrapper::instance()->initInput();
-// }
-//
-// void quitInputSystem()
-// {
-//   SDLWrapper::instance()->quitInput();
-// }
-//
-// // events functions
-// bool initEventSystem(Flags flags)
-// {
-//   return SDLWrapper::instance()->initEvents();
-// }
-//
-// void quitEventSystem()
-// {
-//   SDLWrapper::instance()->quitEvents();
-// }
 
 } // end namespace BackEnd
 
