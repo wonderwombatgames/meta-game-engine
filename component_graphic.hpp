@@ -19,7 +19,7 @@ namespace Component
 
   struct GraphicPod
   {
-    // reference to entity data component
+    // reference to transform data component
     TransformPod * transformData;
 
     // defines the anchor within the boudaries

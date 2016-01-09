@@ -41,7 +41,7 @@ public:
     bool resume();
     void destroy(bool mustDestroy);
     bool destroy();
-    bool hasComponent(BaseInterface & system);
+    bool hasComponent(SystemsInterface & system);
 
   protected:
     // can be used to register components into systems from constructor
@@ -51,13 +51,13 @@ public:
     void tearDownComponents();
 
     // add one more component to the entity
-    void addComponent(BaseInterface & system);
+    void addComponent(SystemsInterface & system);
 
     // data
     bool _destroy;
     string _name;
 
-    set< BaseInterface * > _componentSystems;
+    set< SystemsInterface * > _componentSystems;
     // this POD is to be used by the component systems
     Component::EntityPod _entityData;
     // contains spatial information
@@ -69,7 +69,7 @@ public:
 
   // entity related methods
   template< class EntityType = IEntity >
-  int  createEntity(const char * name);
+  EntityID  createEntity(const char * name);
   bool destroyEntity(EntityID entityId);
   bool suspendEntity(EntityID entityId);
   bool resumeEntity(EntityID entityId);
@@ -79,7 +79,7 @@ public:
   int  refreshEntities();
 
   // component related methods
-  bool addComponent(EntityID entitityId, BaseInterface & system);
+  bool addComponent(EntityID entitityId, SystemsInterface & system);
 
 protected:
   enum {  MAX_ENTITIES_AMOUNT = 10000  };
@@ -138,7 +138,7 @@ inline bool EntitiesManager::IEntity::destroy()
   return this->_destroy;
 }
 
-inline bool EntitiesManager::IEntity::hasComponent(BaseInterface & system)
+inline bool EntitiesManager::IEntity::hasComponent(SystemsInterface & system)
 {
   return (0 < this->_componentSystems.count(&system));
 }

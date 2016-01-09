@@ -28,24 +28,24 @@ typedef float TimeDimension;
 namespace System
 {
 
-  class BaseInterface
+  class SystemsInterface
   {
   public:
-    BaseInterface() = delete;
-    BaseInterface(BaseInterface & other) = delete;
-    BaseInterface(const char * name): _name(name), _frames(0)
+    SystemsInterface() = delete;
+    SystemsInterface(SystemsInterface & other) = delete;
+    SystemsInterface(const char * name): _name(name), _frames(0)
     {
-      assert(BaseInterface::systemRegistrar(this, name, REGISTER));
+      assert(SystemsInterface::systemRegistrar(this, name, REGISTER));
     }
-    virtual ~BaseInterface()
+    virtual ~SystemsInterface()
     {
-      assert(BaseInterface::systemRegistrar(this, _name.c_str(), UNREGISTER));
+      assert(SystemsInterface::systemRegistrar(this, _name.c_str(), UNREGISTER));
     }
 
     // get system name
     const string & getName() { return this->_name;  }
     // check if the pointer actually points to a system
-    static bool isValid(BaseInterface & system);
+    static bool isValid(SystemsInterface & system);
     // perform one step in the system
     FrameCount update(TimeDimension delta)
     {
@@ -54,8 +54,8 @@ namespace System
     }
 
     // entity related methods
-    void addEntity(Component::EntityPod & entity, const Component::TransformPod transform){};
-    void delEntity(Component::EntityPod & entity){};
+    void addEntity(const Component::EntityPod & entity, Component::TransformPod transform);
+    void delEntity(const Component::EntityPod & entity);
 
    protected:
     enum eRegistrar
@@ -66,24 +66,36 @@ namespace System
     };
 
     // must be overriden in each system (impl. NVI)
-    virtual void tick(TimeDimension delta){};
-    static bool systemRegistrar(BaseInterface * system, const char * name = nullptr, eRegistrar op = VERIFY);
+    virtual void tick(TimeDimension delta){}
+    virtual void add(const Component::EntityPod & entity, Component::TransformPod transform){}
+    virtual void del(const Component::EntityPod & entity){}
+    static bool systemRegistrar(SystemsInterface * system, const char * name = nullptr, eRegistrar op = VERIFY);
 
     string _name;
     FrameCount _frames;
   };
 
-  inline bool BaseInterface::isValid(BaseInterface & system)
+  inline void SystemsInterface::addEntity(const Component::EntityPod & entity, const Component::TransformPod transform)
   {
-    return BaseInterface::systemRegistrar(&system, nullptr, VERIFY);
+    this->add(entity, transform);
   }
 
-  inline bool BaseInterface::systemRegistrar(
-      BaseInterface * system,
+  inline void SystemsInterface::delEntity(const Component::EntityPod & entity)
+  {
+    this->del(entity);
+  }
+
+  inline bool SystemsInterface::isValid(SystemsInterface & system)
+  {
+    return SystemsInterface::systemRegistrar(&system, nullptr, VERIFY);
+  }
+
+  inline bool SystemsInterface::systemRegistrar(
+      SystemsInterface * system,
       const char * name,
       eRegistrar op)
   {
-    static map< string, BaseInterface * > s_systems;
+    static map< string, SystemsInterface * > s_systems;
 
     string searchName;
     if (nullptr != name)

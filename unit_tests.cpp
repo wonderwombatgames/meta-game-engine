@@ -9,7 +9,7 @@
 
 #include "entities_manager.hpp"
 #include "system_interface.hpp"
-#include "component_graphic_display.hpp"
+// #include "component_graphic_display.hpp"
 #include "backend_handler_sdl.hpp"
 #include "system_graphics.hpp"
 
@@ -34,12 +34,12 @@ int main(int argc, char *argv[])
   assert(em->refreshEntities() == 2);
   cout << "!!!OK - " << ++test_count << " => Created 2 Entities" << endl;
 
-  BaseInterface dummySystem1("dummy1");
-  assert(BaseInterface::isValid(dummySystem1));
+  SystemsInterface dummySystem1("dummy1");
+  assert(SystemsInterface::isValid(dummySystem1));
   cout << "!!!OK - " << ++test_count << " => Created first Dummy System" << endl;
 
-  BaseInterface dummySystem2("dummy2");
-  assert(BaseInterface::isValid(dummySystem2));
+  SystemsInterface dummySystem2("dummy2");
+  assert(SystemsInterface::isValid(dummySystem2));
   cout << "!!!OK - " << ++test_count << " => Created second Dummy System" << endl;
 
   assert(em->addComponent(id2, dummySystem1));

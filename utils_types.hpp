@@ -18,14 +18,34 @@ namespace Utils
 
 enum { InvalidID = -1 };
 
-typedef int EntityID;
-typedef int TypeID;
 typedef uint32_t Flags;
 typedef uint16_t BlendingMode;
 typedef uint8_t ErrorCode;
 typedef float ColourComponent;
 typedef float SpatialDimention;
 
+typedef long int EntityID;
+typedef EntityID TypeID;
+typedef EntityID AssetID;
+
+
+// EntityID newId()
+// {
+//   const EntityID maxEntities = EntitiesManager::MAX_ENTITIES_AMOUNT;
+//   // use current time as seed for random generator
+//   srand(time(0));
+//   EntityID randomId = 1 + ((rand() * (maxEntities + 1)) % maxEntities);
+//   int attempts = 0;
+//   // check that the id was not used yet
+//   while (this->_entities.count(randomId)>0)
+//   {
+//     randomId = (rand() * (maxEntities + 1)) % maxEntities;
+//     ++attempts;
+//     // this ensures we do not allocate more entities than the MAX
+//     assert( attempts < maxEntities);
+//   }
+//   return randomId;
+// }
 
 enum eSpace
 {

@@ -33,8 +33,9 @@ namespace Engine
 using namespace std;
 using namespace BackEnd;
 
-namespace Component
+namespace GraphicDevice
 {
+
   // Display
   template <>
   void Display< SDL2::Handler >::render()
@@ -166,6 +167,12 @@ namespace Component
 
     this->setViewRect(rect);
   }
+
+} // end namespace GraphicDevice
+
+
+namespace Component
+{
 
   // Image
   template <>
@@ -356,7 +363,7 @@ namespace System
 {
 
   Graphics::Graphics(const char * name)
-      :BaseInterface(name)
+      :SystemsInterface(name)
   {
     SDL2::initGraphicSystem();
   }
@@ -364,6 +371,65 @@ namespace System
   Graphics::~Graphics()
   {
     SDL2::quitGraphicSystem();
+  }
+
+  // TODO:
+  // int loadAssetFromAtlas(const ImageAtlas & atlas);
+  // int loadAssetFromNet(const NetworkResource & netRes)
+  template< typename T >
+  int Graphics::loadAssetFromFile(const string & filepath)
+  {
+    static AssetID assetCounter = 0;
+    ++assetCounter;
+    this->_assets.emplace(assetCounter, make_shared<T>(filepath));
+
+    return assetCounter;
+  }
+
+  bool Graphics::setEntityAsset(Component::EntityPod entity, int assetId)
+  {
+    auto itComp = this->_components.find(entity.entityId);
+    auto itAsset = this->_assets.find(assetId);
+    if (itComp  != this->_components.end() &&
+        itAsset != this->_assets.end())
+    {
+      itComp->second.element = itAsset->second.get();
+      return true;
+    }
+
+    return false;
+  }
+
+  void Graphics::add(const Component::EntityPod & entity, Component::TransformPod transform)
+  {
+    Colour c;
+    c.kind = RGBA;
+    c.rgba = {0.0f, 0.0f, 0.0f, 1.0f};
+    Component::GraphicPod pod{
+            // reference to entity transform component
+            &transform,
+            // defines the anchor within the boudaries
+            // values between 0.0 - 1.0 (in relation to entity size | UV)
+            {0.5f, 0.5f, 0.0f},
+            // graphic element data pointer
+            nullptr,
+            // colour parameters
+            c,    // Colour colourTint
+            1.0f, // ColourComponent alphaMode;
+            0,    // BlendingMode blendingMode;
+            // whether to show the entity or not
+            true                // isVisible
+          };
+    this->_components.emplace(entity.entityId, pod);
+  }
+
+  void Graphics::del(const Component::EntityPod & entity)
+  {
+    auto it = this->_components.find(entity.entityId);
+    if (it != this->_components.end())
+    {
+      this->_components.erase(it);
+    }
   }
 
 } // end namespace System

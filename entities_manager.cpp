@@ -76,7 +76,7 @@ void EntitiesManager::IEntity::tearDownComponents()
 {
   for(auto system : this->_componentSystems)
   {
-    if (BaseInterface::isValid(*system))
+    if (SystemsInterface::isValid(*system))
     {
       system->delEntity(this->_entityData);
     }
@@ -84,9 +84,9 @@ void EntitiesManager::IEntity::tearDownComponents()
 }
 
 // add one more component to the entity
-void EntitiesManager::IEntity::addComponent(BaseInterface & system)
+void EntitiesManager::IEntity::addComponent(SystemsInterface & system)
 {
-  if (BaseInterface::isValid(system))
+  if (SystemsInterface::isValid(system))
   {
     this->_componentSystems.insert(&system);
     system.addEntity(this->_entityData, this->_transformData);
@@ -107,7 +107,7 @@ EntitiesManager * EntitiesManager::instance()
   return s_instance;
 }
 
-bool EntitiesManager::addComponent(EntityID entitityId, BaseInterface & system)
+bool EntitiesManager::addComponent(EntityID entitityId, SystemsInterface & system)
 {
   auto entity = this->_entities.find(entitityId);
   if(entity != this->_entities.end())

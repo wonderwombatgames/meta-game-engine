@@ -20,7 +20,6 @@ using namespace Utils;
 // TODO:
 // forward declaration
 // class ImageAtlas;
-// class AtlasKey;
 // class NetworkResource;
 
 namespace Component
@@ -41,7 +40,7 @@ namespace Component
     bool isLoaded();
     bool loadFromFile(const string & filepath);
     // TODO:
-    // bool loadFromAtlas(const ImageAtlas & atlas, vector<AtlasKey> keys);
+    // bool loadFromAtlas(const ImageAtlas & atlas);
     // bool loadFromNet(const NetworkResource & netRes);
 
     virtual void paint(

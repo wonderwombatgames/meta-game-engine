@@ -9,7 +9,7 @@
 #include <memory>
 #include <SDL2/SDL.h>
 #include "utils_types.hpp"
-#include "component_graphic_display.hpp"
+#include "system_graphics.hpp"
 #include "component_graphic_image.hpp"
 
 
@@ -70,8 +70,8 @@ namespace SDL2
 
 namespace SDL2BackEnd
 {
-typedef Component::Display< BackEnd::SDL2::Handler > Display;
-typedef std::unique_ptr< Component::Display< Engine::BackEnd::SDL2::Handler > > DisplayPtr;
+typedef GraphicDevice::Display< BackEnd::SDL2::Handler > Display;
+typedef std::unique_ptr< GraphicDevice::Display< Engine::BackEnd::SDL2::Handler > > DisplayPtr;
 typedef Component::Image< BackEnd::SDL2::Handler > Image;
 }
 
