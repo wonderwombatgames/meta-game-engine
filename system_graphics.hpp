@@ -101,21 +101,31 @@ namespace System
     void createDisplay(const BoxBoundXYWH & rect, Flags flags = 0);
 
     template <typename T>
-    int loadAssetFromFile(const string & filepath);
+    AssetID loadAssetFromFile(const string & filepath);
     // TODO:
-    // int loadAssetFromAtlas(const ImageAtlas & atlas);
-    // int loadAssetFromNet(const NetworkResource & netRes)
+    // AssetID loadAssetFromAtlas(const ImageAtlas & atlas);
+    // AssetID loadAssetFromNet(const NetworkResource & netRes)
 
-    bool setEntityAsset(Component::EntityPod entity, int assetId);
+    bool setEntityAsset(EntityID entityId, int assetId);
 
   protected:
     virtual void add(const Component::EntityPod & entity, Component::TransformPod * transform) override;
     virtual void del(const Component::EntityPod & entity) override;
-    virtual void tick(TimeDimension delta) override {};
+    virtual void tick(TimeDimension delta) override;
 
     unordered_map< EntityID, Component::GraphicPod > _components;
     unordered_map< AssetID, shared_ptr< Component::GraphicInterface > > _assets;
   };
+
+  template< typename T >
+  AssetID Graphics::loadAssetFromFile(const string & filepath)
+  {
+    static AssetID assetCounter = 0;
+    ++assetCounter;
+    this->_assets.emplace(assetCounter, make_shared<T>(filepath));
+
+    return assetCounter;
+  }
 
 
 } // end namespace System

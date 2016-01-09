@@ -381,22 +381,10 @@ namespace System
     SDL2::quitGraphicSystem();
   }
 
-  // TODO:
-  // int loadAssetFromAtlas(const ImageAtlas & atlas);
-  // int loadAssetFromNet(const NetworkResource & netRes)
-  template< typename T >
-  int Graphics::loadAssetFromFile(const string & filepath)
-  {
-    static AssetID assetCounter = 0;
-    ++assetCounter;
-    this->_assets.emplace(assetCounter, make_shared<T>(filepath));
 
-    return assetCounter;
-  }
-
-  bool Graphics::setEntityAsset(Component::EntityPod entity, int assetId)
+  bool Graphics::setEntityAsset(EntityID entityId, int assetId)
   {
-    auto itComp = this->_components.find(entity.entityId);
+    auto itComp = this->_components.find(entityId);
     auto itAsset = this->_assets.find(assetId);
     if (itComp  != this->_components.end() &&
         itAsset != this->_assets.end())
@@ -441,6 +429,11 @@ namespace System
     {
       this->_components.erase(it);
     }
+  }
+
+  void Graphics::tick(TimeDimension delta)
+  {
+
   }
 
 } // end namespace System
