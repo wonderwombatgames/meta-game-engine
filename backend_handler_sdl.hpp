@@ -70,9 +70,11 @@ namespace SDL2
 
 namespace SDL2BackEnd
 {
-typedef GraphicDevice::Display< BackEnd::SDL2::Handler > Display;
-typedef std::unique_ptr< GraphicDevice::Display< Engine::BackEnd::SDL2::Handler > > DisplayPtr;
-typedef Component::Image< BackEnd::SDL2::Handler > Image;
+typedef Engine::BackEnd::SDL2::Handler Handler;
+typedef GraphicDevice::Display< Handler > Display;
+typedef GraphicDevice::DisplayInterface DisplayInterface;
+typedef std::unique_ptr< DisplayInterface > DisplayPtr;
+typedef Component::Image< Handler > Image;
 }
 
 } // end namespace Engine

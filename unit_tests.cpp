@@ -80,7 +80,11 @@ int main(int argc, char *argv[])
   cout << "!!!OK - " << ++test_count << " => Destroied All Entities" << endl;
 
   System::Graphics graphics("window1");
-  SDL2BackEnd::Display view({{0.0,0.0,0.0}, {320.0, 240.0, 0.0}});
+  graphics.createDisplay({{0.0,0.0,0.0}, {320.0, 240.0, 0.0}});
+  SDL2BackEnd::DisplayInterface & view = *graphics.display.get();
+  //     *(graphics.createDisplay<SDL2BackEnd::Display>
+  //         ({{0.0,0.0,0.0}, {320.0, 240.0, 0.0}}));
+  // SDL2BackEnd::Display view({{0.0,0.0,0.0}, {320.0, 240.0, 0.0}});
   cout << "!!!OK - " << ++test_count << " => Created a viewport. " << endl;
 
   Component::EntityPod _entityData;

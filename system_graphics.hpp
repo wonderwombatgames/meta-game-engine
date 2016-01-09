@@ -23,33 +23,58 @@ using namespace std;
 namespace GraphicDevice
 {
 
-  template < typename T >
-  class Display
+  class DisplayInterface
   {
   public:
-    ~Display(){};
+    virtual ~DisplayInterface(){};
+
+    // rendering
+    virtual void render() =0;
+    virtual void clear() =0;
+    virtual void clear(const Colour & c) =0;
+
+    // reseting the viewport
+    virtual void setColour(const Colour & c) =0;
+    virtual const Colour & getColour() const =0;
+    virtual void setResolution(Dimension3 & res) =0;
+    virtual const Dimension3 & getResolution() const =0;
+    virtual void setViewRect(const BoxBoundXYWH & rect) =0;
+    virtual const BoxBoundXYWH & getViewRect() const =0;
+    virtual void setTitle(const string & title) =0;
+    virtual const char * getTitle() const =0;
+    virtual void setFullscreen(bool fs) =0;
+    virtual const bool isFullscreen() const =0;
+  };
+
+
+  template < typename T >
+  class Display : public DisplayInterface
+  {
+  public:
     Display(const BoxBoundXYWH & rect, Flags flags = 0);
+    virtual ~Display(){};
     Display() = delete;
     Display(Display & other) = delete;
 
     // rendering
-    void render();
-    void clear();
-    void clear(const Colour & c);
+    virtual void render() override;
+    virtual void clear() override;
+    virtual void clear(const Colour & c) override;
 
     // reseting the viewport
-    void setColour(const Colour & c);
-    const Colour & getColour() const;
-    void setResolution(Dimension3 & res);
-    const Dimension3 & getResolution() const;
-    void setViewRect(const BoxBoundXYWH & rect);
-    const BoxBoundXYWH & getViewRect() const;
-    void setTitle(const string & title);
-    const char * getTitle() const;
-    void setFullscreen(bool fs);
-    const bool isFullscreen() const;
+    virtual void setColour(const Colour & c) override;
+    virtual const Colour & getColour() const override;
+    virtual void setResolution(Dimension3 & res) override;
+    virtual const Dimension3 & getResolution() const override;
+    virtual void setViewRect(const BoxBoundXYWH & rect) override;
+    virtual const BoxBoundXYWH & getViewRect() const override;
+    virtual void setTitle(const string & title) override;
+    virtual const char * getTitle() const override;
+    virtual void setFullscreen(bool fs) override;
+    virtual const bool isFullscreen() const override;
 
   protected:
+
     typedef T _HANDLER;
 
     //data
@@ -66,10 +91,14 @@ namespace System
   class Graphics : public SystemsInterface
   {
   public:
+    shared_ptr<GraphicDevice::DisplayInterface> display;
+
     Graphics(const char * name);
     Graphics() = delete;
     Graphics(Graphics & other) = delete;
     virtual ~Graphics();
+
+    void createDisplay(const BoxBoundXYWH & rect, Flags flags = 0);
 
     template <typename T>
     int loadAssetFromFile(const string & filepath);

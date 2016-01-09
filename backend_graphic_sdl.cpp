@@ -365,6 +365,11 @@ namespace Component
 namespace System
 {
 
+  void Graphics::createDisplay(const BoxBoundXYWH & rect, Flags flags)
+  {
+    this->display = make_shared< GraphicDevice::Display< SDL2::Handler > > (rect, flags);
+  }
+
   Graphics::Graphics(const char * name)
       :SystemsInterface(name)
   {
@@ -405,25 +410,28 @@ namespace System
 
   void Graphics::add(const Component::EntityPod & entity, Component::TransformPod * transform)
   {
-    Colour c;
-    c.kind = RGBA;
-    c.rgba = {0.0f, 0.0f, 0.0f, 1.0f};
-    Component::GraphicPod pod{
-            // reference to entity transform component
-            transform,
-            // defines the anchor within the boudaries
-            // values between 0.0 - 1.0 (in relation to entity size | UV)
-            {0.5f, 0.5f, 0.0f},
-            // graphic element data pointer
-            nullptr,
-            // colour parameters
-            c,    // Colour colourTint
-            1.0f, // ColourComponent alphaMode;
-            0,    // BlendingMode blendingMode;
-            // whether to show the entity or not
-            true                // isVisible
-          };
-    this->_components.emplace(entity.entityId, pod);
+    if (transform != nullptr)
+    {
+      Colour c;
+      c.kind = RGBA;
+      c.rgba = {0.0f, 0.0f, 0.0f, 1.0f};
+      Component::GraphicPod pod{
+              // reference to entity transform component
+              transform,
+              // defines the anchor within the boudaries
+              // values between 0.0 - 1.0 (in relation to entity size | UV)
+              {0.5f, 0.5f, 0.0f},
+              // graphic element data pointer
+              nullptr,
+              // colour parameters
+              c,    // Colour colourTint
+              1.0f, // ColourComponent alphaMode;
+              0,    // BlendingMode blendingMode;
+              // whether to show the entity or not
+              true                // isVisible
+            };
+      this->_components.emplace(entity.entityId, pod);
+    }
   }
 
   void Graphics::del(const Component::EntityPod & entity)
