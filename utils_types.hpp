@@ -9,6 +9,10 @@
 #define UTILS_TYPES_HPP
 
 #include <cstdint>
+#include <cstdlib>
+#include <ctime>
+#include <cassert>
+#include <set>
 
 namespace Engine
 {
@@ -28,24 +32,9 @@ typedef long int EntityID;
 typedef EntityID TypeID;
 typedef EntityID AssetID;
 
-
-// EntityID newId()
-// {
-//   const EntityID maxEntities = EntitiesManager::MAX_ENTITIES_AMOUNT;
-//   // use current time as seed for random generator
-//   srand(time(0));
-//   EntityID randomId = 1 + ((rand() * (maxEntities + 1)) % maxEntities);
-//   int attempts = 0;
-//   // check that the id was not used yet
-//   while (this->_entities.count(randomId)>0)
-//   {
-//     randomId = (rand() * (maxEntities + 1)) % maxEntities;
-//     ++attempts;
-//     // this ensures we do not allocate more entities than the MAX
-//     assert( attempts < maxEntities);
-//   }
-//   return randomId;
-// }
+enum {  MAX_IDS = 99999  };
+// creates a new random ID < MAX_IDS
+EntityID newId();
 
 enum eSpace
 {

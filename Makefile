@@ -8,6 +8,7 @@ sourcesfiles=\
 		backend_handler_sdl.cpp	\
 		system_transform.cpp \
 		utils_colour.cpp \
+		utils_types.cpp \
 		command_router.cpp \
 		unit_tests.cpp
 

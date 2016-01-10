@@ -121,7 +121,7 @@ namespace System
   AssetID Graphics::loadAssetFromFile(const string & filepath)
   {
     static AssetID assetCounter = 0;
-    ++assetCounter;
+    assetCounter = newId();
     this->_assets.emplace(assetCounter, make_shared<T>(filepath));
 
     return assetCounter;

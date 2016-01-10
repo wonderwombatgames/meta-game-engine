@@ -2,9 +2,6 @@
   *
   */
 
-#include <cstdlib>
-#include <ctime>
-#include <cassert>
 #include <deque>
 #include "system_interface.hpp"
 #include "entities_manager.hpp"
@@ -123,22 +120,5 @@ int EntitiesManager::refreshEntities()
   return this->_count;
 }
 
-EntityID EntitiesManager::newId()
-{
-  const EntityID maxEntities = EntitiesManager::MAX_ENTITIES_AMOUNT;
-  // use current time as seed for random generator
-  srand(time(0));
-  EntityID randomId = 1 + ((rand() * (maxEntities + 1)) % maxEntities);
-  int attempts = 0;
-  // check that the id was not used yet
-  while (this->_entities.count(randomId)>0)
-  {
-    randomId = (rand() * (maxEntities + 1)) % maxEntities;
-    ++attempts;
-    // this ensures we do not allocate more entities than the MAX
-    assert( attempts < maxEntities);
-  }
-  return randomId;
-}
 
 } // end namespace Engine

@@ -44,9 +44,6 @@ public:
 protected:
   enum {  MAX_ENTITIES_AMOUNT = 99999  };
 
-  // creates a new random entity ID < MAX_ENTITIES_AMOUNT
-  EntityID newId();
-
   // CTOR
   EntitiesManager() : _count(0) {};
 
@@ -64,7 +61,7 @@ protected:
 template< class EntityType >
 inline EntityID EntitiesManager::createEntity(const char * name)
 {
-  EntityID id = this->newId();
+  EntityID id = newId();
   EntityType * entity = new EntityType(id);
   entity->setUpComponents();
   this->_entities[id].reset(entity);
