@@ -37,25 +37,17 @@ namespace Component
     // whether to show the entity or not
     bool isVisible;
 
+    GraphicPod()
+        :transformData(nullptr)
+        ,anchor{0.5f, 0.5f, 0.0f}
+        ,element(nullptr)
+        ,colourTint()
+        ,alphaMode(1.0f)
+        ,blendingMode(0)
+        ,isVisible(true)
+    {}
   };
 
-  // Colour c;
-  // c.kind = RGBA;
-  // c.rgba = {0.0f, 0.0f, 0.0f, 1.0f};
-  // Component::GraphicPod pod{
-  //         // reference to entity transform component
-  //         transform,
-  //         // defines the anchor within the boudaries
-  //         // values between 0.0 - 1.0 (in relation to entity size | UV)
-  //         {0.5f, 0.5f, 0.0f},
-  //         // graphic element data pointer
-  //         nullptr,
-  //         // colour parameters
-  //         c,    // Colour colourTint
-  //         1.0f, // ColourComponent alphaMode;
-  //         0,    // BlendingMode blendingMode;
-  //         // whether to show the entity or not
-  //         true                // isVisible
 
   class GraphicInterface
   {

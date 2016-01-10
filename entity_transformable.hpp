@@ -15,7 +15,7 @@ using namespace System;
 class EntityTransformable :  public EntityBase
 {
 public:
-  // friend class EntitiesManager;
+  friend class EntitiesManager;
   // ctors and dtor
   EntityTransformable(EntityID id);
   EntityTransformable() = delete;
@@ -24,7 +24,7 @@ public:
 
 protected:
   // can be used to register components into systems from constructor
-  virtual void setUpComponents() {};
+  virtual void setUpComponents() override;
 
 };
 

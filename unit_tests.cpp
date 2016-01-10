@@ -8,9 +8,11 @@
 #include <SDL2/SDL.h>
 
 #include "entities_manager.hpp"
+#include "entity_transformable.hpp"
 #include "system_interface.hpp"
 #include "backend_handler_sdl.hpp"
 #include "system_graphics.hpp"
+#include "system_transform.hpp"
 
 
 using namespace Engine;
@@ -79,10 +81,13 @@ int main(int argc, char *argv[])
   assert(em->refreshEntities() == 0);
   cout << "!!!OK - " << ++test_count << " => Destroied All Entities" << endl;
 
-  System::Graphics graphics("window1");
+  System::Graphics graphics;
   graphics.createDisplay({{0.0,0.0,0.0}, {320.0, 240.0, 0.0}});
   SDL2BackEnd::DisplayInterface & view = *graphics.display.get();
   cout << "!!!OK - " << ++test_count << " => Created a viewport. " << endl;
+
+  System::Transform transform;
+  cout << "!!!OK - " << ++test_count << " => Started Transform System. " << endl;
 
   Component::EntityPod _entityData;
   // defaults
@@ -105,11 +110,14 @@ int main(int argc, char *argv[])
   // <0.0 : mirror
   _transformData.scale = {1.0f, 1.0f, 1.0f};
 
-  EntityID entId = em->createEntity<EntityBase>("Player");
-  AssetID imgId = graphics.loadAssetFromFile<SDL2BackEnd::Image>("img/test.png");
-  graphics.setEntityAsset(entId, imgId);
-  cout << "!!!OK - " << ++test_count << " => load texture in graphic system and assigned to entity " << endl;
+  EntityID entId = em->createEntity<EntityTransformable>("Player");
+  cout << "!!!OK - " << ++test_count << " => Created a Trasnformable entity. " << endl;
 
+  AssetID imgId = graphics.loadAssetFromFile<SDL2BackEnd::Image>("img/test.png");
+  cout << "!!!OK - " << ++test_count << " => load texture in graphic system " << endl;
+
+  graphics.setEntityAsset(entId, imgId);
+  cout << "!!!OK - " << ++test_count << " => assigned newly created texture to transformable entity " << endl;
 
   SDL2BackEnd::Image tex1;
   string filename("img/sample.png");

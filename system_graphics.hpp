@@ -93,8 +93,8 @@ namespace System
   public:
     shared_ptr<GraphicDevice::DisplayInterface> display;
 
+    Graphics();
     Graphics(const char * name);
-    Graphics() = delete;
     Graphics(Graphics & other) = delete;
     virtual ~Graphics();
 

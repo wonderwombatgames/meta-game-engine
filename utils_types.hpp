@@ -209,6 +209,13 @@ struct Colour
     ColourCMYK cmyk;
     ColourHex hex;
   };
+
+  Colour()
+  :kind(RGBA)
+  ,rgba{0.0f, 0.0f, 0.0f, 1.0f}
+  {}
+  // c.kind = RGBA;
+  // c.rgba = ;
 };
 
 enum eAudioState

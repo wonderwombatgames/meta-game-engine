@@ -35,11 +35,15 @@ namespace System
     SystemsInterface(SystemsInterface & other) = delete;
     SystemsInterface(const char * name): _name(name), _frames(0)
     {
-      assert(SystemsInterface::systemRegistrar(this, name, REGISTER));
+      bool retVal = false;
+      SystemsInterface::systemRegistrar(retVal, this, name, REGISTER);
+      assert(retVal);
     }
     virtual ~SystemsInterface()
     {
-      assert(SystemsInterface::systemRegistrar(this, _name.c_str(), UNREGISTER));
+      bool retVal = false;
+      SystemsInterface::systemRegistrar(retVal, this, _name.c_str(), UNREGISTER);
+      assert(retVal);
     }
 
     // get system name
@@ -47,15 +51,13 @@ namespace System
     // check if the pointer actually points to a system
     static bool isValid(SystemsInterface & system);
     // perform one step in the system
-    FrameCount update(TimeDimension delta)
-    {
-      this->tick(delta);
-      return ++(this->_frames);
-    }
+    FrameCount update(TimeDimension delta);
 
     // entity related methods
     void addEntity(const Component::EntityPod & entity, Component::TransformPod * transform);
     void delEntity(const Component::EntityPod & entity);
+
+    static SystemsInterface * getSystem(const string & name);
 
    protected:
     enum eRegistrar
@@ -69,11 +71,17 @@ namespace System
     virtual void tick(TimeDimension delta){}
     virtual void add(const Component::EntityPod & entity, Component::TransformPod * transform){}
     virtual void del(const Component::EntityPod & entity){}
-    static bool systemRegistrar(SystemsInterface * system, const char * name = nullptr, eRegistrar op = VERIFY);
+    static SystemsInterface * systemRegistrar(bool & retValue, SystemsInterface * system, const char * name = nullptr, eRegistrar op = VERIFY);
 
     string _name;
     FrameCount _frames;
   };
+
+  inline FrameCount SystemsInterface::update(TimeDimension delta)
+  {
+    this->tick(delta);
+    return ++(this->_frames);
+  }
 
   inline void SystemsInterface::addEntity(const Component::EntityPod & entity, Component::TransformPod * transform)
   {
@@ -87,36 +95,47 @@ namespace System
 
   inline bool SystemsInterface::isValid(SystemsInterface & system)
   {
-    return SystemsInterface::systemRegistrar(&system, nullptr, VERIFY);
+    bool retVal = false;
+    SystemsInterface::systemRegistrar(retVal, &system, nullptr, VERIFY);
+    return retVal;
   }
 
-  inline bool SystemsInterface::systemRegistrar(
-      SystemsInterface * system,
-      const char * name,
-      eRegistrar op)
+  inline SystemsInterface * SystemsInterface::getSystem(const string & name)
+  {
+    bool success = false;
+    SystemsInterface * retPtr = nullptr;
+    retPtr = SystemsInterface::systemRegistrar(success, nullptr, name.c_str(), VERIFY);
+    assert(success);
+    return retPtr;
+  }
+
+  inline SystemsInterface * SystemsInterface::systemRegistrar(bool & retValue, SystemsInterface * inSystem, const char * name, eRegistrar op)
   {
     static map< string, SystemsInterface * > s_systems;
+    SystemsInterface *  outSystem = nullptr;
 
     string searchName;
     if (nullptr != name)
     {
       searchName = name;
     }
-    else if (nullptr != system)
+    else if (nullptr != inSystem)
     {
-      searchName = system->getName();
+      searchName = inSystem->getName();
     }
 
     if(op == REGISTER)
     {
-      if (nullptr != system)
+      if (nullptr != inSystem)
       {
-        s_systems[searchName] = system;
-        return true;
+        s_systems[searchName] = inSystem;
+        retValue = true;
+        return inSystem;
       }
       else
       {
-        return false;
+        retValue = false;
+        return outSystem;
       }
     }
     else if(op == UNREGISTER || op == VERIFY)
@@ -127,13 +146,19 @@ namespace System
         {
           if(op == UNREGISTER)
           {
-            s_systems.erase(string(name));
+            s_systems.erase(searchName);
           }
-          return true;
+          else
+          {
+            outSystem = s_systems.at(searchName);
+          }
+          retValue = true;
+          return outSystem;
         }
       }
     }
-    return false;
+    retValue = false;
+    return outSystem;
   }
 
 } // end namespace System
