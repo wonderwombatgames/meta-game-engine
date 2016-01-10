@@ -81,16 +81,16 @@ bool EntitiesManager::isEntityActive(EntityID entityId)
   return false;
 }
 
-const string * EntitiesManager::lookUpentityName(EntityID entityId)
-{
-
-  auto entity = this->_entities.find(entityId);
-  if (entity != this->_entities.end())
-  {
-    return &(entity->second->getName());
-  }
-  return nullptr;
-}
+// const string * EntitiesManager::lookUpEntityName(EntityID entityId)
+// {
+//
+//   auto entity = this->_entities.find(entityId);
+//   if (entity != this->_entities.end())
+//   {
+//     return &(entity->second->getName());
+//   }
+//   return nullptr;
+// }
 
 EntityID EntitiesManager::lookUpEntityId(const string& name)
 {

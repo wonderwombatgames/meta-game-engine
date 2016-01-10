@@ -1,14 +1,13 @@
 /**
   * entities manager contains all entities
-  * entities are just containers to components
+  * entities are just containers for components
   *
   *
   */
 
-#ifndef BASE_ENTITY_HPP
-#define BASE_ENTITY_HPP
+#ifndef ENTITY_BASE_HPP
+#define ENTITY_BASE_HPP
 
-#include <string>
 #include <set>
 #include "system_interface.hpp"
 
@@ -18,17 +17,16 @@ namespace Engine
 using namespace std;
 using namespace System;
 
-class BaseEntity
+class EntityBase
 {
 public:
   friend class EntitiesManager;
   // ctors and dtor
-  BaseEntity(EntityID id, const char * name);
-  BaseEntity() = delete;
-  BaseEntity(BaseEntity & other) = delete;
-  virtual ~BaseEntity();
+  EntityBase(EntityID id);
+  EntityBase() = delete;
+  EntityBase(EntityBase & other) = delete;
+  virtual ~EntityBase();
 
-  const string & getName() const;
   bool isActive() const;
   bool suspend();
   bool resume();
@@ -48,7 +46,6 @@ protected:
 
   // data
   bool _destroy;
-  string _name;
 
   set< SystemsInterface * > _componentSystems;
   // this POD is to be used by the component systems
@@ -58,27 +55,22 @@ protected:
 };
 
 
-inline const string & BaseEntity::getName() const
-{
-  return this->_name;
-}
-
-inline bool BaseEntity::isActive() const
+inline bool EntityBase::isActive() const
 {
   return this->_entityData.isActive;
 }
 
-inline void BaseEntity::destroy(bool mustDestroy)
+inline void EntityBase::destroy(bool mustDestroy)
 {
   this->_destroy = mustDestroy;
 }
 
-inline bool BaseEntity::destroy()
+inline bool EntityBase::destroy()
 {
   return this->_destroy;
 }
 
-inline bool BaseEntity::hasComponent(SystemsInterface & system)
+inline bool EntityBase::hasComponent(SystemsInterface & system)
 {
   return (0 < this->_componentSystems.count(&system));
 }
@@ -86,4 +78,4 @@ inline bool BaseEntity::hasComponent(SystemsInterface & system)
 
 } // end namespace Engine
 
-#endif // BASE_ENTITY_HPP
+#endif // ENTITY_BASE_HPP

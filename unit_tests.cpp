@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
   int test_count = 0;
 
   EntitiesManager * em = EntitiesManager::instance();
-  int id1 = em->createEntity<BaseEntity>("player1");
+  int id1 = em->createEntity<EntityBase>("player1");
   assert(em->refreshEntities() == 1);
   assert(em->destroyEntity(id1));
   cout << "entities count = " << em->count() << endl;
@@ -28,8 +28,8 @@ int main(int argc, char *argv[])
   assert(em->refreshEntities() == 0);
   cout << "!!!OK - " << ++test_count << " => Destroied Entity" << endl;
 
-  int id2 = em->createEntity<BaseEntity>("player2");
-  int id3 = em->createEntity<BaseEntity>("player3");
+  int id2 = em->createEntity<EntityBase>("player2");
+  int id3 = em->createEntity<EntityBase>("player3");
   assert(em->refreshEntities() == 2);
   cout << "!!!OK - " << ++test_count << " => Created 2 Entities" << endl;
 
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
   assert(em->addComponent(id3, dummySystem2));
   cout << "!!!OK - " << ++test_count << " => Added second Dummy Component to second valid entity" << endl;
 
-  id1 = em->createEntity<BaseEntity>("player1");
+  id1 = em->createEntity<EntityBase>("player1");
   assert(em->count() == 3);
   cout << "!!!OK - " << ++test_count << " => Created third Entity" << endl;
 
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
   // <0.0 : mirror
   _transformData.scale = {1.0f, 1.0f, 1.0f};
 
-  EntityID entId = em->createEntity<BaseEntity>("Player");
+  EntityID entId = em->createEntity<EntityBase>("Player");
   AssetID imgId = graphics.loadAssetFromFile<SDL2BackEnd::Image>("img/test.png");
   graphics.setEntityAsset(entId, imgId);
   cout << "!!!OK - " << ++test_count << " => load texture in graphic system and assigned to entity " << endl;

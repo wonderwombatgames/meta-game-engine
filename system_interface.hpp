@@ -21,7 +21,7 @@ namespace Engine
 using namespace std;
 
 // forward declare entity type interface
-class BaseEntity;
+class EntityBase;
 typedef unsigned long long int FrameCount;
 typedef float TimeDimension;
 

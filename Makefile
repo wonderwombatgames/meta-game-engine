@@ -1,9 +1,12 @@
-sourcesfiles=entities_manager.cpp \
-		base_entity.cpp \
+sourcesfiles=\
+		entities_manager.cpp \
+		entity_base.cpp \
+		entity_transformable.cpp \
 		backend_audio_null.cpp \
 		backend_physics_null.cpp \
 		backend_graphic_sdl.cpp \
 		backend_handler_sdl.cpp	\
+		system_transform.cpp \
 		utils_colour.cpp \
 		command_router.cpp \
 		unit_tests.cpp

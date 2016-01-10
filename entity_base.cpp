@@ -4,7 +4,7 @@
 
 
 #include "system_interface.hpp"
-#include "base_entity.hpp"
+#include "entity_base.hpp"
 
 namespace Engine
 {
@@ -12,12 +12,11 @@ using namespace std;
 using namespace System;
 
 //
-// BaseEntity Methods
+// EntityBase Methods
 //
 
-BaseEntity::BaseEntity(EntityID id, const char * name)
+EntityBase::EntityBase(EntityID id)
   :_destroy(false)
-  ,_name(name)
   ,_transformData(nullptr)
 {
   // defaults
@@ -30,12 +29,12 @@ BaseEntity::BaseEntity(EntityID id, const char * name)
   this->_entityData.typeId = 1;
 }
 
-BaseEntity::~BaseEntity()
+EntityBase::~EntityBase()
 {
   this->tearDownComponents();
 }
 
-bool BaseEntity::suspend()
+bool EntityBase::suspend()
 {
   if (this->_entityData.isActive)
   {
@@ -45,7 +44,7 @@ bool BaseEntity::suspend()
   return false;
 }
 
-bool BaseEntity::resume()
+bool EntityBase::resume()
 {
   if (!this->_entityData.isActive)
   {
@@ -56,7 +55,7 @@ bool BaseEntity::resume()
 }
 
 // tear down (de register) components from systems
-void BaseEntity::tearDownComponents()
+void EntityBase::tearDownComponents()
 {
   for(auto system : this->_componentSystems)
   {
@@ -68,7 +67,7 @@ void BaseEntity::tearDownComponents()
 }
 
 // add one more component to the entity
-void BaseEntity::addComponent(SystemsInterface & system)
+void EntityBase::addComponent(SystemsInterface & system)
 {
   if (SystemsInterface::isValid(system))
   {
