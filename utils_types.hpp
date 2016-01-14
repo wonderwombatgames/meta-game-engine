@@ -52,63 +52,118 @@ enum eSpace
   SPACE_3D,
 };
 
+// struct Vector2
+// {
+//   union{
+//     SpaceDim x = 0.0f;
+//     SpaceDim width;
+//     SpaceDim pitch;
+//   };
+//   union{
+//     SpaceDim y = 0.0f;
+//     SpaceDim height;
+//     SpaceDim roll;
+//   };
+// };
 
-struct Vector2
+union Vector2
 {
-  union{
+  struct {
     SpaceDim x;
-    SpaceDim width;
-    SpaceDim pitch;
-  };
-  union{
     SpaceDim y;
+  };
+  struct {
+    SpaceDim width;
     SpaceDim height;
+  };
+  struct {
     SpaceDim roll;
+    SpaceDim pitch;
   };
 };
 
 
-struct Vector3
+union Vector3
 {
-  union{
+  struct{
     SpaceDim x;
-    SpaceDim width;
-    SpaceDim pitch;
-  };
-  union{
     SpaceDim y;
-    SpaceDim height;
-    SpaceDim roll;
-  };
-  union{
     SpaceDim z;
+  };
+  struct{
+    SpaceDim width;
+    SpaceDim height;
     SpaceDim depth;
-    SpaceDim zorder;
+  };
+  struct{
+    SpaceDim pitch;
+    SpaceDim roll;
     SpaceDim yaw;
   };
 };
 
+// struct Vector3
+// {
+//   union{
+//     SpaceDim x;// = 0.0f;
+//     SpaceDim width;
+//     SpaceDim pitch;
+//   };
+//   union{
+//     SpaceDim y;// = 0.0f;
+//     SpaceDim height;
+//     SpaceDim roll;
+//   };
+//   union{
+//     SpaceDim z;// = 0.0f;
+//     SpaceDim depth;
+//     SpaceDim zorder;
+//     SpaceDim yaw;
+//   };
+// };
 
-struct Vector4
+union Vector4
 {
-  union{
+  struct{
     SpaceDim x;
-    SpaceDim width;
-    SpaceDim pitch;
-  };
-  union{
     SpaceDim y;
-    SpaceDim height;
-    SpaceDim roll;
-  };
-  union{
     SpaceDim z;
+    SpaceDim w;
+  };
+  struct{
+    SpaceDim width;
+    SpaceDim height;
     SpaceDim depth;
     SpaceDim zorder;
-    SpaceDim yaw;
   };
-  SpaceDim w;
+  struct{
+    SpaceDim pitch;
+    SpaceDim roll;
+    SpaceDim yaw;
+    SpaceDim mag;
+  };
 };
+
+// struct Vector4
+// {
+//   union{
+//     SpaceDim x;// = 0.0f;
+//     SpaceDim width;
+//     SpaceDim pitch;
+//   };
+//   union{
+//     SpaceDim y;// = 0.0f;
+//     SpaceDim height;
+//     SpaceDim roll;
+//   };
+//   union{
+//     SpaceDim z;// = 0.0f;
+//     SpaceDim depth;
+//     SpaceDim zorder;
+//     SpaceDim yaw;
+//   };
+//   SpaceDim w;// = 0.0f;
+// };
 
 typedef Vector2 Dimension2;
 typedef Vector3 Dimension3;
@@ -117,22 +172,16 @@ typedef Vector2 Rotation2;
 typedef Vector3 Rotation3;
 
 
-
-
 enum eBound
 {
   CIRCLE,
   BOX_TLBR,
   BOX_XYWH,
-  // MULTICIRCLE,
-  // MULTIBOX,
-  // POLYGON,
-  // HASH,
 };
 
 struct CircleBound
 {
-  SpaceDim radius;
+  SpaceDim radius;// = 0.0f;
 };
 
 struct BoxBoundTLBR
@@ -141,7 +190,6 @@ struct BoxBoundTLBR
   Vector2 bottonRight;
 };
 
-typedef BoxBoundTLBR BoxBoundAABB;
 
 struct BoxBoundXYWH
 {
@@ -149,26 +197,16 @@ struct BoxBoundXYWH
   Dimension2 size;
 };
 
-
-// #define POLYGON_BOUND_MAX_VERTICES 16
-// struct PolygonBound
-// {
-//   unsigned char numOfVertice;
-//   Vector3 * vertices[POLYGON_BOUND_MAX_VERTICES];
-// };
-;
-
-
+typedef BoxBoundTLBR BoxBoundAABB;
 
 struct Bound
 {
-  eBound kind;
+  eBound kind = BOX_XYWH;
   union
   {
-    CircleBound  circleBound;
-    BoxBoundTLBR     boxBoundTLBR;
-    BoxBoundXYWH     boxBoundXYWH;
-    // MultiBoxBound multiBoxBound;
+    CircleBound   circleBound;
+    BoxBoundTLBR  boxBoundTLBR;
+    BoxBoundXYWH  boxBoundXYWH;
   };
 };
 
@@ -257,12 +295,6 @@ struct Colour
     ColourHex hex;
   };
 
-  // Colour()
-  // :kind(RGBA)
-  // ,rgba{0.0f, 0.0f, 0.0f, 1.0f}
-  // {}
-  // c.kind = RGBA;
-  // c.rgba = ;
 };
 
 enum eAudioState

@@ -45,7 +45,7 @@ namespace Component
 
     virtual void paint(
         const GraphicPod & component,
-        const Vector3 & offset = { .x = 0.0f, .y = 0.0f, .zorder = 0.0f}) override;
+        const Vector3 & offset = { .x = 0.0f, .y = 0.0f, .z = 0.0f}) override;
     virtual bool setParameter(
         const char * paramName,
         const float & paramValue = 0.0f) override;

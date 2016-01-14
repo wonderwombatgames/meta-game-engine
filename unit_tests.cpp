@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
   cout << "!!!OK - " << ++test_count << " => Destroied All Entities" << endl;
 
   System::Graphics graphics;
-  graphics.createDisplay({{ 0.0, 0.0}, { 320.0, 240.0}});
+  graphics.createDisplay({ {{0.0, 0.0}}, {{320.0, 240.0}} });
   SDL2BackEnd::DisplayInterface & view = *graphics.display.get();
   cout << "!!!OK - " << ++test_count << " => Created a viewport. " << endl;
 
@@ -101,14 +101,14 @@ int main(int argc, char *argv[])
   // position
   // absolute in pixels (float values)
   // can contain z-order
-  _transformData.position = {320.0f, 240.0f, 0.0f};
+  _transformData.position = {{ 320.0f, 240.0f, 0.0f }};
   // rotation
   // values between 0.0 - 1.0  (= 0 - 360)
-  _transformData.rotation = { 0.0f, 0.0f, 0.0f};
+  _transformData.rotation = {{ 0.0f, 0.0f, 0.0f }};
   // scales
   // <1.0 : smaller | > 1.0 : larger
   // <0.0 : mirror
-  _transformData.scale = { 1.0f, 1.0f, 1.0f};
+  _transformData.scale = {{ 1.0f, 1.0f, 1.0f }};
 
   EntityID entId = em->createEntity<EntityTransformable>("Player");
   cout << "!!!OK - " << ++test_count << " => Created a Trasnformable entity. " << endl;
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
   Component::GraphicPod sprite;
   sprite.transformData = &_transformData;
   sprite.isVisible = true;
-  sprite.anchor = { 0.5f, 0.5f, 0.5f};
+  sprite.anchor = {{ 0.5f, 0.5f, 0.5f }};
   sprite.blendingMode = SDL_BLENDMODE_BLEND;
   sprite.alphaMode = 1.0f;
   Colour c2;
@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
   cout << "!!!OK - " << ++test_count << " => set the sprite on the world: " << sprite.transformData->position.x << " - " << sprite.transformData->position.y << endl;
 
 
-  Dimension2 r{ 640.0, 480.0};
+  Dimension2 r{{ 640.0, 480.0 }};
   view.setResolution(r);
   cout << "!!!OK - " << ++test_count << " => reset resolution " << endl;
   //view.setFullscreen(true);
@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
     _transformData.rotation.yaw = rotation;
     rand_x += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
     rand_y += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
-    Vector3 offset{ rand_x, rand_y, 0.0f};
+    Vector3 offset{{ rand_x, rand_y, 0.0f }};
 
     view.clear(c1);
     tex2.paint(sprite, offset);

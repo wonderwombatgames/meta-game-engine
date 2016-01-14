@@ -201,7 +201,7 @@ namespace Component
     static_cast<SpaceDim>(th) / static_cast<SpaceDim>(rh);
 
     // size - between 0.0 - 1.0 (in relation to Display size)
-    _textureSize = { w, h };
+    _textureSize = {{ w, h }};
 
     return this->isLoaded();
   }
