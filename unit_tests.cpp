@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
   int test_count = 0;
 
   EntitiesManager * em = EntitiesManager::instance();
-  int id1 = em->createEntity<EntityBase>("player1");
+  EntityID id1 = em->createEntity<EntityBase>("player1");
   assert(em->refreshEntities() == 1);
   assert(em->destroyEntity(id1));
   cout << "entities count = " << em->count() << endl;
@@ -30,8 +30,8 @@ int main(int argc, char *argv[])
   assert(em->refreshEntities() == 0);
   cout << "!!!OK - " << ++test_count << " => Destroied Entity" << endl;
 
-  int id2 = em->createEntity<EntityBase>("player2");
-  int id3 = em->createEntity<EntityBase>("player3");
+  EntityID id2 = em->createEntity<EntityBase>("player2");
+  EntityID id3 = em->createEntity<EntityBase>("player3");
   assert(em->refreshEntities() == 2);
   cout << "!!!OK - " << ++test_count << " => Created 2 Entities" << endl;
 

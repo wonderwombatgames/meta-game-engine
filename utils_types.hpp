@@ -9,10 +9,7 @@
 #define UTILS_TYPES_HPP
 
 #include <cstdint>
-#include <cstdlib>
-#include <ctime>
-#include <cassert>
-#include <set>
+
 
 namespace Engine
 {
@@ -20,19 +17,32 @@ namespace Engine
 namespace Utils
 {
 
+// basic types
+typedef uint8_t  u8;
+typedef uint16_t u16;
+typedef uint32_t u32;
+typedef uint64_t u64;
+typedef int8_t   i8;
+typedef int16_t  i16;
+typedef int32_t  i32;
+typedef int64_t  i64;
+typedef float    f32;
+typedef double   f64;
+
+
+// game specific types
 enum { InvalidID = -1 };
 
-typedef uint32_t Flags;
-typedef uint16_t BlendingMode;
-typedef uint8_t ErrorCode;
-typedef float ColourComponent;
-typedef float SpatialDimention;
+typedef u32 Flags;
+typedef u16 BlendingMode;
+typedef u8  ErrorCode;
+typedef f32 ColourComponent;
+typedef f32 SpatialDimention;
 
-typedef long int EntityID;
+typedef u32 EntityID;
 typedef EntityID TypeID;
 typedef EntityID AssetID;
 
-enum {  MAX_IDS = 99999  };
 // creates a new random ID < MAX_IDS
 EntityID newId();
 

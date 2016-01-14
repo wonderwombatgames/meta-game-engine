@@ -1,3 +1,4 @@
 img/
-sdl_sandbox.cpp
+klib/
+stb/
 *.x
