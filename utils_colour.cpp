@@ -37,9 +37,9 @@ void Hex2Rgb (const ColourHex  & in, ColourRGB  & out)
     rgb += hexChar2Val(&in.hexVal[i]);
     rgb <<= 1;
   }
-  out.b = static_cast<ColourComponent>(0xff & rgb);
-  out.g = static_cast<ColourComponent>(0xff & (rgb >> 8));
-  out.r = static_cast<ColourComponent>(0xff & (rgb >> 16));
+  out.b = static_cast<ColourComp>(0xff & rgb);
+  out.g = static_cast<ColourComp>(0xff & (rgb >> 8));
+  out.r = static_cast<ColourComp>(0xff & (rgb >> 16));
 }
 
 
@@ -74,13 +74,13 @@ void Rgb2Hex (const ColourRGB  & in, ColourHex  & out)
 }
 
 
-ColourComponent calcHueFromRgb(
+ColourComp calcHueFromRgb(
     const ColourRGB  & in,
-    const ColourComponent & cMax,
-    const ColourComponent & cMin)
+    const ColourComp & cMax,
+    const ColourComp & cMin)
 {
-  ColourComponent delta = cMax - cMin;
-  ColourComponent h = 0.0f;
+  ColourComp delta = cMax - cMin;
+  ColourComp h = 0.0f;
 
   // calculating Hue
   if( in.r == cMax )
@@ -109,9 +109,9 @@ ColourComponent calcHueFromRgb(
 
 void Rgb2Hsv(const ColourRGB  & in, ColourHSV  & out)
 {
-  ColourComponent cMax = std::max(in.r, std::max(in.g, in.b));
-  ColourComponent cMin = std::min(in.r, std::min(in.g, in.b));
-  ColourComponent delta = cMax - cMin;
+  ColourComp cMax = std::max(in.r, std::max(in.g, in.b));
+  ColourComp cMin = std::min(in.r, std::min(in.g, in.b));
+  ColourComp delta = cMax - cMin;
 
   //calculating saturation
   if( cMax > 0 )
@@ -137,9 +137,9 @@ void Rgb2Hsv(const ColourRGB  & in, ColourHSV  & out)
 
 void Rgb2Hsl(const ColourRGB  & in, ColourHSL  & out)
 {
-  ColourComponent cMax = std::max(in.r, std::max(in.g, in.b));
-  ColourComponent cMin = std::min(in.r, std::min(in.g, in.b));
-  ColourComponent delta = cMax - cMin;
+  ColourComp cMax = std::max(in.r, std::max(in.g, in.b));
+  ColourComp cMin = std::min(in.r, std::min(in.g, in.b));
+  ColourComp delta = cMax - cMin;
 
   // calculating lightness
   out.l = 0.5 * (cMax + cMin);
@@ -173,10 +173,10 @@ void Rgb2Cmyk(const ColourRGB  & in, ColourCMYK & out)
 
 
 inline void calcRgbFromHue(
-  const ColourComponent & h,
-  const ColourComponent & c,
-  const ColourComponent & x,
-  const ColourComponent & m,
+  const ColourComp & h,
+  const ColourComp & c,
+  const ColourComp & x,
+  const ColourComp & m,
   ColourRGB & out)
 {
   out.r = 0.0f;
@@ -224,10 +224,10 @@ inline void calcRgbFromHue(
 
 void Hsl2Rgb (const ColourHSL  & in, ColourRGB  & out)
 {
-  ColourComponent h = fmod(6.0f + in.h * 6.0f, 6.0f);
-  ColourComponent c = in.s * (1 - abs(2 * in.l - 1));
-  ColourComponent x = c * (1 - abs( fmod(h, 2.0f) -1));
-  ColourComponent m = in.l - (c / 2.0f);
+  ColourComp h = fmod(6.0f + in.h * 6.0f, 6.0f);
+  ColourComp c = in.s * (1 - abs(2 * in.l - 1));
+  ColourComp x = c * (1 - abs( fmod(h, 2.0f) -1));
+  ColourComp m = in.l - (c / 2.0f);
 
   calcRgbFromHue(h, c, x, m, out);
 }
@@ -235,10 +235,10 @@ void Hsl2Rgb (const ColourHSL  & in, ColourRGB  & out)
 
 void Hsv2Rgb (const ColourHSV  & in, ColourRGB  & out)
 {
-  ColourComponent h = fmod(6.0f + in.h * 6.0f, 6.0f);
-  ColourComponent c = in.v * in.s;
-  ColourComponent x = c * (1 - abs( fmod(h, 2.0f) -1));
-  ColourComponent m = in.v - c;
+  ColourComp h = fmod(6.0f + in.h * 6.0f, 6.0f);
+  ColourComp c = in.v * in.s;
+  ColourComp x = c * (1 - abs( fmod(h, 2.0f) -1));
+  ColourComp m = in.v - c;
 
   calcRgbFromHue(h, c, x, m, out);
 }
@@ -261,8 +261,8 @@ void Hsl2Hsv (const ColourHSL  & in, ColourHSV  & out)
   // repeat the hue without change
   out.h = in.h;
 
-  ColourComponent l2 = 2 * in.l;
-  ColourComponent s2 = 0.0f;
+  ColourComp l2 = 2 * in.l;
+  ColourComp s2 = 0.0f;
 
   if(l2 <= 1 )
   {
@@ -281,9 +281,9 @@ void Hsl2Hsv (const ColourHSL  & in, ColourHSV  & out)
 
 void Hsv2Hsl (const ColourHSV  & in, ColourHSL  & out)
 {
-  ColourComponent cMax = in.v;
-  ColourComponent cMin = in.v - in.s*in.v;
-  ColourComponent delta = cMax - cMin;
+  ColourComp cMax = in.v;
+  ColourComp cMin = in.v - in.s*in.v;
+  ColourComp delta = cMax - cMin;
 
   // repeat the hue without change
   out.h = in.h;

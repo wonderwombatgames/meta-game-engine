@@ -36,8 +36,8 @@ namespace GraphicDevice
     // reseting the viewport
     virtual void setColour(const Colour & c) =0;
     virtual const Colour & getColour() const =0;
-    virtual void setResolution(Dimension3 & res) =0;
-    virtual const Dimension3 & getResolution() const =0;
+    virtual void setResolution(Dimension2 & res) =0;
+    virtual const Dimension2 & getResolution() const =0;
     virtual void setViewRect(const BoxBoundXYWH & rect) =0;
     virtual const BoxBoundXYWH & getViewRect() const =0;
     virtual void setTitle(const string & title) =0;
@@ -64,8 +64,8 @@ namespace GraphicDevice
     // reseting the viewport
     virtual void setColour(const Colour & c) override;
     virtual const Colour & getColour() const override;
-    virtual void setResolution(Dimension3 & res) override;
-    virtual const Dimension3 & getResolution() const override;
+    virtual void setResolution(Dimension2 & res) override;
+    virtual const Dimension2 & getResolution() const override;
     virtual void setViewRect(const BoxBoundXYWH & rect) override;
     virtual const BoxBoundXYWH & getViewRect() const override;
     virtual void setTitle(const string & title) override;
@@ -111,7 +111,7 @@ namespace System
   protected:
     virtual void add(const Component::EntityPod & entity, Component::TransformPod * transform) override;
     virtual void del(const Component::EntityPod & entity) override;
-    virtual void tick(TimeDimension delta) override;
+    virtual void tick(TimeDim delta) override;
 
     unordered_map< EntityID, Component::GraphicPod > _components;
     unordered_map< AssetID, shared_ptr< Component::GraphicInterface > > _assets;

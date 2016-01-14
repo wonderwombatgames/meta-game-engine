@@ -148,7 +148,7 @@ namespace SDL2
 {
 
   // converts the float values from Colour into SDL RGB8
-  void colour8RGBA(uint8_t & r, uint8_t & g, uint8_t & b, uint8_t & a, const Engine::Colour & c)
+  void colour8RGBA(u8 & r, u8 & g, u8 & b, u8 & a, const Engine::Colour & c)
   {
     r = 0;
     g = 0;
@@ -159,64 +159,64 @@ namespace SDL2
     {
       case Engine::RGB:
       {
-        r = (static_cast<uint8_t>(c.rgb.r * 255) % 256);
-        g = (static_cast<uint8_t>(c.rgb.g * 255) % 256);
-        b = (static_cast<uint8_t>(c.rgb.b * 255) % 256);
+        r = (static_cast<u8>(c.rgb.r * 255) % 256);
+        g = (static_cast<u8>(c.rgb.g * 255) % 256);
+        b = (static_cast<u8>(c.rgb.b * 255) % 256);
         break;
       }
       case Engine::RGBA:
       {
-        r = (static_cast<uint8_t>(c.rgba.r * 255) % 256);
-        g = (static_cast<uint8_t>(c.rgba.g * 255) % 256);
-        b = (static_cast<uint8_t>(c.rgba.b * 255) % 256);
-        a = (static_cast<uint8_t>(c.rgba.a * 255) % 256);
+        r = (static_cast<u8>(c.rgba.r * 255) % 256);
+        g = (static_cast<u8>(c.rgba.g * 255) % 256);
+        b = (static_cast<u8>(c.rgba.b * 255) % 256);
+        a = (static_cast<u8>(c.rgba.a * 255) % 256);
         break;
       }
       case Engine::HSL:
       {
         ColourRGB tmp;
         Hsl2Rgb(c.hsl, tmp);
-        r = (static_cast<uint8_t>(tmp.r * 255) % 256);
-        g = (static_cast<uint8_t>(tmp.g * 255) % 256);
-        b = (static_cast<uint8_t>(tmp.b * 255) % 256);
+        r = (static_cast<u8>(tmp.r * 255) % 256);
+        g = (static_cast<u8>(tmp.g * 255) % 256);
+        b = (static_cast<u8>(tmp.b * 255) % 256);
         break;
       }
       case Engine::HSLA:
       {
         ColourRGB tmp;
         Hsl2Rgb({c.hsla.h, c.hsla.s, c.hsla.l }, tmp);
-        r = (static_cast<uint8_t>(tmp.r * 255) % 256);
-        g = (static_cast<uint8_t>(tmp.g * 255) % 256);
-        b = (static_cast<uint8_t>(tmp.b * 255) % 256);
-        a = (static_cast<uint8_t>(c.hsla.a * 255) % 256);
+        r = (static_cast<u8>(tmp.r * 255) % 256);
+        g = (static_cast<u8>(tmp.g * 255) % 256);
+        b = (static_cast<u8>(tmp.b * 255) % 256);
+        a = (static_cast<u8>(c.hsla.a * 255) % 256);
       }
       break;
       case Engine::HSV:
       {
         ColourRGB tmp;
         Hsv2Rgb(c.hsv, tmp);
-        r = (static_cast<uint8_t>(tmp.r * 255) % 256);
-        g = (static_cast<uint8_t>(tmp.g * 255) % 256);
-        b = (static_cast<uint8_t>(tmp.b * 255) % 256);
+        r = (static_cast<u8>(tmp.r * 255) % 256);
+        g = (static_cast<u8>(tmp.g * 255) % 256);
+        b = (static_cast<u8>(tmp.b * 255) % 256);
         break;
       }
       case Engine::HSVA:
       {
         ColourRGB tmp;
         Hsl2Rgb({c.hsva.h, c.hsva.s, c.hsva.v }, tmp);
-        r = (static_cast<uint8_t>(tmp.r * 255) % 256);
-        g = (static_cast<uint8_t>(tmp.g * 255) % 256);
-        b = (static_cast<uint8_t>(tmp.b * 255) % 256);
-        a = (static_cast<uint8_t>(c.hsva.a * 255) % 256);
+        r = (static_cast<u8>(tmp.r * 255) % 256);
+        g = (static_cast<u8>(tmp.g * 255) % 256);
+        b = (static_cast<u8>(tmp.b * 255) % 256);
+        a = (static_cast<u8>(c.hsva.a * 255) % 256);
       }
       break;
       case Engine::CMYK:
       {
         ColourRGB tmp;
         Cmyk2Rgb(c.cmyk, tmp);
-        r = (static_cast<uint8_t>(tmp.r * 255) % 256);
-        g = (static_cast<uint8_t>(tmp.g * 255) % 256);
-        b = (static_cast<uint8_t>(tmp.b * 255) % 256);
+        r = (static_cast<u8>(tmp.r * 255) % 256);
+        g = (static_cast<u8>(tmp.g * 255) % 256);
+        b = (static_cast<u8>(tmp.b * 255) % 256);
         break;
       }
       case Engine::HEX:
@@ -232,7 +232,7 @@ namespace SDL2
   // wrapper around window and renderer
 
   // only one instance of the window is allowed
-  Dimension3 Renderer::_resolution = {640.0, 480.0};
+  Dimension2 Renderer::_resolution = { 640.0, 480.0};
   SDL_Window * Renderer::_window = nullptr;
   SDL_Renderer * Renderer::_renderer = nullptr;
 
@@ -241,8 +241,8 @@ namespace SDL2
     if(SDL_WasInit(SDL_INIT_VIDEO) && nullptr == this->_window &&  nullptr == this->_renderer)
     {
       if (  SDL_CreateWindowAndRenderer(
-                static_cast<int>(_resolution.w),
-                static_cast<int>(_resolution.h),
+                static_cast<int>(_resolution.width),
+                static_cast<int>(_resolution.height),
                 SDL_WINDOW_OPENGL,
                 &this->_window,
                 &this->_renderer) )
@@ -278,9 +278,9 @@ namespace SDL2
       if (!this->_buffer) {
           SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create texture from surface: %s", SDL_GetError());
       }
-      _rect.topLeft = {0.0f, 0.0f};
-      _rect.size = {static_cast<SpatialDimention>(surface->w),
-                    static_cast<SpatialDimention>(surface->h)};
+      _rect.topLeft = { 0.0f, 0.0f };
+      _rect.size = {static_cast<SpaceDim>(surface->w),
+                    static_cast<SpaceDim>(surface->h)};
       SDL_FreeSurface(surface);
     }
     assert(this->_buffer);

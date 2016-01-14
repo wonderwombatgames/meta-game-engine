@@ -28,7 +28,7 @@ namespace System
   protected:
     virtual void add(const Component::EntityPod & entity, Component::TransformPod * transform) override;
     virtual void del(const Component::EntityPod & entity) override;
-    virtual void tick(TimeDimension delta) override;
+    virtual void tick(TimeDim delta) override;
 
     unordered_map< EntityID, Component::TransformPod > _components;
   };

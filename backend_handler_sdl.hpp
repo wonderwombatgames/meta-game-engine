@@ -29,7 +29,7 @@ namespace SDL2
   {
     Renderer();
     ~Renderer();
-    static Dimension3 _resolution;
+    static Dimension2 _resolution;
     static SDL_Window * _window;
     static SDL_Renderer * _renderer;
   };
@@ -61,7 +61,7 @@ namespace SDL2
   void quitGraphicSystem();
 
   // converts the float values from Colour into SDL RGB8
-  void colour8RGBA(uint8_t & r, uint8_t & g, uint8_t & b, uint8_t & a, const Engine::Colour & c);
+  void colour8RGBA(u8 & r, u8 & g, u8 & b, u8 & a, const Engine::Colour & c);
 
 } // end namespace SDL2
 

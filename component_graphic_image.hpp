@@ -45,7 +45,7 @@ namespace Component
 
     virtual void paint(
         const GraphicPod & component,
-        const Vector3 & offset = {0.0f, 0.0f, 0.0f}) override;
+        const Vector3 & offset = { .x = 0.0f, .y = 0.0f, .zorder = 0.0f}) override;
     virtual bool setParameter(
         const char * paramName,
         const float & paramValue = 0.0f) override;
@@ -55,9 +55,9 @@ namespace Component
     unique_ptr< _HANDLER > _data;
 
     // size - between 0.0 - 1.0 (in relation to viewport size)
-    Dimension3 _textureSize;
+    Dimension2 _textureSize;
 
-    void computeClipRects(const GraphicPod & component, BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector3 & center);
+    void computeClipRects(const GraphicPod & component, BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector2 & center);
   };
 
 } // end namespace Component

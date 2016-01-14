@@ -36,8 +36,8 @@ enum { InvalidID = -1 };
 typedef u32 Flags;
 typedef u16 BlendingMode;
 typedef u8  ErrorCode;
-typedef f32 ColourComponent;
-typedef f32 SpatialDimention;
+typedef f32 ColourComp;
+typedef f32 SpaceDim;
 
 typedef u32 EntityID;
 typedef EntityID TypeID;
@@ -53,33 +53,70 @@ enum eSpace
 };
 
 
+struct Vector2
+{
+  union{
+    SpaceDim x;
+    SpaceDim width;
+    SpaceDim pitch;
+  };
+  union{
+    SpaceDim y;
+    SpaceDim height;
+    SpaceDim roll;
+  };
+};
+
+
 struct Vector3
 {
-  SpatialDimention x;
-  SpatialDimention y;
-  // depending on kind of space this might be
-  // either the 3rd axis or the z-order.
-  // in case it is z-order it is casted to integer.
-  SpatialDimention z;
+  union{
+    SpaceDim x;
+    SpaceDim width;
+    SpaceDim pitch;
+  };
+  union{
+    SpaceDim y;
+    SpaceDim height;
+    SpaceDim roll;
+  };
+  union{
+    SpaceDim z;
+    SpaceDim depth;
+    SpaceDim zorder;
+    SpaceDim yaw;
+  };
 };
 
 
-struct Rotation3
+struct Vector4
 {
-  // rotation
-  SpatialDimention angleXY;
-  // these next 2 angles are used only in 3d
-  SpatialDimention angleYZ;
-  SpatialDimention angleZX;
+  union{
+    SpaceDim x;
+    SpaceDim width;
+    SpaceDim pitch;
+  };
+  union{
+    SpaceDim y;
+    SpaceDim height;
+    SpaceDim roll;
+  };
+  union{
+    SpaceDim z;
+    SpaceDim depth;
+    SpaceDim zorder;
+    SpaceDim yaw;
+  };
+  SpaceDim w;
 };
 
+typedef Vector2 Dimension2;
+typedef Vector3 Dimension3;
 
-struct Dimension3
-{
-  SpatialDimention w; // width
-  SpatialDimention h; // height
-  SpatialDimention d; // depth
-};
+typedef Vector2 Rotation2;
+typedef Vector3 Rotation3;
+
+
 
 
 enum eBound
@@ -95,21 +132,21 @@ enum eBound
 
 struct CircleBound
 {
-  SpatialDimention radius;
+  SpaceDim radius;
 };
 
 struct BoxBoundTLBR
 {
-  Vector3 topLeft;
-  Vector3 bottonRight;
+  Vector2 topLeft;
+  Vector2 bottonRight;
 };
 
 typedef BoxBoundTLBR BoxBoundAABB;
 
 struct BoxBoundXYWH
 {
-  Vector3 topLeft;
-  Dimension3 size;
+  Vector2 topLeft;
+  Dimension2 size;
 };
 
 
@@ -149,55 +186,55 @@ enum eColour
 
 struct ColourRGB
 {
-  ColourComponent r;
-  ColourComponent g;
-  ColourComponent b;
+  ColourComp r;
+  ColourComp g;
+  ColourComp b;
 };
 
 struct ColourRGBA
 {
-  ColourComponent r;
-  ColourComponent g;
-  ColourComponent b;
-  ColourComponent a;
+  ColourComp r;
+  ColourComp g;
+  ColourComp b;
+  ColourComp a;
 };
 
 struct ColourHSL
 {
-  ColourComponent h;
-  ColourComponent s;
-  ColourComponent l;
+  ColourComp h;
+  ColourComp s;
+  ColourComp l;
 };
 
 struct ColourHSLA
 {
-  ColourComponent h;
-  ColourComponent s;
-  ColourComponent l;
-  ColourComponent a;
+  ColourComp h;
+  ColourComp s;
+  ColourComp l;
+  ColourComp a;
 };
 
 struct ColourHSV
 {
-  ColourComponent h;
-  ColourComponent s;
-  ColourComponent v;
+  ColourComp h;
+  ColourComp s;
+  ColourComp v;
 };
 
 struct ColourHSVA
 {
-  ColourComponent h;
-  ColourComponent s;
-  ColourComponent v;
-  ColourComponent a;
+  ColourComp h;
+  ColourComp s;
+  ColourComp v;
+  ColourComp a;
 };
 
 struct ColourCMYK
 {
-  ColourComponent c;
-  ColourComponent m;
-  ColourComponent y;
-  ColourComponent k;
+  ColourComp c;
+  ColourComp m;
+  ColourComp y;
+  ColourComp k;
 };
 
 struct ColourHex
@@ -207,23 +244,23 @@ struct ColourHex
 
 struct Colour
 {
-  eColour kind;
+  eColour kind = RGBA;
   union
   {
+    ColourRGBA rgba = {  .r = 0.0f, .g = 0.0f, .b = 0.0f, .a = 0.0f };
     ColourRGB rgb;
-    ColourRGBA rgba;
-    ColourHSL hsl;
     ColourHSLA hsla;
-    ColourHSV hsv;
+    ColourHSL hsl;
     ColourHSVA hsva;
+    ColourHSV hsv;
     ColourCMYK cmyk;
     ColourHex hex;
   };
 
-  Colour()
-  :kind(RGBA)
-  ,rgba{0.0f, 0.0f, 0.0f, 1.0f}
-  {}
+  // Colour()
+  // :kind(RGBA)
+  // ,rgba{0.0f, 0.0f, 0.0f, 1.0f}
+  // {}
   // c.kind = RGBA;
   // c.rgba = ;
 };

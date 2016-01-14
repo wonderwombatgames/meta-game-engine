@@ -35,7 +35,7 @@ namespace System
       this->_components.erase(it);
     }
   }
-  void Transform::tick(TimeDimension delta)
+  void Transform::tick(TimeDim delta)
   {
 
   }

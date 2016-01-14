@@ -23,7 +23,7 @@ using namespace std;
 // forward declare entity type interface
 class EntityBase;
 typedef unsigned long long int FrameCount;
-typedef float TimeDimension;
+typedef float TimeDim;
 
 namespace System
 {
@@ -51,7 +51,7 @@ namespace System
     // check if the pointer actually points to a system
     static bool isValid(SystemsInterface & system);
     // perform one step in the system
-    FrameCount update(TimeDimension delta);
+    FrameCount update(TimeDim delta);
 
     // entity related methods
     void addEntity(const Component::EntityPod & entity, Component::TransformPod * transform);
@@ -68,7 +68,7 @@ namespace System
     };
 
     // must be overriden in each system (impl. NVI)
-    virtual void tick(TimeDimension delta){}
+    virtual void tick(TimeDim delta){}
     virtual void add(const Component::EntityPod & entity, Component::TransformPod * transform){}
     virtual void del(const Component::EntityPod & entity){}
     static SystemsInterface * systemRegistrar(bool & retValue, SystemsInterface * system, const char * name = nullptr, eRegistrar op = VERIFY);
@@ -77,7 +77,7 @@ namespace System
     FrameCount _frames;
   };
 
-  inline FrameCount SystemsInterface::update(TimeDimension delta)
+  inline FrameCount SystemsInterface::update(TimeDim delta)
   {
     this->tick(delta);
     return ++(this->_frames);

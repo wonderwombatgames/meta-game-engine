@@ -21,8 +21,8 @@ using namespace Utils;
   {
     rect.x = static_cast<int>(box.topLeft.x);
     rect.y = static_cast<int>(box.topLeft.y);
-    rect.w = static_cast<int>(box.size.w);
-    rect.h = static_cast<int>(box.size.h);
+    rect.w = static_cast<int>(box.size.width);
+    rect.h = static_cast<int>(box.size.height);
   }
 
 }
@@ -112,14 +112,14 @@ namespace GraphicDevice
   }
 
   template <>
-  void Display< SDL2::Handler >::setResolution(Dimension3 & res)
+  void Display< SDL2::Handler >::setResolution(Dimension2 & res)
   {
     // only update if different
-    if(_rect.size.w != res.w || _rect.size.h != res.h )
+    if(_rect.size.width != res.width || _rect.size.height != res.height )
     {
       _rect.size = res;
-      int width  = static_cast<int>(_rect.size.w);
-      int height = static_cast<int>(_rect.size.h);
+      int width  = static_cast<int>(_rect.size.width);
+      int height = static_cast<int>(_rect.size.height);
 
       SDL_Rect rect;
       SDL_RenderGetViewport(_data->_view->_renderer, &rect);
@@ -137,7 +137,7 @@ namespace GraphicDevice
   }
 
   template <>
-  const Dimension3 & Display< SDL2::Handler >::getResolution() const
+  const Dimension2 & Display< SDL2::Handler >::getResolution() const
   {
     return _rect.size;
   }
@@ -187,21 +187,21 @@ namespace Component
     _data->_image = SDL2::Texture::createTexture(filepath, _data->_view->_renderer);
 
     // query window
-    int rw = _data->_view->_resolution.w;
-    int rh = _data->_view->_resolution.h;
+    int rw = _data->_view->_resolution.width;
+    int rh = _data->_view->_resolution.height;
 
     // query Image
-    int tw = _data->_image->_rect.size.w;
-    int th = _data->_image->_rect.size.h;
+    int tw = _data->_image->_rect.size.width;
+    int th = _data->_image->_rect.size.height;
 
     // compute the relative size
-    SpatialDimention w =
-    static_cast<SpatialDimention>(tw) / static_cast<SpatialDimention>(rw);
-    SpatialDimention h =
-    static_cast<SpatialDimention>(th) / static_cast<SpatialDimention>(rh);
+    SpaceDim w =
+    static_cast<SpaceDim>(tw) / static_cast<SpaceDim>(rw);
+    SpaceDim h =
+    static_cast<SpaceDim>(th) / static_cast<SpaceDim>(rh);
 
     // size - between 0.0 - 1.0 (in relation to Display size)
-    _textureSize = {w, h, 0.0f};
+    _textureSize = { w, h };
 
     return this->isLoaded();
   }
@@ -232,14 +232,14 @@ namespace Component
   }
 
   template <>
-  void Image< SDL2::Handler >::computeClipRects(const GraphicPod & component, BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector3 & center)
+  void Image< SDL2::Handler >::computeClipRects(const GraphicPod & component, BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector2 & center)
   {
-    int rw = _data->_view->_resolution.w;
-    int rh = _data->_view->_resolution.h;
+    int rw = _data->_view->_resolution.width;
+    int rh = _data->_view->_resolution.height;
 
     // compute Image parameters in px
-    int tw  = static_cast<int>(_textureSize.w * rw);
-    int th  = static_cast<int>(_textureSize.h * rh);
+    int tw  = static_cast<int>(_textureSize.width * rw);
+    int th  = static_cast<int>(_textureSize.height * rh);
     int tx  = 0;
     int ty  = 0;
     float sx  = 1.0f;
@@ -264,13 +264,13 @@ namespace Component
 
     src.topLeft.x = 0;
     src.topLeft.y = 0;
-    src.size.w = tw;
-    src.size.h = th;
+    src.size.width = tw;
+    src.size.height = th;
 
     dst.topLeft.x = x;
     dst.topLeft.y = y;
-    dst.size.w = w;
-    dst.size.h = h;
+    dst.size.width = w;
+    dst.size.height = h;
 
     center.x = cx;
     center.y = cy;
@@ -284,12 +284,12 @@ namespace Component
         component.isVisible &&
         component.transformData != nullptr)
     {
-      int rw = _data->_view->_resolution.w;
-      int rh = _data->_view->_resolution.h;
+      int rw = _data->_view->_resolution.width;
+      int rh = _data->_view->_resolution.height;
 
       BoxBoundXYWH src;
       BoxBoundXYWH dst;
-      Vector3 center;
+      Vector2 center;
 
       this->computeClipRects(component, src, dst, center);
 
@@ -303,7 +303,7 @@ namespace Component
       {
         sx  = component.transformData->scale.x;
         sy  = component.transformData->scale.y;
-        rot = component.transformData->rotation.angleXY;
+        rot = component.transformData->rotation.yaw;
       }
 
       double angle = fmod((rot * 360.0), 360.0);
@@ -420,7 +420,7 @@ namespace System
     }
   }
 
-  void Graphics::tick(TimeDimension delta)
+  void Graphics::tick(TimeDim delta)
   {
 
   }
