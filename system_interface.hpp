@@ -22,8 +22,6 @@ using namespace std;
 
 // forward declare entity type interface
 class EntityBase;
-typedef unsigned long long int FrameCount;
-typedef float TimeDim;
 
 namespace System
 {

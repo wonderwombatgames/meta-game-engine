@@ -33,11 +33,13 @@ typedef double   f64;
 // game specific types
 enum { InvalidID = -1 };
 
+typedef u64 FrameCount;
 typedef u32 Flags;
 typedef u16 BlendingMode;
 typedef u8  ErrorCode;
 typedef f32 ColourComp;
 typedef f32 SpaceDim;
+typedef f32 TimeDim;
 
 typedef u32 EntityID;
 typedef EntityID TypeID;
@@ -52,19 +54,6 @@ enum eSpace
   SPACE_3D,
 };
 
-// struct Vector2
-// {
-//   union{
-//     SpaceDim x = 0.0f;
-//     SpaceDim width;
-//     SpaceDim pitch;
-//   };
-//   union{
-//     SpaceDim y = 0.0f;
-//     SpaceDim height;
-//     SpaceDim roll;
-//   };
-// };
 
 union Vector2
 {
@@ -102,25 +91,6 @@ union Vector3
   };
 };
 
-// struct Vector3
-// {
-//   union{
-//     SpaceDim x;// = 0.0f;
-//     SpaceDim width;
-//     SpaceDim pitch;
-//   };
-//   union{
-//     SpaceDim y;// = 0.0f;
-//     SpaceDim height;
-//     SpaceDim roll;
-//   };
-//   union{
-//     SpaceDim z;// = 0.0f;
-//     SpaceDim depth;
-//     SpaceDim zorder;
-//     SpaceDim yaw;
-//   };
-// };
 
 union Vector4
 {
@@ -134,7 +104,7 @@ union Vector4
     SpaceDim width;
     SpaceDim height;
     SpaceDim depth;
-    SpaceDim zorder;
+    TimeDim  time;
   };
   struct{
     SpaceDim pitch;
@@ -143,27 +113,6 @@ union Vector4
     SpaceDim mag;
   };
 };
-
-// struct Vector4
-// {
-//   union{
-//     SpaceDim x;// = 0.0f;
-//     SpaceDim width;
-//     SpaceDim pitch;
-//   };
-//   union{
-//     SpaceDim y;// = 0.0f;
-//     SpaceDim height;
-//     SpaceDim roll;
-//   };
-//   union{
-//     SpaceDim z;// = 0.0f;
-//     SpaceDim depth;
-//     SpaceDim zorder;
-//     SpaceDim yaw;
-//   };
-//   SpaceDim w;// = 0.0f;
-// };
 
 typedef Vector2 Dimension2;
 typedef Vector3 Dimension3;
