@@ -9,10 +9,9 @@
 #define GRAPHIC_SYSTEMS_HPP
 
 #include <cassert>
-#include <string>
-#include <unordered_map>
 #include <memory>
 
+#include "utils_colour.hpp"
 #include "system_interface.hpp"
 #include "component_graphic.hpp"
 
@@ -40,7 +39,7 @@ namespace GraphicDevice
     virtual const Dimension2 & getResolution() const =0;
     virtual void setViewRect(const BoxBoundXYWH & rect) =0;
     virtual const BoxBoundXYWH & getViewRect() const =0;
-    virtual void setTitle(const string & title) =0;
+    virtual void setTitle(const String & title) =0;
     virtual const char * getTitle() const =0;
     virtual void setFullscreen(bool fs) =0;
     virtual const bool isFullscreen() const =0;
@@ -68,17 +67,17 @@ namespace GraphicDevice
     virtual const Dimension2 & getResolution() const override;
     virtual void setViewRect(const BoxBoundXYWH & rect) override;
     virtual const BoxBoundXYWH & getViewRect() const override;
-    virtual void setTitle(const string & title) override;
+    virtual void setTitle(const String & title) override;
     virtual const char * getTitle() const override;
     virtual void setFullscreen(bool fs) override;
     virtual const bool isFullscreen() const override;
 
   protected:
 
-    typedef T _HANDLER;
+    using _HANDLER = T;
 
     //data
-    unique_ptr< _HANDLER > _data;
+    UniquePtr< _HANDLER > _data;
     BoxBoundXYWH _rect;
     Colour _background;
   };
@@ -88,20 +87,22 @@ namespace GraphicDevice
 namespace System
 {
 
+  using DisplayHandler = SharedPtr< GraphicDevice::DisplayInterface >;
+
   class Graphics : public SystemsInterface
   {
   public:
-    shared_ptr<GraphicDevice::DisplayInterface> display;
+    DisplayHandler display;
 
     Graphics();
     Graphics(const char * name);
     Graphics(Graphics & other) = delete;
     virtual ~Graphics();
 
-    void createDisplay(const BoxBoundXYWH & rect, Flags flags = 0);
+    DisplayHandler createDisplay(const BoxBoundXYWH & rect, Flags flags = 0);
 
     template <typename T>
-    AssetID loadAssetFromFile(const string & filepath);
+    AssetID loadAssetFromFile(const String & filepath);
     // TODO:
     // AssetID loadAssetFromAtlas(const ImageAtlas & atlas);
     // AssetID loadAssetFromNet(const NetworkResource & netRes)
@@ -113,15 +114,15 @@ namespace System
     virtual void del(const Component::EntityPod & entity) override;
     virtual void tick(TimeDim delta) override;
 
-    unordered_map< EntityID, Component::GraphicPod > _components;
-    unordered_map< AssetID, shared_ptr< Component::GraphicInterface > > _assets;
+    HashMap< EntityID, Component::GraphicPod > _components;
+    HashMap< AssetID, SharedPtr< Component::GraphicInterface > > _assets;
   };
 
   template< typename T >
-  AssetID Graphics::loadAssetFromFile(const string & filepath)
+  AssetID Graphics::loadAssetFromFile(const String & filepath)
   {
     static AssetID assetCounter = 0;
-    assetCounter = newId();
+    assetCounter = seqId();
     this->_assets.emplace(assetCounter, make_shared<T>(filepath));
 
     return assetCounter;

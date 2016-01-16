@@ -2,7 +2,6 @@
   *
   */
 
-#include <deque>
 #include "system_interface.hpp"
 #include "entities_manager.hpp"
 
@@ -25,60 +24,60 @@ EntitiesManager * EntitiesManager::instance()
   return s_instance;
 }
 
-bool EntitiesManager::addComponent(EntityID entitityId, SystemsInterface & system)
-{
-  auto entity = this->_entities.find(entitityId);
-  if(entity != this->_entities.end())
-  {
-    entity->second->addComponent(system);
-    return true;
-  }
-  return false;
-}
-
-bool EntitiesManager::destroyEntity(EntityID entityId)
-{
-  auto entity = this->_entities.find(entityId);
-  if (entity != this->_entities.end())
-  {
-    entity->second->destroy(true);
-    return true;
-  }
-  return false;
-}
-
-bool EntitiesManager::suspendEntity(EntityID entityId)
-{
-  auto entity = this->_entities.find(entityId);
-  if (entity != this->_entities.end())
-  {
-    return entity->second->suspend();
-  }
-  return false;
-}
-
-bool EntitiesManager::resumeEntity(EntityID entityId)
-{
-  auto entity = this->_entities.find(entityId);
-  if (entity != this->_entities.end())
-  {
-    return entity->second->resume();
-  }
-  return false;
-}
-
-
-bool EntitiesManager::isEntityActive(EntityID entityId)
-{
-  auto entity = this->_entities.find(entityId);
-  if (entity != this->_entities.end())
-  {
-    return entity->second->isActive();
-  }
-  return false;
-}
-
-// const string * EntitiesManager::lookUpEntityName(EntityID entityId)
+// bool EntitiesManager::addComponent(EntityID entitityId, SystemsInterface & system)
+// {
+//   auto entity = this->_entities.find(entitityId);
+//   if(entity != this->_entities.end())
+//   {
+//     entity->second->addComponent(system);
+//     return true;
+//   }
+//   return false;
+// }
+//
+// bool EntitiesManager::destroyEntity(EntityID entityId)
+// {
+//   auto entity = this->_entities.find(entityId);
+//   if (entity != this->_entities.end())
+//   {
+//     entity->second->destroy(true);
+//     return true;
+//   }
+//   return false;
+// }
+//
+// bool EntitiesManager::suspendEntity(EntityID entityId)
+// {
+//   auto entity = this->_entities.find(entityId);
+//   if (entity != this->_entities.end())
+//   {
+//     return entity->second->suspend();
+//   }
+//   return false;
+// }
+//
+// bool EntitiesManager::resumeEntity(EntityID entityId)
+// {
+//   auto entity = this->_entities.find(entityId);
+//   if (entity != this->_entities.end())
+//   {
+//     return entity->second->resume();
+//   }
+//   return false;
+// }
+//
+//
+// bool EntitiesManager::isEntityActive(EntityID entityId)
+// {
+//   auto entity = this->_entities.find(entityId);
+//   if (entity != this->_entities.end())
+//   {
+//     return entity->second->isActive();
+//   }
+//   return false;
+// }
+//
+// const String * EntitiesManager::lookUpEntityName(EntityID entityId)
 // {
 //
 //   auto entity = this->_entities.find(entityId);
@@ -89,7 +88,18 @@ bool EntitiesManager::isEntityActive(EntityID entityId)
 //   return nullptr;
 // }
 
-EntityID EntitiesManager::lookUpEntityId(const string& name)
+EntityBase & EntitiesManager::entity(EntityID entityId)
+{
+  auto entity = this->_entities.find(entityId);
+  if (entity != this->_entities.end())
+  {
+    return *(entity->second.get());
+  }
+  assert(false);
+}
+
+
+EntityID EntitiesManager::lookUpEntityId(const String& name)
 {
   auto entity = this->_lookUp.find(name);
   if (entity != this->_lookUp.end())
@@ -102,10 +112,10 @@ EntityID EntitiesManager::lookUpEntityId(const string& name)
 int EntitiesManager::refreshEntities()
 {
   // find all entities marked to be destroied
-  deque<EntityID> toDestroy;
+  List<EntityID> toDestroy;
   for(auto entity : this->_entities)
   {
-    if(entity.second->destroy())
+    if(entity.second->willDestroy())
     {
       toDestroy.push_back(entity.second->_entityData.entityId);
     }

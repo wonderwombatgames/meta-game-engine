@@ -8,19 +8,29 @@
 #ifndef ENTITY_BASE_HPP
 #define ENTITY_BASE_HPP
 
-#include <set>
-#include "system_interface.hpp"
-
+//#include "system_interface.hpp"
+#include "utils_types.hpp"
+#include "component_entity.hpp"
 
 namespace Engine
 {
-using namespace std;
-using namespace System;
+
+namespace System
+{
+  class SystemsInterface;
+}
+
+//using namespace std;
+//using namespace System;
+using namespace Utils;
+
 
 class EntityBase
 {
 public:
   friend class EntitiesManager;
+  // friend class SystemsInterface;
+
   // ctors and dtor
   EntityBase(EntityID id);
   EntityBase() = delete;
@@ -30,9 +40,12 @@ public:
   bool isActive() const;
   bool suspend();
   bool resume();
-  void destroy(bool mustDestroy);
-  bool destroy();
-  bool hasComponent(SystemsInterface & system);
+  bool destroy(bool mustDestroy = true);
+  bool willDestroy();
+  // add one more component to the entity
+  bool addComponent(System::SystemsInterface & system);
+  // verify if entity has component
+  bool hasComponent(System::SystemsInterface * system);
 
 protected:
   // can be used to register components into systems from constructor
@@ -41,17 +54,15 @@ protected:
   // tear down (de register) components from systems
   void tearDownComponents();
 
-  // add one more component to the entity
-  void addComponent(SystemsInterface & system);
 
   // data
   bool _destroy;
 
-  set< SystemsInterface * > _componentSystems;
+  // set holds the systems to wich this entity was added
+  Set< System::SystemsInterface * > _componentSystems;
+
   // this POD is to be used by the component systems
   Component::EntityPod _entityData;
-  // contains spatial information
-  Component::TransformPod * _transformData;
 };
 
 
@@ -60,19 +71,20 @@ inline bool EntityBase::isActive() const
   return this->_entityData.isActive;
 }
 
-inline void EntityBase::destroy(bool mustDestroy)
+inline bool EntityBase::destroy(bool mustDestroy)
 {
   this->_destroy = mustDestroy;
+  return this->_destroy;
 }
 
-inline bool EntityBase::destroy()
+inline bool EntityBase::willDestroy()
 {
   return this->_destroy;
 }
 
-inline bool EntityBase::hasComponent(SystemsInterface & system)
+inline bool EntityBase::hasComponent(System::SystemsInterface * system)
 {
-  return (0 < this->_componentSystems.count(&system));
+  return (0 < this->_componentSystems.count(system));
 }
 
 

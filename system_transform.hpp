@@ -5,8 +5,6 @@
 #ifndef SYSTEM_TRANSFORM_HPP
 #define SYSTEM_TRANSFORM_HPP
 
-#include <unordered_map>
-
 #include "system_interface.hpp"
 #include "component_transform.hpp"
 
@@ -30,7 +28,7 @@ namespace System
     virtual void del(const Component::EntityPod & entity) override;
     virtual void tick(TimeDim delta) override;
 
-    unordered_map< EntityID, Component::TransformPod > _components;
+    HashMap< EntityID, Component::TransformPod > _components;
   };
 
 } // end namespace System

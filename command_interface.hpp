@@ -6,16 +6,15 @@
 #ifndef COMMAND_INTERFACE_HPP
 #define COMMAND_INTERFACE_HPP
 
-#include <string>
-
 #include "utils_types.hpp"
 
 namespace Engine
 {
-  using namespace std;
+  // using namespace std;
+  using namespace Utils;
 
-  typedef uint16_t CommandType;
-  typedef uint16_t CommandOp;
+  using  CommandType = uint16_t;
+  using  CommandOp   = uint16_t;
 
   struct Args
   {
@@ -26,8 +25,8 @@ namespace Engine
           int64_t i;
           uint64_t u;
           double d;
-          string * s;
-      };
+          String * s;
+      } data;
   };
 
 

@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
   EntitiesManager * em = EntitiesManager::instance();
   EntityID id1 = em->createEntity<EntityBase>("player1");
   assert(em->refreshEntities() == 1);
-  assert(em->destroyEntity(id1));
+  assert(em->entity(id1).destroy());
   cout << "entities count = " << em->count() << endl;
 
   assert(em->refreshEntities() == 0);
@@ -43,20 +43,20 @@ int main(int argc, char *argv[])
   assert(SystemsInterface::isValid(dummySystem2));
   cout << "!!!OK - " << ++test_count << " => Created second Dummy System" << endl;
 
-  assert(em->addComponent(id2, dummySystem1));
+  assert(em->entity(id2).addComponent(dummySystem1));
   cout << "!!!OK - " << ++test_count << " => Added first Dummy Component to first valid entity" << endl;
 
-  assert(em->addComponent(id3, dummySystem1));
+  assert(em->entity(id3).addComponent(dummySystem1));
   cout << "!!!OK - " << ++test_count << " => Added first Dummy Component to second valid entity" << endl;
 
-  assert(em->addComponent(id3, dummySystem2));
+  assert(em->entity(id3).addComponent(dummySystem2));
   cout << "!!!OK - " << ++test_count << " => Added second Dummy Component to second valid entity" << endl;
 
   id1 = em->createEntity<EntityBase>("player1");
   assert(em->count() == 3);
   cout << "!!!OK - " << ++test_count << " => Created third Entity" << endl;
 
-  assert(em->addComponent(id1, dummySystem2));
+  assert(em->entity(id1).addComponent(dummySystem2));
   cout << "!!!OK - " << ++test_count << " => Added second Dummy Component to third valid entity" << endl;
 
   for (int i = 0; i < 50; ++i)
@@ -66,18 +66,18 @@ int main(int argc, char *argv[])
   }
   cout << "!!!OK - " << ++test_count << " => Performed 50 updates on each component system" << endl;
 
-  assert(em->suspendEntity(id2));
+  assert(em->entity(id2).suspend());
   cout << "!!!OK - " << ++test_count << " => Suspended 1 entity" << endl;
-  assert(!em->suspendEntity(id2));
+  assert(!em->entity(id2).suspend());
   cout << "!!!OK - " << ++test_count << " => Tried to suspend the same entity" << endl;
-  assert(em->resumeEntity(id2));
+  assert(em->entity(id2).resume());
   cout << "!!!OK - " << ++test_count << " => Resumed 1 entity" << endl;
-  assert(!em->resumeEntity(id2));
+  assert(!em->entity(id2).resume());
   cout << "!!!OK - " << ++test_count << " => Tried to resume the same entity" << endl;
 
-  assert(em->destroyEntity(id1));
-  assert(em->destroyEntity(id2));
-  assert(em->destroyEntity(id3));
+  assert(em->entity(id1).destroy());
+  assert(em->entity(id2).destroy());
+  assert(em->entity(id3).destroy());
   assert(em->refreshEntities() == 0);
   cout << "!!!OK - " << ++test_count << " => Destroied All Entities" << endl;
 
@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
   cout << "!!!OK - " << ++test_count << " => assigned newly created texture to transformable entity " << endl;
 
   SDL2BackEnd::Image tex1;
-  string filename("img/sample.png");
+  String filename("img/sample.png");
   tex1.loadFromFile(filename);
   cout << "!!!OK - " << ++test_count << " => Created 1 texture. " << endl;
 

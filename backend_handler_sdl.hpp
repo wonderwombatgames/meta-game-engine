@@ -6,9 +6,9 @@
 #ifndef BACKEND_CONTEXT_SDL_HPP
 #define BACKEND_CONTEXT_SDL_HPP
 
-#include <memory>
 #include <SDL2/SDL.h>
 #include "utils_types.hpp"
+#include "utils_colour.hpp"
 #include "system_graphics.hpp"
 #include "component_graphic_image.hpp"
 
@@ -37,14 +37,14 @@ namespace SDL2
   // wrapper around texture
   struct Texture
   {
-    static shared_ptr< Texture > createTexture(
-        const string & filepath,
+    static SharedPtr< Texture > createTexture(
+        const String & filepath,
         SDL_Renderer * renderer);
     ~Texture();
     SDL_Texture * _buffer;
     BoxBoundXYWH _rect;
   private:
-    Texture(const string & filepath, SDL_Renderer * renderer);
+    Texture(const String & filepath, SDL_Renderer * renderer);
   };
 
   // context used by viewport and texture
@@ -52,8 +52,8 @@ namespace SDL2
   {
     Handler();
 
-    shared_ptr< Renderer > _view;
-    shared_ptr< Texture > _image;
+    SharedPtr< Renderer > _view;
+    SharedPtr< Texture > _image;
   };
 
   // graphic functions
@@ -61,7 +61,7 @@ namespace SDL2
   void quitGraphicSystem();
 
   // converts the float values from Colour into SDL RGB8
-  void colour8RGBA(u8 & r, u8 & g, u8 & b, u8 & a, const Engine::Colour & c);
+  void colour8RGBA(u8 & r, u8 & g, u8 & b, u8 & a, const Colour & c);
 
 } // end namespace SDL2
 
@@ -70,11 +70,11 @@ namespace SDL2
 
 namespace SDL2BackEnd
 {
-typedef Engine::BackEnd::SDL2::Handler Handler;
-typedef GraphicDevice::Display< Handler > Display;
-typedef GraphicDevice::DisplayInterface DisplayInterface;
-typedef std::unique_ptr< DisplayInterface > DisplayPtr;
-typedef Component::Image< Handler > Image;
+using Handler = Engine::BackEnd::SDL2::Handler;
+using Display = GraphicDevice::Display< Handler >;
+using DisplayInterface = GraphicDevice::DisplayInterface;
+using DisplayPtr = UniquePtr< DisplayInterface >;
+using Image = Component::Image< Handler >;
 }
 
 } // end namespace Engine

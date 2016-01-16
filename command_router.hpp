@@ -7,8 +7,6 @@
 #define COMMAND_ROUTER_HPP
 
 
-#include <unordered_map>
-
 #include "command_interface.hpp"
 
 namespace Engine
@@ -29,7 +27,7 @@ namespace Engine
 
   protected:
     CommandRouter();
-    static unordered_multimap< CommandType, ICommand * > subscribers;
+    static HashMultiMap< CommandType, ICommand * > subscribers;
   };
 
 } // end namespace Engine

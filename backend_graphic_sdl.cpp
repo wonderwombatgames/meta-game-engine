@@ -63,7 +63,7 @@ namespace GraphicDevice
   }
 
   template <>
-  void Display< SDL2::Handler >::setTitle(const string & title)
+  void Display< SDL2::Handler >::setTitle(const String & title)
   {
     SDL_SetWindowTitle(_data->_view->_window, title.c_str());
   }
@@ -182,7 +182,7 @@ namespace Component
   }
 
   template <>
-  bool Image< SDL2::Handler >::loadFromFile(const string & filepath)
+  bool Image< SDL2::Handler >::loadFromFile(const String & filepath)
   {
     _data->_image = SDL2::Texture::createTexture(filepath, _data->_view->_renderer);
 
@@ -208,7 +208,7 @@ namespace Component
 
 
   template <>
-  Image< SDL2::Handler >::Image(const string & filepath)
+  Image< SDL2::Handler >::Image(const String & filepath)
       :_data(new _HANDLER)
   {
     this->loadFromFile(filepath);
@@ -365,9 +365,10 @@ namespace Component
 namespace System
 {
 
-  void Graphics::createDisplay(const BoxBoundXYWH & rect, Flags flags)
+  DisplayHandler Graphics::createDisplay(const BoxBoundXYWH & rect, Flags flags)
   {
     this->display = make_shared< GraphicDevice::Display< SDL2::Handler > > (rect, flags);
+    return this->display;
   }
 
   Graphics::Graphics()

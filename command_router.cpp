@@ -7,9 +7,10 @@
 
 namespace Engine
 {
-  using namespace std;
+  //using namespace std;
+  using namespace Utils;
 
-  unordered_multimap< CommandType, ICommand * > CommandRouter::subscribers;
+  HashMultiMap< CommandType, ICommand * > CommandRouter::subscribers;
 
   CommandRouter::CommandRouter(){};
 

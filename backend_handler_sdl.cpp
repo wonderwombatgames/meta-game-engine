@@ -1,5 +1,4 @@
 #include <cassert>
-#include <unordered_map>
 #include <SDL2/SDL_image.h>
 #include "utils_colour.hpp"
 #include "utils_types.hpp"
@@ -11,9 +10,10 @@ namespace // anonymous
   // holds pointers to loaded textures to avoid reloading textures more than once.
   using namespace std;
   using namespace Engine::BackEnd;
+  using namespace Engine::Utils;
 
   static
-  std::unordered_map< string, shared_ptr< SDL2::Texture > > textures;
+  HashMap< String, SharedPtr< SDL2::Texture > > textures;
 
   // this anonymous (restricted) namespace contains a
   // singleton class that inits SDL and its subsystems
@@ -232,7 +232,7 @@ namespace SDL2
   // wrapper around window and renderer
 
   // only one instance of the window is allowed
-  Dimension2 Renderer::_resolution = { 640.0, 480.0};
+  Dimension2 Renderer::_resolution = {{ 640.0, 480.0 }};
   SDL_Window * Renderer::_window = nullptr;
   SDL_Renderer * Renderer::_renderer = nullptr;
 
@@ -265,7 +265,7 @@ namespace SDL2
   }
 
   // wrapper around texture
-  Texture::Texture(const string & filepath, SDL_Renderer * renderer)
+  Texture::Texture(const String & filepath, SDL_Renderer * renderer)
   {
     SDL_Surface * surface = IMG_Load(filepath.c_str());
     if (!surface) {
@@ -278,19 +278,19 @@ namespace SDL2
       if (!this->_buffer) {
           SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create texture from surface: %s", SDL_GetError());
       }
-      _rect.topLeft = { 0.0f, 0.0f };
-      _rect.size = {static_cast<SpaceDim>(surface->w),
-                    static_cast<SpaceDim>(surface->h)};
+      _rect.topLeft = {{ 0.0f, 0.0f }};
+      _rect.size = {{ static_cast<SpaceDim>(surface->w),
+                    static_cast<SpaceDim>(surface->h) }};
       SDL_FreeSurface(surface);
     }
     assert(this->_buffer);
   }
 
-  shared_ptr< Texture > Texture::createTexture(
-      const string & filepath,
+  SharedPtr< Texture > Texture::createTexture(
+      const String & filepath,
       SDL_Renderer * renderer)
   {
-    shared_ptr< Texture > texPtr(nullptr);
+    SharedPtr< Texture > texPtr(nullptr);
 
     auto sdlTexIt = textures.find(filepath);
     if(sdlTexIt != textures.end())

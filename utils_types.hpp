@@ -9,7 +9,11 @@
 #define UTILS_TYPES_HPP
 
 #include <cstdint>
-
+#include <memory>
+#include <set>
+#include <unordered_map>
+#include <deque>
+#include <string>
 
 namespace Engine
 {
@@ -17,36 +21,64 @@ namespace Engine
 namespace Utils
 {
 
+// based on Ginger Bill DUNJUN
+#define GLOBAL        static // global variables
+#define INTERNAL      static // internal linkage
+#define LOCAL_PERSIST static // local persisting variables
+
 // basic types
-typedef uint8_t  u8;
-typedef uint16_t u16;
-typedef uint32_t u32;
-typedef uint64_t u64;
-typedef int8_t   i8;
-typedef int16_t  i16;
-typedef int32_t  i32;
-typedef int64_t  i64;
-typedef float    f32;
-typedef double   f64;
+using u8  = uint8_t;
+using u16 = uint16_t;
+using u32 = uint32_t;
+using u64 = uint64_t;
+using i8  = int8_t;
+using i16 = int16_t;
+using i32 = int32_t;
+using i64 = int64_t;
+using f32 = float;
+using f64 = double;
+
+
+// containers
+template<typename el>
+using SharedPtr = std::shared_ptr<el>;
+
+template<typename el>
+using UniquePtr = std::unique_ptr<el>;
+
+template<typename el>
+using Set = std::set<el>;
+
+template<typename el>
+using List = std::deque<el>;
+
+template<typename k, typename el>
+using HashMap = std::unordered_map<k,el>;
+
+template<typename k, typename el>
+using HashMultiMap = std::unordered_multimap<k,el>;
+
+using String = std::string;
 
 
 // game specific types
 enum { InvalidID = -1 };
 
-typedef u64 FrameCount;
-typedef u32 Flags;
-typedef u16 BlendingMode;
-typedef u8  ErrorCode;
-typedef f32 ColourComp;
-typedef f32 SpaceDim;
-typedef f32 TimeDim;
+using FrameCount = u64;
+using Flags = u32;
+using BlendingMode = u16;
+using ErrorCode = u8;
+using ColourComp = f32;
+using SpaceDim = f32;
+using TimeDim = f32;
 
-typedef u32 EntityID;
-typedef EntityID TypeID;
-typedef EntityID AssetID;
+using EntityID = u32 ;
+using TypeID = EntityID;
+using AssetID = EntityID;
 
 // creates a new random ID < MAX_IDS
-EntityID newId();
+EntityID rndId();
+EntityID seqId();
 
 enum eSpace
 {
@@ -60,6 +92,14 @@ union Vector2
   struct {
     SpaceDim x;
     SpaceDim y;
+  };
+  struct {
+    SpaceDim u;
+    SpaceDim v;
+  };
+  struct {
+    SpaceDim s;
+    SpaceDim t;
   };
   struct {
     SpaceDim width;
@@ -101,12 +141,6 @@ union Vector4
     SpaceDim w;
   };
   struct{
-    SpaceDim width;
-    SpaceDim height;
-    SpaceDim depth;
-    TimeDim  time;
-  };
-  struct{
     SpaceDim pitch;
     SpaceDim roll;
     SpaceDim yaw;
@@ -114,11 +148,11 @@ union Vector4
   };
 };
 
-typedef Vector2 Dimension2;
-typedef Vector3 Dimension3;
+using Dimension2 = Vector2 ;
+using Dimension3 = Vector3;
 
-typedef Vector2 Rotation2;
-typedef Vector3 Rotation3;
+using Rotation2 = Vector2;
+using Rotation3 = Vector3;
 
 
 enum eBound
@@ -145,7 +179,7 @@ struct BoxBoundXYWH
   Dimension2 size;
 };
 
-typedef BoxBoundTLBR BoxBoundAABB;
+using BoxBoundAABB = BoxBoundTLBR;
 
 struct Bound
 {
@@ -156,93 +190,6 @@ struct Bound
     BoxBoundTLBR  boxBoundTLBR;
     BoxBoundXYWH  boxBoundXYWH;
   };
-};
-
-enum eColour
-{
-  RGB,
-  RGBA,
-  HSL,
-  HSLA,
-  HSV,
-  HSVA,
-  CMYK,
-  HEX,
-};
-
-struct ColourRGB
-{
-  ColourComp r;
-  ColourComp g;
-  ColourComp b;
-};
-
-struct ColourRGBA
-{
-  ColourComp r;
-  ColourComp g;
-  ColourComp b;
-  ColourComp a;
-};
-
-struct ColourHSL
-{
-  ColourComp h;
-  ColourComp s;
-  ColourComp l;
-};
-
-struct ColourHSLA
-{
-  ColourComp h;
-  ColourComp s;
-  ColourComp l;
-  ColourComp a;
-};
-
-struct ColourHSV
-{
-  ColourComp h;
-  ColourComp s;
-  ColourComp v;
-};
-
-struct ColourHSVA
-{
-  ColourComp h;
-  ColourComp s;
-  ColourComp v;
-  ColourComp a;
-};
-
-struct ColourCMYK
-{
-  ColourComp c;
-  ColourComp m;
-  ColourComp y;
-  ColourComp k;
-};
-
-struct ColourHex
-{
-  char hexVal[8];
-};
-
-struct Colour
-{
-  eColour kind = RGBA;
-  union
-  {
-    ColourRGBA rgba = {  .r = 0.0f, .g = 0.0f, .b = 0.0f, .a = 0.0f };
-    ColourRGB rgb;
-    ColourHSLA hsla;
-    ColourHSL hsl;
-    ColourHSVA hsva;
-    ColourHSV hsv;
-    ColourCMYK cmyk;
-    ColourHex hex;
-  };
-
 };
 
 enum eAudioState

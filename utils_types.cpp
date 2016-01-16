@@ -15,7 +15,7 @@ namespace Utils
 {
 
 // creates a new random ID < MAX_IDS
-EntityID newId()
+EntityID rndId()
 {
 
   using namespace std::chrono;
@@ -24,9 +24,16 @@ EntityID newId()
   std::time_t t = ns.count();
 
   uint32_t rndPrefix = static_cast<uint32_t>(rand() * 0xff) << 24;
-  uint32_t randomId = rndPrefix + (static_cast<uint32_t>(t) & 0xffffff );
-  return randomId;
+  uint32_t rId = rndPrefix + (static_cast<uint32_t>(t) & 0xffffff );
+  return rId;
 }
+
+EntityID seqId()
+{
+  static EntityID sId = 0;
+  return ++sId;
+}
+
 
 
 } // end namespace Utils

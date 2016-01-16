@@ -8,10 +8,8 @@
 #ifndef ENTITIES_MANAGER_HPP
 #define ENTITIES_MANAGER_HPP
 
-#include <unordered_map>
 #include <memory>
 
-#include "system_interface.hpp"
 #include "entity_base.hpp"
 
 namespace Engine
@@ -30,16 +28,16 @@ public:
   // entity related methods
   template< class EntityType = EntityBase >
   EntityID  createEntity(const char * name);
-  bool destroyEntity(EntityID entityId);
-  bool suspendEntity(EntityID entityId);
-  bool resumeEntity(EntityID entityId);
-  bool isEntityActive(EntityID entityId);
-  //const string * lookUpEntityName(EntityID entityId);
-  EntityID lookUpEntityId(const string& name);
-  int  refreshEntities();
+  EntityBase & entity(EntityID entityId);
 
-  // component related methods
-  bool addComponent(EntityID entitityId, SystemsInterface & system);
+  // bool destroyEntity(EntityID entityId);
+  // bool suspendEntity(EntityID entityId);
+  // bool resumeEntity(EntityID entityId);
+  // bool isEntityActive(EntityID entityId);
+  // bool addComponent(EntityID entitityId, SystemsInterface & system);
+  //const String * lookUpEntityName(EntityID entityId);
+  EntityID lookUpEntityId(const String& name);
+  int  refreshEntities();
 
 protected:
   enum {  MAX_ENTITIES_AMOUNT = 99999  };
@@ -47,10 +45,10 @@ protected:
   // CTOR
   EntitiesManager() : _count(0) {};
 
-  // private typedefs
-  typedef shared_ptr<EntityBase> IEntityPtr;
-  typedef unordered_map<EntityID, IEntityPtr> Entities;
-  typedef unordered_map<string, EntityID> EntitiesLookUp;
+  // private type defs
+  using IEntityPtr = SharedPtr<EntityBase>;
+  using Entities = HashMap<EntityID, IEntityPtr>;
+  using EntitiesLookUp = HashMap<String, EntityID>;
 
   // data
   int _count;
@@ -61,7 +59,7 @@ protected:
 template< class EntityType >
 inline EntityID EntitiesManager::createEntity(const char * name)
 {
-  EntityID id = newId();
+  EntityID id = rndId();
   EntityType * entity = new EntityType(id);
   entity->setUpComponents();
   this->_entities[id].reset(entity);

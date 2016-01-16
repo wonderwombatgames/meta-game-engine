@@ -6,10 +6,7 @@
 #ifndef COMPONENT_GRAPHIC_IMAGE_HPP
 #define COMPONENT_GRAPHIC_IMAGE_HPP
 
-#include <memory>
-#include <string>
-#include <vector>
-
+#include "utils_colour.hpp"
 #include "component_graphic.hpp"
 
 namespace Engine
@@ -31,14 +28,14 @@ namespace Component
   public:
     Image(Image & other) = delete;
     Image();
-    Image(const string & filepath);
+    Image(const String & filepath);
     // TODO:
     // Image(const ImageAtlas & atlas, vector<AtlasKey> keys);
     // Image(const NetworkResource & netRes);
     virtual ~Image();
 
     bool isLoaded();
-    bool loadFromFile(const string & filepath);
+    bool loadFromFile(const String & filepath);
     // TODO:
     // bool loadFromAtlas(const ImageAtlas & atlas);
     // bool loadFromNet(const NetworkResource & netRes);
@@ -51,8 +48,8 @@ namespace Component
         const float & paramValue = 0.0f) override;
 
   protected:
-    typedef T _HANDLER;
-    unique_ptr< _HANDLER > _data;
+    using _HANDLER = T;
+    UniquePtr< _HANDLER > _data;
 
     // size - between 0.0 - 1.0 (in relation to viewport size)
     Dimension2 _textureSize;

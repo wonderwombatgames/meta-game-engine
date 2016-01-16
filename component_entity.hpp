@@ -14,6 +14,10 @@ using namespace Utils;
 namespace Component
 {
 
+  // forward declaration
+  struct TransformPod;
+
+
   struct EntityPod
   {
     // entity unique identifier
@@ -24,6 +28,9 @@ namespace Component
 
     // whether or not this entity is active
     bool isActive;
+
+    // pointer to transform pod
+    TransformPod * transform;
 
   };
 

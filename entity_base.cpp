@@ -17,7 +17,6 @@ using namespace System;
 
 EntityBase::EntityBase(EntityID id)
   :_destroy(false)
-  ,_transformData(nullptr)
 {
   // defaults
   this->_entityData.entityId = id;
@@ -27,6 +26,8 @@ EntityBase::EntityBase(EntityID id)
 
   // this is the base entity so we set it to 1
   this->_entityData.typeId = 1;
+
+  this->_entityData.transform = nullptr;
 }
 
 EntityBase::~EntityBase()
@@ -67,13 +68,15 @@ void EntityBase::tearDownComponents()
 }
 
 // add one more component to the entity
-void EntityBase::addComponent(SystemsInterface & system)
+bool EntityBase::addComponent(SystemsInterface & system)
 {
   if (SystemsInterface::isValid(system))
   {
     this->_componentSystems.insert(&system);
-    system.addEntity(this->_entityData, this->_transformData);
+    system.addEntity(this->_entityData);
+    return true;
   }
+  return false;
 }
 
 

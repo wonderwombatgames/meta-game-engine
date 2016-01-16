@@ -3,6 +3,7 @@
   */
 
 #include "entity_transformable.hpp"
+#include "system_interface.hpp"
 
 namespace Engine
 {

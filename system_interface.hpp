@@ -8,20 +8,15 @@
 #ifndef SYSTEM_INTERFACE_HPP
 #define SYSTEM_INTERFACE_HPP
 
-#include <memory>
-#include <map>
-#include <string>
 #include <cassert>
 
 #include "component_entity.hpp"
 #include "component_transform.hpp"
+#include "entities_manager.hpp"
 
 namespace Engine
 {
 using namespace std;
-
-// forward declare entity type interface
-class EntityBase;
 
 namespace System
 {
@@ -37,6 +32,7 @@ namespace System
       SystemsInterface::systemRegistrar(retVal, this, name, REGISTER);
       assert(retVal);
     }
+
     virtual ~SystemsInterface()
     {
       bool retVal = false;
@@ -45,17 +41,17 @@ namespace System
     }
 
     // get system name
-    const string & getName() { return this->_name;  }
+    const String & getName() { return this->_name;  }
     // check if the pointer actually points to a system
     static bool isValid(SystemsInterface & system);
     // perform one step in the system
     FrameCount update(TimeDim delta);
 
     // entity related methods
-    void addEntity(const Component::EntityPod & entity, Component::TransformPod * transform);
+    void addEntity(const Component::EntityPod & entity);
     void delEntity(const Component::EntityPod & entity);
 
-    static SystemsInterface * getSystem(const string & name);
+    static SystemsInterface * getSystem(const String & name);
 
    protected:
     enum eRegistrar
@@ -71,7 +67,7 @@ namespace System
     virtual void del(const Component::EntityPod & entity){}
     static SystemsInterface * systemRegistrar(bool & retValue, SystemsInterface * system, const char * name = nullptr, eRegistrar op = VERIFY);
 
-    string _name;
+    String _name;
     FrameCount _frames;
   };
 
@@ -81,9 +77,9 @@ namespace System
     return ++(this->_frames);
   }
 
-  inline void SystemsInterface::addEntity(const Component::EntityPod & entity, Component::TransformPod * transform)
+  inline void SystemsInterface::addEntity(const Component::EntityPod & entity)
   {
-    this->add(entity, transform);
+    this->add(entity, entity.transform);
   }
 
   inline void SystemsInterface::delEntity(const Component::EntityPod & entity)
@@ -98,7 +94,7 @@ namespace System
     return retVal;
   }
 
-  inline SystemsInterface * SystemsInterface::getSystem(const string & name)
+  inline SystemsInterface * SystemsInterface::getSystem(const String & name)
   {
     bool success = false;
     SystemsInterface * retPtr = nullptr;
@@ -109,10 +105,10 @@ namespace System
 
   inline SystemsInterface * SystemsInterface::systemRegistrar(bool & retValue, SystemsInterface * inSystem, const char * name, eRegistrar op)
   {
-    static map< string, SystemsInterface * > s_systems;
+    static HashMap< String, SystemsInterface * > s_systems;
     SystemsInterface *  outSystem = nullptr;
 
-    string searchName;
+    String searchName;
     if (nullptr != name)
     {
       searchName = name;
