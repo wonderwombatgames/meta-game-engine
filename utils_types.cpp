@@ -30,7 +30,7 @@ EntityID rndId()
 
 EntityID seqId()
 {
-  static EntityID sId = 0;
+  LOCAL_PERSISTENT EntityID sId = 0;
   return ++sId;
 }
 

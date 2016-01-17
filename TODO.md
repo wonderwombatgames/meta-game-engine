@@ -1,6 +1,6 @@
 # TO DO
 
-* rename all statics to either GLOBAL or INTERNAL or PERSISTENT
+* ~~rename all statics to either GLOBAL or INTERNAL or PERSISTENT~~
 
 * add custom allocator to the types alias in utils_types.hpp
 
@@ -23,3 +23,7 @@
 * change the namespace Engine to W2
 
 * find a way to remove Image::void computeClipRects(const GraphicPod & component, BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector2 & center);
+
+* remove backend.hpp file
+
+* reduce usage of STL

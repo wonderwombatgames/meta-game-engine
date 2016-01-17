@@ -2,7 +2,7 @@
 
 # - Systems:
 
-## - Artificial Intelligence
+## - artificial intelligence
 
 ## - state machine
 

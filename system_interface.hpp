@@ -54,12 +54,14 @@ namespace System
 
     // get system name
     const String & getName() { return this->_name;  }
-    // check if the pointer actually points to a system
-    static bool isValid(SystemsInterface & system);
     // perform one step in the system
     FrameCount update(TimeDim delta);
+
+    // public class methods
     // get system by name
-    static SystemsInterface * getSystem(const String & name);
+    CLASS_METHOD SystemsInterface * getSystem(const String & name);
+    // check if the pointer actually points to a system
+    CLASS_METHOD bool isValid(SystemsInterface & system);
 
     // entity related methods
     void insertEntity(Component::EntityPod & entity);
@@ -83,7 +85,7 @@ namespace System
     }
 
     // class methods
-    static SystemsInterface * systemRegistrar(bool & retValue, SystemsInterface * system, const char * name = nullptr, eRegistrar op = VERIFY);
+    CLASS_METHOD SystemsInterface * systemRegistrar(bool & retValue, SystemsInterface * system, const char * name = nullptr, eRegistrar op = VERIFY);
 
     // data
     String _name;
@@ -132,7 +134,7 @@ namespace System
 
   inline SystemsInterface * SystemsInterface::systemRegistrar(bool & retValue, SystemsInterface * inSystem, const char * name, eRegistrar op)
   {
-    static HashMap< String, SystemsInterface * > s_systems;
+    LOCAL_PERSISTENT HashMap< String, SystemsInterface * > s_systems;
     SystemsInterface *  outSystem = nullptr;
 
     String searchName;

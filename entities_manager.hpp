@@ -22,7 +22,7 @@ class EntitiesManager
 public:
 
 
-  static EntitiesManager * instance();
+  CLASS_METHOD EntitiesManager * instance();
   int count();
 
   // entity related methods

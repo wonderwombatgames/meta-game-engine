@@ -19,7 +19,7 @@ namespace Engine
     CommandRouter(CommandRouter & other) = delete;
     ~CommandRouter();
 
-    static CommandRouter * instance();
+    CLASS_METHOD CommandRouter * instance();
 
     bool subscribe(CommandType type, ICommand * cmd);
     bool unSubscribe(const CommandType type, const ICommand * cmd);
@@ -27,7 +27,7 @@ namespace Engine
 
   protected:
     CommandRouter();
-    static HashMultiMap< CommandType, ICommand * > subscribers;
+    GLOBAL HashMultiMap< CommandType, ICommand * > subscribers;
   };
 
 } // end namespace Engine

@@ -29,15 +29,15 @@ namespace SDL2
   {
     Renderer();
     ~Renderer();
-    static Dimension2 _resolution;
-    static SDL_Window * _window;
-    static SDL_Renderer * _renderer;
+    GLOBAL Dimension2 _resolution;
+    GLOBAL SDL_Window * _window;
+    GLOBAL SDL_Renderer * _renderer;
   };
 
   // wrapper around texture
   struct Texture
   {
-    static SharedPtr< Texture > createTexture(
+    CLASS_METHOD SharedPtr< Texture > createTexture(
         const String & filepath,
         SDL_Renderer * renderer);
     ~Texture();

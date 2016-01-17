@@ -22,9 +22,10 @@ namespace Utils
 {
 
 // based on Ginger Bill DUNJUN
-#define GLOBAL        static // global variables
-#define INTERNAL      static // internal linkage
-#define LOCAL_PERSIST static // local persisting variables
+#define GLOBAL            static // global variables
+#define CLASS_METHOD      static // class methods work without instantiation
+#define INTERNAL          static // internal linkage
+#define LOCAL_PERSISTENT  static // local persisting variables
 
 // basic types
 using u8  = uint8_t;

@@ -18,7 +18,7 @@ namespace Engine
 
   CommandRouter * CommandRouter::instance()
   {
-    static CommandRouter * s_instance = nullptr;
+    LOCAL_PERSISTENT CommandRouter * s_instance = nullptr;
     if (nullptr == s_instance)
     {
       s_instance = new CommandRouter();

@@ -12,8 +12,7 @@ namespace // anonymous
   using namespace Engine::BackEnd;
   using namespace Engine::Utils;
 
-  static
-  HashMap< String, SharedPtr< SDL2::Texture > > textures;
+  INTERNAL HashMap< String, SharedPtr< SDL2::Texture > > textures;
 
   // this anonymous (restricted) namespace contains a
   // singleton class that inits SDL and its subsystems
@@ -23,7 +22,7 @@ namespace // anonymous
   public:
     ~SDLWrapper();
 
-    static SDLWrapper * instance();
+    CLASS_METHOD SDLWrapper * instance();
 
     bool initVideo();
     bool initEvents();
@@ -41,7 +40,7 @@ namespace // anonymous
 
   inline SDLWrapper * SDLWrapper::instance()
   {
-    static SDLWrapper * s_instance = nullptr;
+    LOCAL_PERSISTENT SDLWrapper * s_instance = nullptr;
 
     if(nullptr == s_instance)
     {
