@@ -19,7 +19,7 @@ namespace System
   {
     if(_system != nullptr)
     {
-      EntityID id = entity->addComponent(*_system);
+      EntityID id = entity->registerIntoSystem(*_system);
       auto it = this->_components->find(id);
       if (it != this->_components->end())
       {

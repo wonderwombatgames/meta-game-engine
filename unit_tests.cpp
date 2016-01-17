@@ -43,20 +43,20 @@ int main(int argc, char *argv[])
   assert(SystemsInterface::isValid(dummySystem2));
   cout << "!!!OK - " << ++test_count << " => Created second Dummy System" << endl;
 
-  assert(em->entity(id2).addComponent(dummySystem1));
+  assert(em->entity(id2).registerIntoSystem(dummySystem1));
   cout << "!!!OK - " << ++test_count << " => Added first Dummy Component to first valid entity" << endl;
 
-  assert(em->entity(id3).addComponent(dummySystem1));
+  assert(em->entity(id3).registerIntoSystem(dummySystem1));
   cout << "!!!OK - " << ++test_count << " => Added first Dummy Component to second valid entity" << endl;
 
-  assert(em->entity(id3).addComponent(dummySystem2));
+  assert(em->entity(id3).registerIntoSystem(dummySystem2));
   cout << "!!!OK - " << ++test_count << " => Added second Dummy Component to second valid entity" << endl;
 
   id1 = em->createEntity<EntityBase>("player1");
   assert(em->count() == 3);
   cout << "!!!OK - " << ++test_count << " => Created third Entity" << endl;
 
-  assert(em->entity(id1).addComponent(dummySystem2));
+  assert(em->entity(id1).registerIntoSystem(dummySystem2));
   cout << "!!!OK - " << ++test_count << " => Added second Dummy Component to third valid entity" << endl;
 
   for (int i = 0; i < 50; ++i)

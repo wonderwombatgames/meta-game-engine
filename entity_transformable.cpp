@@ -23,7 +23,7 @@ using namespace System;
   {
     SystemsInterface * sys = System::SystemsInterface::getSystem("Transform");
     assert(sys != nullptr);
-    addComponent(*sys);
+    registerIntoSystem(*sys);
   }
 
 } // end namespace W2E

@@ -43,9 +43,9 @@ public:
   bool willDestroy();
   bool isActive() const;
   // add one more component to the entity
-  EntityID addComponent(System::SystemsInterface & system);
+  EntityID registerIntoSystem(System::SystemsInterface & system);
   // verify if entity has component
-  bool hasComponent(System::SystemsInterface * system);
+  bool containedInSystem(System::SystemsInterface * system);
 
 protected:
   // can be used to register components into systems from constructor
@@ -82,7 +82,7 @@ inline bool EntityBase::willDestroy()
   return this->_destroy;
 }
 
-inline bool EntityBase::hasComponent(System::SystemsInterface * system)
+inline bool EntityBase::containedInSystem(System::SystemsInterface * system)
 {
   return (0 < this->_componentSystems.count(system));
 }

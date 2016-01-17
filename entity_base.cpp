@@ -69,7 +69,7 @@ void EntityBase::tearDownComponents()
 }
 
 // add one more component to the entity
-EntityID EntityBase::addComponent(SystemsInterface & system)
+EntityID EntityBase::registerIntoSystem(SystemsInterface & system)
 {
   if (SystemsInterface::isValid(system))
   {
