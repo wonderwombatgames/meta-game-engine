@@ -51,7 +51,14 @@ namespace System
 
   void Graphics::tick(TimeDim delta)
   {
-
+    for(auto comp : this->_components)
+    {
+      if(comp.second.isVisible &&
+         comp.second.resource )
+      {
+        comp.second.resource->paint(comp.second, this->_camera);
+      }
+    }
   }
 
   ResourceBinderPtr Graphics::getResourceBinder(ResourceID resourceId)
@@ -65,6 +72,12 @@ namespace System
       );
     }
     return retVal;
+  }
+
+  ErrorCode Graphics::setCameraTransform(Component::TransformPod & transformData)
+  {
+    this->_camera = transformData;
+    return NO_ERROR;
   }
 
 

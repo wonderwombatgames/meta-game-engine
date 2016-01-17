@@ -11,7 +11,9 @@ https://trello.com/b/vs9Ajlx5/game-engine-ecs#
 
 * [X] PARTIAL: replace all bool return for ErrorCode! - missing more error enumerations
 
-* [ ] update unit tests -> add graphic system rendering and transform to the entity then remove manual rendering
+* [ ] PARTIAL: add camera control to the graphic system - changed  GraphicInterface::paint() and added Graphics::setCameraTransform.
+
+* [ ] PARTIAL: update unit tests -> add graphic system rendering and transform to the entity then remove manual rendering - NOT WORKING!
 
 * [ ] change image load to use stb_image and remove sdl_image
 

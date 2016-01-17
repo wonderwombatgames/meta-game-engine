@@ -313,7 +313,7 @@ namespace Component
   }
 
   template <>
-  void Image< SDL2::Handler >::paint(const GraphicPod & component, const Vector3 & offset)
+  void Image< SDL2::Handler >::paint(const GraphicPod & component, const TransformPod & transformData)
   {
     if( _data->_view->_renderer &&
         this->isLoaded() &&
@@ -329,8 +329,8 @@ namespace Component
 
       this->computeClipRects(component, src, dst, center);
 
-      dst.topLeft.x -= static_cast<int>(offset.x);
-      dst.topLeft.y -= static_cast<int>(offset.y);
+      dst.topLeft.x -= static_cast<int>(transformData.position.x);
+      dst.topLeft.y -= static_cast<int>(transformData.position.y);
 
       float rot = 0.0f;
       float sx  = 1.0f;
@@ -411,12 +411,15 @@ namespace System
       :SystemsInterface("Graphics")
   {
     SDL2::initGraphicSystem();
+    this->_camera = { {{0.0f, 0.0f, 0.0f}}, {{0.0f, 0.0f, 0.0f}}, {{1.0f}} };
   }
 
   Graphics::Graphics(const char * name)
       :SystemsInterface(name)
   {
     SDL2::initGraphicSystem();
+    SDL2::initGraphicSystem();
+    this->_camera = { {{0.0f, 0.0f, 0.0f}}, {{0.0f, 0.0f, 0.0f}}, {{1.0f}} };
   }
 
   Graphics::~Graphics()

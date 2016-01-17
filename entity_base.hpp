@@ -44,6 +44,8 @@ public:
   bool isActive() const;
   // add one more component to the entity
   EntityID registerIntoSystem(System::SystemsInterface & system);
+  // remove one more component to the entity
+  ErrorCode deregisterFromSystem(System::SystemsInterface & system);
   // verify if entity has component
   bool containedInSystem(System::SystemsInterface * system);
 

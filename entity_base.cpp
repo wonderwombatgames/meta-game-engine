@@ -66,6 +66,7 @@ void EntityBase::tearDownComponents()
       system->removeEntity(this->_entityData);
     }
   }
+  this->_componentSystems.clear();
 }
 
 // add one more component to the entity
@@ -73,12 +74,29 @@ EntityID EntityBase::registerIntoSystem(SystemsInterface & system)
 {
   if (SystemsInterface::isValid(system))
   {
-    this->_componentSystems.insert(&system);
-    system.insertEntity(this->_entityData);
-    return this->_entityData.entityId;
+    if(this->_componentSystems.count(&system) == 0)
+    {
+      this->_componentSystems.insert(&system);
+      system.insertEntity(this->_entityData);
     }
+    return this->_entityData.entityId;
+  }
   return InvalidID;
 }
 
+
+ErrorCode EntityBase::deregisterFromSystem(System::SystemsInterface & system)
+{
+  if (SystemsInterface::isValid(system))
+  {
+    if(this->_componentSystems.count(&system) > 0)
+    {
+      system.removeEntity(this->_entityData);
+      this->_componentSystems.erase(&system);
+      return NO_ERROR;
+    }
+  }
+  return UNKNOWN_ERROR;
+}
 
 } // end namespace W2E

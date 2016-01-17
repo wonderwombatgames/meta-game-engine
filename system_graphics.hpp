@@ -95,12 +95,16 @@ namespace System
     // ResourceID loadResourceFromAtlas(const ImageAtlas & atlas);
     // ResourceID loadResourceFromNet(const NetworkResource & netRes)
 
+    // camera set
+    ErrorCode setCameraTransform(Component::TransformPod & transformData);
+
   protected:
     virtual void insert(Component::EntityPod & entity) override;
     virtual void remove(const Component::EntityPod & entity) override;
     virtual void tick(TimeDim delta) override;
     virtual ResourceBinderPtr getResourceBinder(ResourceID resourceId) override;
 
+    Component::TransformPod _camera;
     ComponentsHashMap _components;
     ResourcesHashMap _resources;
   };

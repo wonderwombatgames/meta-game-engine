@@ -83,7 +83,6 @@ int main(int argc, char *argv[])
 
   System::Graphics graphics;
   DisplayHandler view = graphics.createDisplay({ {{0.0, 0.0}}, {{320.0, 240.0}} });
-//   graphics.display;
   cout << "!!!OK - " << ++test_count << " => Created a viewport. " << endl;
 
   System::Transform transform;
@@ -149,7 +148,7 @@ int main(int argc, char *argv[])
 
   Colour c1;
   c1.kind = RGB;
-  c1.rgb = {0.5, 0.5, 0.5};
+  c1.rgb = {0.5f, 0.5f, 0.5f};
 
   float rotation = 0.0f;
   float rand_x = 0;
@@ -170,10 +169,11 @@ int main(int argc, char *argv[])
     _transformData.rotation.yaw = rotation;
     rand_x += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
     rand_y += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
-    Vector3 offset{{ rand_x, rand_y, 0.0f }};
+    Component::TransformPod offset{ {{rand_x, rand_y, 0.0f}}, {{0.0f, 0.0f, 0.0f}}, {{1.0f}} };
 
     view->clear(c1);
     tex2.paint(sprite, offset);
+    graphics.update(0.0f);
     view->render();
 
     SDL_Delay(1000/25);
