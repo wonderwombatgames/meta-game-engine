@@ -58,7 +58,7 @@ namespace Component
     virtual ~GraphicInterface(){}
     virtual void
       paint(const GraphicPod & component, const Vector3 & offset = {{ 0.0f, 0.0f, 0.0f }} ) = 0;
-    virtual bool setParameter(const char * paramName, const float & paramValue = 0.0f) = 0;
+    // virtual bool setParameter(const char * paramName, const float & paramValue = 0.0f) = 0;
   };
 
 } // namespace Component

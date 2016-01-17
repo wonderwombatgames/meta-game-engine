@@ -62,12 +62,16 @@ namespace System
     virtual ~GraphicResourceBinder(){}
 
     // ctor
-    GraphicResourceBinder(Component::GraphicInterface * resource, ComponentsHashMap * components);
+    GraphicResourceBinder(
+      SystemsInterface * system,
+      Component::GraphicInterface * resource,
+      ComponentsHashMap * components);
 
     // bind this resource to entity
-    bool toEntity(EntityID entityId);
+    bool toEntity(EntityBase * entity);
 
   private:
+    SystemsInterface * _system;
     Component::GraphicInterface * _resource;
     ComponentsHashMap * _components;
   };

@@ -336,7 +336,6 @@ namespace SDL2
 
 } // end namespace SDL2
 
-
 } // end namespace BackEnd
 
 } // end namespace Engine

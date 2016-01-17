@@ -6,10 +6,11 @@ sourcesfiles=\
 		backend_physics_null.cpp \
 		backend_graphic_sdl.cpp \
 		backend_handler_sdl.cpp	\
-		system_transform.cpp \
-		utils_colour.cpp \
-		utils_types.cpp \
-		command_router.cpp \
+		system_graphics.cpp	\
+		system_transform.cpp	\
+		utils_colour.cpp	\
+		utils_types.cpp	\
+		command_router.cpp	\
 		unit_tests.cpp
 
 buildflags=`pkg-config --cflags --libs sdl2`

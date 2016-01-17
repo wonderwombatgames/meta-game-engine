@@ -43,7 +43,7 @@ public:
   bool destroy(bool mustDestroy = true);
   bool willDestroy();
   // add one more component to the entity
-  bool addComponent(System::SystemsInterface & system);
+  EntityID addComponent(System::SystemsInterface & system);
   // verify if entity has component
   bool hasComponent(System::SystemsInterface * system);
 

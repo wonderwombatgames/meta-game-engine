@@ -28,7 +28,7 @@ namespace System
     virtual ~ResourceBinder(){}
 
     // bind this resource to entity
-    bool toEntity(EntityID entityId){ return false; }
+    bool toEntity(EntityBase * entity){ return false; }
   };
 
   using ResourceBinderPtr = SharedPtr<ResourceBinder>;

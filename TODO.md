@@ -6,7 +6,7 @@
 
 * change image load to use stb_image and remove sdl_image
 
-* ~~remove addComponent from EntitiesManager and add to Systems::BaseInterface a method to add an entity binded to an assetId~~
+* remove addComponent from EntitiesManager and add to Systems::BaseInterface a method to add an entity binded to an assetId
 
 * load texture from atlas
 
@@ -19,3 +19,7 @@
 * find better way to initialize the POD's
 
 * move parts of backend_graphic_sdl.cpp that do not directly depend on SDL to another file: system_graphic.cpp
+
+* change the namespace Engine to W2
+
+* find a way to remove Image::void computeClipRects(const GraphicPod & component, BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector2 & center);

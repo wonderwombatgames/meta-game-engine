@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
   cout << "!!!OK - " << ++test_count << " => load texture in graphic system " << endl;
 
   // graphics.setEntityAsset(entId, imgId);
-  graphics.bindResource(imgId)->toEntity(entId);
+  graphics.bindResource(imgId)->toEntity(&(em->entity(entId)));
   cout << "!!!OK - " << ++test_count << " => assigned newly created texture to transformable entity " << endl;
 
   SDL2BackEnd::Image tex1;

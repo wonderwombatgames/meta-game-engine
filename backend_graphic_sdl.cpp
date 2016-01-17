@@ -259,13 +259,13 @@ namespace Component
   Image< SDL2::Handler >::~Image()
   {}
 
-  template <>
-  bool Image< SDL2::Handler >::setParameter(
-      const char * paramName,
-      const float & paramValue)
-  {
-    return true;
-  }
+  // template <>
+  // bool Image< SDL2::Handler >::setParameter(
+  //     const char * paramName,
+  //     const float & paramValue)
+  // {
+  //   return true;
+  // }
 
   template <>
   void Image< SDL2::Handler >::computeClipRects(const GraphicPod & component, BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector2 & center)
@@ -401,23 +401,6 @@ namespace Component
 namespace System
 {
 
-  GraphicResourceBinder::GraphicResourceBinder(Component::GraphicInterface * resource, ComponentsHashMap * components)
-      : _resource(resource)
-      , _components(components)
-  {}
-
-  bool GraphicResourceBinder::toEntity(EntityID entityId)
-  {
-    auto it = this->_components->find(entityId);
-    if (it != this->_components->end())
-    {
-      it->second.resource = _resource;
-      return true;
-    }
-
-    return false;
-  }
-
   DisplayHandler Graphics::createDisplay(const BoxBoundXYWH & rect, Flags flags)
   {
     this->display = make_shared< GraphicDevice::Display< SDL2::Handler > > (rect, flags);
@@ -441,57 +424,6 @@ namespace System
     SDL2::quitGraphicSystem();
   }
 
-
-  // bool Graphics::setEntityResource(EntityID entityId, int assetId)
-  // {
-  //   auto itComp = this->_components.find(entityId);
-  //   auto itAsset = this->_assets.find(assetId);
-  //   if (itComp  != this->_components.end() &&
-  //       itAsset != this->_assets.end())
-  //   {
-  //     itComp->second.element = itAsset->second.get();
-  //     return true;
-  //   }
-  //
-  //   return false;
-  // }
-
-  void Graphics::insert(Component::EntityPod & entity)
-  {
-    Component::TransformPod * transform = entity.transform;
-    if (transform != nullptr)
-    {
-      Component::GraphicPod pod;
-      this->_components.emplace(entity.entityId, pod);
-    }
-  }
-
-  void Graphics::remove(const Component::EntityPod & entity)
-  {
-    auto it = this->_components.find(entity.entityId);
-    if (it != this->_components.end())
-    {
-      this->_components.erase(it);
-    }
-  }
-
-  void Graphics::tick(TimeDim delta)
-  {
-
-  }
-
-  ResourceBinderPtr Graphics::getResourceBinder(ResourceID resourceId)
-  {
-    ResourceBinderPtr retVal;
-    auto it = _resources.find(resourceId);
-    if(it != _resources.end())
-    {
-      retVal.reset(
-        new GraphicResourceBinder(it->second.get(), &_components)
-      );
-    }
-    return retVal;
-  }
 
 } // end namespace System
 
