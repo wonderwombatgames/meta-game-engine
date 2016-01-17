@@ -5,6 +5,7 @@
 #ifndef GRAPHIC_COMPONENT_HPP
 #define GRAPHIC_COMPONENT_HPP
 
+#include "utils_colour.hpp"
 #include "component_transform.hpp"
 
 namespace Engine
@@ -36,12 +37,12 @@ namespace Component
     TransformPod * transformData = nullptr;
 
     // graphic element data pointer
-    GraphicInterface * element = nullptr;
+    GraphicInterface * resource = nullptr;
 
     // GraphicPod()
     //     :transformData(nullptr)
     //     ,anchor{0.5f, 0.5f, 0.0f}
-    //     ,element(nullptr)
+    //     ,reource(nullptr)
     //     ,colourTint()
     //     ,alphaMode(1.0f)
     //     ,blendingMode(0)

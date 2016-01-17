@@ -24,8 +24,8 @@ namespace System
     virtual ~Transform();
 
   protected:
-    virtual void add(const Component::EntityPod & entity, Component::TransformPod * transform) override;
-    virtual void del(const Component::EntityPod & entity) override;
+    virtual void insert(Component::EntityPod & entity) override;
+    virtual void remove(const Component::EntityPod & entity) override;
     virtual void tick(TimeDim delta) override;
 
     HashMap< EntityID, Component::TransformPod > _components;

@@ -27,6 +27,7 @@ EntityBase::EntityBase(EntityID id)
   // this is the base entity so we set it to 1
   this->_entityData.typeId = 1;
 
+  // pointer to transformation component (used by several systems)
   this->_entityData.transform = nullptr;
 }
 
@@ -62,7 +63,7 @@ void EntityBase::tearDownComponents()
   {
     if (SystemsInterface::isValid(*system))
     {
-      system->delEntity(this->_entityData);
+      system->removeEntity(this->_entityData);
     }
   }
 }
@@ -73,7 +74,7 @@ bool EntityBase::addComponent(SystemsInterface & system)
   if (SystemsInterface::isValid(system))
   {
     this->_componentSystems.insert(&system);
-    system.addEntity(this->_entityData);
+    system.insertEntity(this->_entityData);
     return true;
   }
   return false;

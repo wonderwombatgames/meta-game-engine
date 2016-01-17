@@ -36,6 +36,43 @@ using namespace BackEnd;
 namespace GraphicDevice
 {
 
+  template < typename T >
+  class Display : public DisplayInterface
+  {
+  public:
+    Display(const BoxBoundXYWH & rect, Flags flags = 0);
+    virtual ~Display(){};
+    Display() = delete;
+    Display(Display & other) = delete;
+
+    // rendering
+    virtual void render() override;
+    virtual void clear() override;
+    virtual void clear(const Colour & c) override;
+
+    // reseting the viewport
+    virtual void setColour(const Colour & c) override;
+    virtual const Colour & getColour() const override;
+    virtual void setResolution(Dimension2 & res) override;
+    virtual const Dimension2 & getResolution() const override;
+    virtual void setViewRect(const BoxBoundXYWH & rect) override;
+    virtual const BoxBoundXYWH & getViewRect() const override;
+    virtual void setTitle(const String & title) override;
+    virtual const char * getTitle() const override;
+    virtual void setFullscreen(bool fs) override;
+    virtual const bool isFullscreen() const override;
+
+  protected:
+
+    using _HANDLER = T;
+
+    //data
+    UniquePtr< _HANDLER > _data;
+    BoxBoundXYWH _rect;
+    Colour _background;
+  };
+
+
   // Display
   template <>
   void Display< SDL2::Handler >::render()
@@ -90,7 +127,6 @@ namespace GraphicDevice
     setColour(c);
     SDL_RenderClear(_data->_view->_renderer);
   }
-
 
   template <>
   void Display< SDL2::Handler >::setFullscreen(bool fs)
@@ -365,6 +401,23 @@ namespace Component
 namespace System
 {
 
+  GraphicResourceBinder::GraphicResourceBinder(Component::GraphicInterface * resource, ComponentsHashMap * components)
+      : _resource(resource)
+      , _components(components)
+  {}
+
+  bool GraphicResourceBinder::toEntity(EntityID entityId)
+  {
+    auto it = this->_components->find(entityId);
+    if (it != this->_components->end())
+    {
+      it->second.resource = _resource;
+      return true;
+    }
+
+    return false;
+  }
+
   DisplayHandler Graphics::createDisplay(const BoxBoundXYWH & rect, Flags flags)
   {
     this->display = make_shared< GraphicDevice::Display< SDL2::Handler > > (rect, flags);
@@ -389,22 +442,23 @@ namespace System
   }
 
 
-  bool Graphics::setEntityAsset(EntityID entityId, int assetId)
-  {
-    auto itComp = this->_components.find(entityId);
-    auto itAsset = this->_assets.find(assetId);
-    if (itComp  != this->_components.end() &&
-        itAsset != this->_assets.end())
-    {
-      itComp->second.element = itAsset->second.get();
-      return true;
-    }
+  // bool Graphics::setEntityResource(EntityID entityId, int assetId)
+  // {
+  //   auto itComp = this->_components.find(entityId);
+  //   auto itAsset = this->_assets.find(assetId);
+  //   if (itComp  != this->_components.end() &&
+  //       itAsset != this->_assets.end())
+  //   {
+  //     itComp->second.element = itAsset->second.get();
+  //     return true;
+  //   }
+  //
+  //   return false;
+  // }
 
-    return false;
-  }
-
-  void Graphics::add(const Component::EntityPod & entity, Component::TransformPod * transform)
+  void Graphics::insert(Component::EntityPod & entity)
   {
+    Component::TransformPod * transform = entity.transform;
     if (transform != nullptr)
     {
       Component::GraphicPod pod;
@@ -412,7 +466,7 @@ namespace System
     }
   }
 
-  void Graphics::del(const Component::EntityPod & entity)
+  void Graphics::remove(const Component::EntityPod & entity)
   {
     auto it = this->_components.find(entity.entityId);
     if (it != this->_components.end())
@@ -424,6 +478,19 @@ namespace System
   void Graphics::tick(TimeDim delta)
   {
 
+  }
+
+  ResourceBinderPtr Graphics::getResourceBinder(ResourceID resourceId)
+  {
+    ResourceBinderPtr retVal;
+    auto it = _resources.find(resourceId);
+    if(it != _resources.end())
+    {
+      retVal.reset(
+        new GraphicResourceBinder(it->second.get(), &_components)
+      );
+    }
+    return retVal;
   }
 
 } // end namespace System

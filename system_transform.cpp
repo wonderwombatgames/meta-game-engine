@@ -14,20 +14,23 @@ namespace System
       :SystemsInterface("Transform")
   {
   }
+
   Transform::Transform(const char * name)
       :SystemsInterface(name)
   {
   }
+
   Transform::~Transform()
   {
   }
-  void Transform::add(const Component::EntityPod & entity, Component::TransformPod * transform)
+
+  void Transform::insert(Component::EntityPod & entity)
   {
     Component::TransformPod pod;
     this->_components.emplace(entity.entityId, pod);
-    transform = &(this->_components[entity.entityId]);
+    entity.transform = &(this->_components[entity.entityId]);
   }
-  void Transform::del(const Component::EntityPod & entity)
+  void Transform::remove(const Component::EntityPod & entity)
   {
     auto it = this->_components.find(entity.entityId);
     if (it != this->_components.end())

@@ -74,7 +74,7 @@ using TimeDim = f32;
 
 using EntityID = u32 ;
 using TypeID = EntityID;
-using AssetID = EntityID;
+using ResourceID = EntityID;
 
 // creates a new random ID < MAX_IDS
 EntityID rndId();

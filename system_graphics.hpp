@@ -45,49 +45,33 @@ namespace GraphicDevice
     virtual const bool isFullscreen() const =0;
   };
 
-
-  template < typename T >
-  class Display : public DisplayInterface
-  {
-  public:
-    Display(const BoxBoundXYWH & rect, Flags flags = 0);
-    virtual ~Display(){};
-    Display() = delete;
-    Display(Display & other) = delete;
-
-    // rendering
-    virtual void render() override;
-    virtual void clear() override;
-    virtual void clear(const Colour & c) override;
-
-    // reseting the viewport
-    virtual void setColour(const Colour & c) override;
-    virtual const Colour & getColour() const override;
-    virtual void setResolution(Dimension2 & res) override;
-    virtual const Dimension2 & getResolution() const override;
-    virtual void setViewRect(const BoxBoundXYWH & rect) override;
-    virtual const BoxBoundXYWH & getViewRect() const override;
-    virtual void setTitle(const String & title) override;
-    virtual const char * getTitle() const override;
-    virtual void setFullscreen(bool fs) override;
-    virtual const bool isFullscreen() const override;
-
-  protected:
-
-    using _HANDLER = T;
-
-    //data
-    UniquePtr< _HANDLER > _data;
-    BoxBoundXYWH _rect;
-    Colour _background;
-  };
-
-} // end namespace  Graphics
+} // end namespace  GraphicDevice
 
 namespace System
 {
 
   using DisplayHandler = SharedPtr< GraphicDevice::DisplayInterface >;
+  using ComponentsHashMap = HashMap< EntityID, Component::GraphicPod >;
+  using ResourcesHashMap = HashMap< ResourceID, SharedPtr< Component::GraphicInterface > >;
+
+
+  class GraphicResourceBinder : public ResourceBinder
+  {
+  public:
+    // virtual dtor
+    virtual ~GraphicResourceBinder(){}
+
+    // ctor
+    GraphicResourceBinder(Component::GraphicInterface * resource, ComponentsHashMap * components);
+
+    // bind this resource to entity
+    bool toEntity(EntityID entityId);
+
+  private:
+    Component::GraphicInterface * _resource;
+    ComponentsHashMap * _components;
+  };
+
 
   class Graphics : public SystemsInterface
   {
@@ -102,30 +86,30 @@ namespace System
     DisplayHandler createDisplay(const BoxBoundXYWH & rect, Flags flags = 0);
 
     template <typename T>
-    AssetID loadAssetFromFile(const String & filepath);
+    ResourceID loadResourceFromFile(const String & filepath);
     // TODO:
-    // AssetID loadAssetFromAtlas(const ImageAtlas & atlas);
-    // AssetID loadAssetFromNet(const NetworkResource & netRes)
+    // ResourceID loadResourceFromAtlas(const ImageAtlas & atlas);
+    // ResourceID loadResourceFromNet(const NetworkResource & netRes)
 
-    bool setEntityAsset(EntityID entityId, int assetId);
+    // bool setEntityAsset(EntityID entityId, int assetId);
 
   protected:
-    virtual void add(const Component::EntityPod & entity, Component::TransformPod * transform) override;
-    virtual void del(const Component::EntityPod & entity) override;
+    virtual void insert(Component::EntityPod & entity) override;
+    virtual void remove(const Component::EntityPod & entity) override;
     virtual void tick(TimeDim delta) override;
+    virtual ResourceBinderPtr getResourceBinder(ResourceID resourceId) override;
 
-    HashMap< EntityID, Component::GraphicPod > _components;
-    HashMap< AssetID, SharedPtr< Component::GraphicInterface > > _assets;
+    ComponentsHashMap _components;
+    ResourcesHashMap _resources;
   };
 
   template< typename T >
-  AssetID Graphics::loadAssetFromFile(const String & filepath)
+  ResourceID Graphics::loadResourceFromFile(const String & filepath)
   {
-    static AssetID assetCounter = 0;
-    assetCounter = seqId();
-    this->_assets.emplace(assetCounter, make_shared<T>(filepath));
+    ResourceID resCounter = seqId();
+    this->_resources.emplace(resCounter, make_shared<T>(filepath));
 
-    return assetCounter;
+    return resCounter;
   }
 
 

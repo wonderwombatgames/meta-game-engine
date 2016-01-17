@@ -1,7 +1,7 @@
 /**
   * base system interface
   * other systems will inherity from this class
-  *
+    *
   *
   */
 
@@ -20,6 +20,18 @@ using namespace std;
 
 namespace System
 {
+
+  class ResourceBinder
+  {
+  public:
+    // virtual dtor
+    virtual ~ResourceBinder(){}
+
+    // bind this resource to entity
+    bool toEntity(EntityID entityId){ return false; }
+  };
+
+  using ResourceBinderPtr = SharedPtr<ResourceBinder>;
 
   class SystemsInterface
   {
@@ -46,12 +58,13 @@ namespace System
     static bool isValid(SystemsInterface & system);
     // perform one step in the system
     FrameCount update(TimeDim delta);
+    // get system by name
+    static SystemsInterface * getSystem(const String & name);
 
     // entity related methods
-    void addEntity(const Component::EntityPod & entity);
-    void delEntity(const Component::EntityPod & entity);
-
-    static SystemsInterface * getSystem(const String & name);
+    void insertEntity(Component::EntityPod & entity);
+    void removeEntity(const Component::EntityPod & entity);
+    ResourceBinderPtr bindResource(ResourceID resourceId);
 
    protected:
     enum eRegistrar
@@ -63,29 +76,42 @@ namespace System
 
     // must be overriden in each system (impl. NVI)
     virtual void tick(TimeDim delta){}
-    virtual void add(const Component::EntityPod & entity, Component::TransformPod * transform){}
-    virtual void del(const Component::EntityPod & entity){}
+    virtual void insert(Component::EntityPod & entity){}
+    virtual void remove(const Component::EntityPod & entity){}
+    virtual ResourceBinderPtr getResourceBinder(ResourceID resourceId){
+      return make_shared<ResourceBinder>();
+    }
+
+    // class methods
     static SystemsInterface * systemRegistrar(bool & retValue, SystemsInterface * system, const char * name = nullptr, eRegistrar op = VERIFY);
 
+    // data
     String _name;
     FrameCount _frames;
   };
 
+  // inlined methods
   inline FrameCount SystemsInterface::update(TimeDim delta)
   {
     this->tick(delta);
     return ++(this->_frames);
   }
 
-  inline void SystemsInterface::addEntity(const Component::EntityPod & entity)
+  inline void SystemsInterface::insertEntity(Component::EntityPod & entity)
   {
-    this->add(entity, entity.transform);
+    this->insert(entity);
   }
 
-  inline void SystemsInterface::delEntity(const Component::EntityPod & entity)
+  inline void SystemsInterface::removeEntity(const Component::EntityPod & entity)
   {
-    this->del(entity);
+    this->remove(entity);
   }
+
+  inline ResourceBinderPtr SystemsInterface::bindResource(ResourceID resourceId)
+  {
+    return  this->getResourceBinder(resourceId);
+  }
+
 
   inline bool SystemsInterface::isValid(SystemsInterface & system)
   {
@@ -94,6 +120,7 @@ namespace System
     return retVal;
   }
 
+  // class methods
   inline SystemsInterface * SystemsInterface::getSystem(const String & name)
   {
     bool success = false;

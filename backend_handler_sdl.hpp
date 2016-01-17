@@ -71,9 +71,6 @@ namespace SDL2
 namespace SDL2BackEnd
 {
 using Handler = Engine::BackEnd::SDL2::Handler;
-using Display = GraphicDevice::Display< Handler >;
-using DisplayInterface = GraphicDevice::DisplayInterface;
-using DisplayPtr = UniquePtr< DisplayInterface >;
 using Image = Component::Image< Handler >;
 }
 

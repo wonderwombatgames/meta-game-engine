@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 
   System::Graphics graphics;
   graphics.createDisplay({ {{0.0, 0.0}}, {{320.0, 240.0}} });
-  SDL2BackEnd::DisplayInterface & view = *graphics.display.get();
+  DisplayHandler view = graphics.display;
   cout << "!!!OK - " << ++test_count << " => Created a viewport. " << endl;
 
   System::Transform transform;
@@ -113,10 +113,11 @@ int main(int argc, char *argv[])
   EntityID entId = em->createEntity<EntityTransformable>("Player");
   cout << "!!!OK - " << ++test_count << " => Created a Trasnformable entity. " << endl;
 
-  AssetID imgId = graphics.loadAssetFromFile<SDL2BackEnd::Image>("img/test.png");
+  ResourceID imgId = graphics.loadResourceFromFile<SDL2BackEnd::Image>("img/test.png");
   cout << "!!!OK - " << ++test_count << " => load texture in graphic system " << endl;
 
-  graphics.setEntityAsset(entId, imgId);
+  // graphics.setEntityAsset(entId, imgId);
+  graphics.bindResource(imgId)->toEntity(entId);
   cout << "!!!OK - " << ++test_count << " => assigned newly created texture to transformable entity " << endl;
 
   SDL2BackEnd::Image tex1;
@@ -142,9 +143,9 @@ int main(int argc, char *argv[])
 
 
   Dimension2 r{{ 640.0, 480.0 }};
-  view.setResolution(r);
+  view->setResolution(r);
   cout << "!!!OK - " << ++test_count << " => reset resolution " << endl;
-  //view.setFullscreen(true);
+  //view->setFullscreen(true);
 
   Colour c1;
   c1.kind = RGB;
@@ -171,15 +172,15 @@ int main(int argc, char *argv[])
     rand_y += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
     Vector3 offset{{ rand_x, rand_y, 0.0f }};
 
-    view.clear(c1);
+    view->clear(c1);
     tex2.paint(sprite, offset);
-    view.render();
+    view->render();
 
     SDL_Delay(1000/25);
   }
   cout << "!!!OK - " << ++test_count << " => Painting texture. " << endl;
   // SDL_Delay(1000);
-  // view.setFullscreen(false);
+  // view->setFullscreen(false);
 
   return 0;
 }
