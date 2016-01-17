@@ -5,7 +5,7 @@
 
 #include "command_router.hpp"
 
-namespace Engine
+namespace W2E
 {
   //using namespace std;
   using namespace Utils;
@@ -27,7 +27,7 @@ namespace Engine
   }
 
 
-  bool CommandRouter::subscribe(CommandType type, ICommand * cmd)
+  ErrorCode CommandRouter::subscribe(CommandType type, ICommand * cmd)
   {
     auto range = subscribers.equal_range(type);
     for (auto it = range.first; it != range.second; ++it)
@@ -35,16 +35,16 @@ namespace Engine
       // one cannot subscribe more than once
       if(it->second == cmd)
       {
-        return false;
+        return UNKNOWN_ERROR;
       }
     }
     subscribers.emplace(type, cmd);
 
-    return true;
+    return NO_ERROR;
   }
 
 
-  bool CommandRouter::unSubscribe(const CommandType type, const ICommand * cmd)
+  ErrorCode CommandRouter::unSubscribe(const CommandType type, const ICommand * cmd)
   {
     auto range = subscribers.equal_range(type);
     for (auto it = range.first; it != range.second; ++it)
@@ -53,12 +53,12 @@ namespace Engine
       if(it->second == cmd)
       {
         subscribers.erase(it);
-        return true;
+        return NO_ERROR;
       }
     }
 
     // did not found that pair!
-    return false;
+    return UNKNOWN_ERROR;
   }
 
 
@@ -72,4 +72,4 @@ namespace Engine
   }
 
 
-} // end namespace Engine
+} // end namespace W2E

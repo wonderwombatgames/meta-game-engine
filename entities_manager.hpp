@@ -12,7 +12,7 @@
 
 #include "entity_base.hpp"
 
-namespace Engine
+namespace W2E
 {
 using namespace std;
 using namespace System;
@@ -30,11 +30,6 @@ public:
   EntityID  createEntity(const char * name);
   EntityBase & entity(EntityID entityId);
 
-  // bool destroyEntity(EntityID entityId);
-  // bool suspendEntity(EntityID entityId);
-  // bool resumeEntity(EntityID entityId);
-  // bool isEntityActive(EntityID entityId);
-  // bool addComponent(EntityID entitityId, SystemsInterface & system);
   //const String * lookUpEntityName(EntityID entityId);
   EntityID lookUpEntityId(const String& name);
   int  refreshEntities();
@@ -74,6 +69,6 @@ inline int EntitiesManager::count()
 }
 
 
-} // end namespace Engine
+} // end namespace W2E
 
 #endif // ENTITIES_MANAGER_HPP

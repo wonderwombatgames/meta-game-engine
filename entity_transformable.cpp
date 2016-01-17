@@ -5,7 +5,7 @@
 #include "entity_transformable.hpp"
 #include "system_interface.hpp"
 
-namespace Engine
+namespace W2E
 {
 using namespace std;
 using namespace System;
@@ -26,4 +26,4 @@ using namespace System;
     addComponent(*sys);
   }
 
-} // end namespace Engine
+} // end namespace W2E

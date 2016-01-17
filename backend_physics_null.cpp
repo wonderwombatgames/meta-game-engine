@@ -5,11 +5,11 @@
 
 
 
-namespace Engine
+namespace W2E
 {
 //using namespace std;
 
-namespace BackEnd
+namespace BE
 {
 
 // bool initPhysicSystem(Flags flags)
@@ -26,6 +26,6 @@ namespace BackEnd
 //   return 0;
 // }
 
-} // end namespace BackEnd
+} // end namespace BE
 
-} // end namespace Engine
+} // end namespace W2E

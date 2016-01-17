@@ -9,8 +9,8 @@ namespace // anonymous
 {
   // holds pointers to loaded textures to avoid reloading textures more than once.
   using namespace std;
-  using namespace Engine::BackEnd;
-  using namespace Engine::Utils;
+  using namespace W2E::BE;
+  using namespace W2E::Utils;
 
   INTERNAL HashMap< String, SharedPtr< SDL2::Texture > > textures;
 
@@ -24,9 +24,9 @@ namespace // anonymous
 
     CLASS_METHOD SDLWrapper * instance();
 
-    bool initVideo();
-    bool initEvents();
-    bool initInput();
+    ErrorCode initVideo();
+    ErrorCode initEvents();
+    ErrorCode initInput();
 
     void quitVideo();
     void quitEvents();
@@ -83,35 +83,33 @@ namespace // anonymous
     SDL_Quit();
   }
 
-  inline bool initSubsystem(const Engine::Flags flag)
+  inline ErrorCode initSubsystem(const W2E::Flags flag)
   {
-    bool wasInit = SDL_WasInit(flag);
-    if(!wasInit)
+    if(!SDL_WasInit(flag))
     {
-      return SDL_InitSubSystem(flag);
+      return (SDL_InitSubSystem(flag))?NO_ERROR:UNKNOWN_ERROR;
     }
-    return wasInit;
+    return UNKNOWN_ERROR;
   }
 
-  inline bool SDLWrapper::initVideo()
+  inline ErrorCode SDLWrapper::initVideo()
   {
     return initSubsystem(SDL_INIT_VIDEO);
   }
 
-  inline bool SDLWrapper::initEvents()
+  inline ErrorCode SDLWrapper::initEvents()
   {
     return initSubsystem(SDL_INIT_EVENTS | SDL_INIT_TIMER);
   }
 
-  inline bool SDLWrapper::initInput()
+  inline ErrorCode SDLWrapper::initInput()
   {
     return initSubsystem(SDL_INIT_GAMECONTROLLER | SDL_INIT_JOYSTICK);
   }
 
-  inline void quitSubsystem(const Engine::Flags flag)
+  inline void quitSubsystem(const W2E::Flags flag)
   {
-    bool wasInit = SDL_WasInit(flag);
-    if(wasInit)
+    if(SDL_WasInit(flag))
     {
       SDL_QuitSubSystem(flag);
     }
@@ -135,19 +133,19 @@ namespace // anonymous
 } // end namespace anonymous
 
 
-namespace Engine
+namespace W2E
 {
 using namespace std;
 using namespace Utils;
 
-namespace BackEnd
+namespace BE
 {
 
 namespace SDL2
 {
 
   // converts the float values from Colour into SDL RGB8
-  void colour8RGBA(u8 & r, u8 & g, u8 & b, u8 & a, const Engine::Colour & c)
+  void colour8RGBA(u8 & r, u8 & g, u8 & b, u8 & a, const W2E::Colour & c)
   {
     r = 0;
     g = 0;
@@ -156,14 +154,14 @@ namespace SDL2
 
     switch (c.kind)
     {
-      case Engine::RGB:
+      case W2E::RGB:
       {
         r = (static_cast<u8>(c.rgb.r * 255) % 256);
         g = (static_cast<u8>(c.rgb.g * 255) % 256);
         b = (static_cast<u8>(c.rgb.b * 255) % 256);
         break;
       }
-      case Engine::RGBA:
+      case W2E::RGBA:
       {
         r = (static_cast<u8>(c.rgba.r * 255) % 256);
         g = (static_cast<u8>(c.rgba.g * 255) % 256);
@@ -171,7 +169,7 @@ namespace SDL2
         a = (static_cast<u8>(c.rgba.a * 255) % 256);
         break;
       }
-      case Engine::HSL:
+      case W2E::HSL:
       {
         ColourRGB tmp;
         Hsl2Rgb(c.hsl, tmp);
@@ -180,7 +178,7 @@ namespace SDL2
         b = (static_cast<u8>(tmp.b * 255) % 256);
         break;
       }
-      case Engine::HSLA:
+      case W2E::HSLA:
       {
         ColourRGB tmp;
         Hsl2Rgb({c.hsla.h, c.hsla.s, c.hsla.l }, tmp);
@@ -190,7 +188,7 @@ namespace SDL2
         a = (static_cast<u8>(c.hsla.a * 255) % 256);
       }
       break;
-      case Engine::HSV:
+      case W2E::HSV:
       {
         ColourRGB tmp;
         Hsv2Rgb(c.hsv, tmp);
@@ -199,7 +197,7 @@ namespace SDL2
         b = (static_cast<u8>(tmp.b * 255) % 256);
         break;
       }
-      case Engine::HSVA:
+      case W2E::HSVA:
       {
         ColourRGB tmp;
         Hsl2Rgb({c.hsva.h, c.hsva.s, c.hsva.v }, tmp);
@@ -209,7 +207,7 @@ namespace SDL2
         a = (static_cast<u8>(c.hsva.a * 255) % 256);
       }
       break;
-      case Engine::CMYK:
+      case W2E::CMYK:
       {
         ColourRGB tmp;
         Cmyk2Rgb(c.cmyk, tmp);
@@ -218,7 +216,7 @@ namespace SDL2
         b = (static_cast<u8>(tmp.b * 255) % 256);
         break;
       }
-      case Engine::HEX:
+      case W2E::HEX:
       {
         //  TODO
         break;
@@ -323,7 +321,7 @@ namespace SDL2
   {}
 
   // graphic functions
-  bool initGraphicSystem(Flags flags)
+  ErrorCode initGraphicSystem(Flags flags)
   {
     return SDLWrapper::instance()->initVideo();
   }
@@ -335,6 +333,6 @@ namespace SDL2
 
 } // end namespace SDL2
 
-} // end namespace BackEnd
+} // end namespace BE
 
-} // end namespace Engine
+} // end namespace W2E

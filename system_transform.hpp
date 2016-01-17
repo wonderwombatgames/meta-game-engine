@@ -8,7 +8,7 @@
 #include "system_interface.hpp"
 #include "component_transform.hpp"
 
-namespace Engine
+namespace W2E
 {
 using namespace std;
 
@@ -34,6 +34,6 @@ namespace System
 } // end namespace System
 
 
-} // end namespace Engine
+} // end namespace W2E
 
 #endif // SYSTEM_TRANSFORM_HPP

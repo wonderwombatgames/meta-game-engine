@@ -9,7 +9,7 @@
 #include "utils_types.hpp"
 
 
-namespace Engine
+namespace W2E
 {
 using namespace Utils;
 
@@ -40,6 +40,6 @@ namespace Component
 
 } // namespace Component
 
-} // end namespace Engine
+} // end namespace W2E
 
 #endif // PHYSICS_COMPONENT_HPP

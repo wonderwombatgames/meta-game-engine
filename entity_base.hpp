@@ -12,7 +12,7 @@
 #include "utils_types.hpp"
 #include "component_entity.hpp"
 
-namespace Engine
+namespace W2E
 {
 
 namespace System
@@ -37,11 +37,11 @@ public:
   EntityBase(EntityBase & other) = delete;
   virtual ~EntityBase();
 
-  bool isActive() const;
-  bool suspend();
-  bool resume();
-  bool destroy(bool mustDestroy = true);
+  ErrorCode suspend();
+  ErrorCode resume();
+  ErrorCode destroy(bool mustDestroy = true);
   bool willDestroy();
+  bool isActive() const;
   // add one more component to the entity
   EntityID addComponent(System::SystemsInterface & system);
   // verify if entity has component
@@ -71,10 +71,10 @@ inline bool EntityBase::isActive() const
   return this->_entityData.isActive;
 }
 
-inline bool EntityBase::destroy(bool mustDestroy)
+inline ErrorCode EntityBase::destroy(bool mustDestroy)
 {
   this->_destroy = mustDestroy;
-  return this->_destroy;
+  return (this->_destroy)?NO_ERROR:UNKNOWN_ERROR;
 }
 
 inline bool EntityBase::willDestroy()
@@ -88,6 +88,6 @@ inline bool EntityBase::hasComponent(System::SystemsInterface * system)
 }
 
 
-} // end namespace Engine
+} // end namespace W2E
 
 #endif // ENTITY_BASE_HPP

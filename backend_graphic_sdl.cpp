@@ -14,7 +14,7 @@
 
 namespace
 {
-using namespace Engine;
+using namespace W2E;
 using namespace Utils;
 
   inline void BoxBoundXYWH2SDLRect(const BoxBoundXYWH & box, SDL_Rect & rect)
@@ -28,10 +28,10 @@ using namespace Utils;
 }
 
 
-namespace Engine
+namespace W2E
 {
 using namespace std;
-using namespace BackEnd;
+using namespace BE;
 
 namespace GraphicDevice
 {
@@ -218,7 +218,7 @@ namespace Component
   }
 
   template <>
-  bool Image< SDL2::Handler >::loadFromFile(const String & filepath)
+  ErrorCode Image< SDL2::Handler >::loadFromFile(const String & filepath)
   {
     _data->_image = SDL2::Texture::createTexture(filepath, _data->_view->_renderer);
 
@@ -239,7 +239,7 @@ namespace Component
     // size - between 0.0 - 1.0 (in relation to Display size)
     _textureSize = {{ w, h }};
 
-    return this->isLoaded();
+    return (this->isLoaded())?NO_ERROR:UNKNOWN_ERROR;
   }
 
 
@@ -428,4 +428,4 @@ namespace System
 } // end namespace System
 
 
-} // end namespace Engine
+} // end namespace W2E

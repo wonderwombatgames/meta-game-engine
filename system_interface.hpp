@@ -14,7 +14,7 @@
 #include "component_transform.hpp"
 #include "entities_manager.hpp"
 
-namespace Engine
+namespace W2E
 {
 using namespace std;
 
@@ -28,7 +28,7 @@ namespace System
     virtual ~ResourceBinder(){}
 
     // bind this resource to entity
-    bool toEntity(EntityBase * entity){ return false; }
+    ErrorCode toEntity(EntityBase * entity){ return UNKNOWN_ERROR; }
   };
 
   using ResourceBinderPtr = SharedPtr<ResourceBinder>;
@@ -186,6 +186,6 @@ namespace System
 
 } // end namespace System
 
-} // end namespace Engine
+} // end namespace W2E
 
 #endif // SYSTEM_INTERFACE_HPP

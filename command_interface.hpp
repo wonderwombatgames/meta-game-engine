@@ -8,7 +8,7 @@
 
 #include "utils_types.hpp"
 
-namespace Engine
+namespace W2E
 {
   // using namespace std;
   using namespace Utils;
@@ -60,6 +60,6 @@ namespace Engine
   };
 
 
-} // end namespace Engine
+} // end namespace W2E
 
 #endif // COMMAND_INTERFACE_HPP

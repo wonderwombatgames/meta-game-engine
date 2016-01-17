@@ -8,7 +8,7 @@
 
 #include "utils_types.hpp"
 
-namespace Engine
+namespace W2E
 {
 
 namespace Utils
@@ -122,6 +122,6 @@ void Cmyk2Hsv(const ColourCMYK & in, ColourHSV  & out);
 
 } // end namespace Utils
 
-} // end namespace Engine
+} // end namespace W2E
 
 #endif // UTILS_COLOUR_HPP

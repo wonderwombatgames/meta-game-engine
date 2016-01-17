@@ -1,29 +1,33 @@
 # TO DO
+https://trello.com/b/vs9Ajlx5/game-engine-ecs#
 
-* ~~rename all statics to either GLOBAL or INTERNAL or PERSISTENT~~
 
-* add custom allocator to the types alias in utils_types.hpp
+* [ ] update unit tests -> add graphic system rendering and transform to the entity then remove manual rendering
 
-* change image load to use stb_image and remove sdl_image
+* [X] ~~rename all statics to either GLOBAL or INTERNAL or PERSISTENT~~
 
-* ~~remove addComponent from EntitiesManager and add to Systems::BaseInterface a method to add an entity binded to an assetId~~
+* [ ] add custom allocator to the types alias in utils_types.hpp
 
-* load texture from atlas
+* [ ] change image load to use stb_image and remove sdl_image
 
-* load texture from network
+* [X] ~~remove addComponent from EntitiesManager and add to Systems::BaseInterface a method to add an entity binded to an assetId~~
 
-* change the RNG to Twist Mersene
+* [ ] load texture from atlas
 
-* replace all bool return for ErrorCode!
+* [ ] load texture from network
 
-* find better way to initialize the POD's
+* [ ] change the RNG to Twist Mersene
 
-* ~~move parts of backend_graphic_sdl.cpp that do not directly depend on SDL to another file: system_graphic.cpp~~
+* [~] ~~replace all bool return for ErrorCode!~~ missing more error enumerations
 
-* change the namespace Engine to W2
+* [ ] find better way to initialize the POD's
 
-* find a way to remove Image::void computeClipRects(const GraphicPod & component, BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector2 & center);
+* [X] ~~move parts of backend_graphic_sdl.cpp that do not directly depend on SDL to another file: system_graphic.cpp~~
 
-* remove backend.hpp file
+* [X] ~~change the namespace Engine to W2E and BackEnd to BE~~
 
-* reduce usage of STL
+* [ ] find a way to remove Image::void computeClipRects(const GraphicPod & component, BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector2 & center);
+
+* [ ] remove backend.hpp file
+
+* [ ] reduce usage of STL

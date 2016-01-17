@@ -15,7 +15,7 @@
 #include "system_transform.hpp"
 
 
-using namespace Engine;
+using namespace W2E;
 
 int main(int argc, char *argv[])
 {
@@ -82,8 +82,8 @@ int main(int argc, char *argv[])
   cout << "!!!OK - " << ++test_count << " => Destroied All Entities" << endl;
 
   System::Graphics graphics;
-  graphics.createDisplay({ {{0.0, 0.0}}, {{320.0, 240.0}} });
-  DisplayHandler view = graphics.display;
+  DisplayHandler view = graphics.createDisplay({ {{0.0, 0.0}}, {{320.0, 240.0}} });
+//   graphics.display;
   cout << "!!!OK - " << ++test_count << " => Created a viewport. " << endl;
 
   System::Transform transform;
@@ -113,19 +113,19 @@ int main(int argc, char *argv[])
   EntityID entId = em->createEntity<EntityTransformable>("Player");
   cout << "!!!OK - " << ++test_count << " => Created a Trasnformable entity. " << endl;
 
-  ResourceID imgId = graphics.loadResourceFromFile<SDL2BackEnd::Image>("img/test.png");
+  ResourceID imgId = graphics.loadResourceFromFile<SDL2BE::Image>("img/test.png");
   cout << "!!!OK - " << ++test_count << " => load texture in graphic system " << endl;
 
   // graphics.setEntityAsset(entId, imgId);
   graphics.bindResource(imgId)->toEntity(&(em->entity(entId)));
   cout << "!!!OK - " << ++test_count << " => assigned newly created texture to transformable entity " << endl;
 
-  SDL2BackEnd::Image tex1;
+  SDL2BE::Image tex1;
   String filename("img/sample.png");
   tex1.loadFromFile(filename);
   cout << "!!!OK - " << ++test_count << " => Created 1 texture. " << endl;
 
-  SDL2BackEnd::Image tex2;
+  SDL2BE::Image tex2;
   tex2.loadFromFile(filename);
   cout << "!!!OK - " << ++test_count << " => Created another texture with same asset. " << endl;
 

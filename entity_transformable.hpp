@@ -7,7 +7,7 @@
 
 #include "entity_base.hpp"
 
-namespace Engine
+namespace W2E
 {
 using namespace std;
 using namespace System;
@@ -28,6 +28,6 @@ protected:
 
 };
 
-} // end namespace Engine
+} // end namespace W2E
 
 #endif // ENTITY_TRANSFORMABLE_HPP

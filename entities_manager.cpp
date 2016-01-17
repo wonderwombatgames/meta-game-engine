@@ -5,7 +5,7 @@
 #include "system_interface.hpp"
 #include "entities_manager.hpp"
 
-namespace Engine
+namespace W2E
 {
 using namespace std;
 using namespace System;
@@ -24,59 +24,6 @@ EntitiesManager * EntitiesManager::instance()
   return s_instance;
 }
 
-// bool EntitiesManager::addComponent(EntityID entitityId, SystemsInterface & system)
-// {
-//   auto entity = this->_entities.find(entitityId);
-//   if(entity != this->_entities.end())
-//   {
-//     entity->second->addComponent(system);
-//     return true;
-//   }
-//   return false;
-// }
-//
-// bool EntitiesManager::destroyEntity(EntityID entityId)
-// {
-//   auto entity = this->_entities.find(entityId);
-//   if (entity != this->_entities.end())
-//   {
-//     entity->second->destroy(true);
-//     return true;
-//   }
-//   return false;
-// }
-//
-// bool EntitiesManager::suspendEntity(EntityID entityId)
-// {
-//   auto entity = this->_entities.find(entityId);
-//   if (entity != this->_entities.end())
-//   {
-//     return entity->second->suspend();
-//   }
-//   return false;
-// }
-//
-// bool EntitiesManager::resumeEntity(EntityID entityId)
-// {
-//   auto entity = this->_entities.find(entityId);
-//   if (entity != this->_entities.end())
-//   {
-//     return entity->second->resume();
-//   }
-//   return false;
-// }
-//
-//
-// bool EntitiesManager::isEntityActive(EntityID entityId)
-// {
-//   auto entity = this->_entities.find(entityId);
-//   if (entity != this->_entities.end())
-//   {
-//     return entity->second->isActive();
-//   }
-//   return false;
-// }
-//
 // const String * EntitiesManager::lookUpEntityName(EntityID entityId)
 // {
 //
@@ -131,4 +78,4 @@ int EntitiesManager::refreshEntities()
 }
 
 
-} // end namespace Engine
+} // end namespace W2E

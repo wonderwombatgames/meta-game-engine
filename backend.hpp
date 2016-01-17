@@ -9,11 +9,11 @@
 #include "utils_types.hpp"
 
 
-namespace Engine
+namespace W2E
 {
 using namespace Utils;
 
-namespace BackEnd
+namespace BE
 {
 
 class IHandler
@@ -54,8 +54,8 @@ ErrorCode getPhysicHandler(IHandler * handler = nullptr, const IConfig * data = 
 // void quitAudioSystem();
 ErrorCode getAudioHandler(IHandler * handler = nullptr, const IConfig * data = nullptr);
 
-} // end namespace BackEnd
+} // end namespace BE
 
-} // end namespace Engine
+} // end namespace W2E
 
 #endif // BACKEND_HPP

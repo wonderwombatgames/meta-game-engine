@@ -1,7 +1,7 @@
 #include <algorithm>
 #include "utils_colour.hpp"
 
-namespace Engine
+namespace W2E
 {
 using namespace std;
 
@@ -341,4 +341,4 @@ void Cmyk2Hsv(const ColourCMYK & in, ColourHSV  & out)
 
 } // end namespace Utils
 
-} // end namespace Engine
+} // end namespace W2E

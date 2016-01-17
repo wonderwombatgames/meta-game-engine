@@ -9,7 +9,7 @@
 #include "utils_colour.hpp"
 #include "component_graphic.hpp"
 
-namespace Engine
+namespace W2E
 {
 using namespace std;
 using namespace Utils;
@@ -35,10 +35,10 @@ namespace Component
     virtual ~Image();
 
     bool isLoaded();
-    bool loadFromFile(const String & filepath);
+    ErrorCode loadFromFile(const String & filepath);
     // TODO:
-    // bool loadFromAtlas(const ImageAtlas & atlas);
-    // bool loadFromNet(const NetworkResource & netRes);
+    // ErrorCode loadFromAtlas(const ImageAtlas & atlas);
+    // ErrorCode loadFromNet(const NetworkResource & netRes);
 
     virtual void paint(
         const GraphicPod & component,
@@ -59,6 +59,6 @@ namespace Component
 
 } // end namespace Component
 
-} // end namespace Engine
+} // end namespace W2E
 
 #endif // COMPONENT_GRAPHIC_IMAGE_HPP

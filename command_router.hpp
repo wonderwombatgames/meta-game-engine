@@ -9,7 +9,7 @@
 
 #include "command_interface.hpp"
 
-namespace Engine
+namespace W2E
 {
   using namespace std;
 
@@ -21,8 +21,8 @@ namespace Engine
 
     CLASS_METHOD CommandRouter * instance();
 
-    bool subscribe(CommandType type, ICommand * cmd);
-    bool unSubscribe(const CommandType type, const ICommand * cmd);
+    ErrorCode subscribe(CommandType type, ICommand * cmd);
+    ErrorCode unSubscribe(const CommandType type, const ICommand * cmd);
     void dispatch(const CommandMsg & msg);
 
   protected:
@@ -30,6 +30,6 @@ namespace Engine
     GLOBAL HashMultiMap< CommandType, ICommand * > subscribers;
   };
 
-} // end namespace Engine
+} // end namespace W2E
 
 #endif // COMMAND_ROUTER_HPP

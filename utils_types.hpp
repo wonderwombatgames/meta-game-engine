@@ -15,7 +15,7 @@
 #include <deque>
 #include <string>
 
-namespace Engine
+namespace W2E
 {
 
 namespace Utils
@@ -41,34 +41,32 @@ using f64 = double;
 
 
 // containers
-template<typename el>
-using SharedPtr = std::shared_ptr<el>;
+template<typename T>
+using SharedPtr = std::shared_ptr<T>;
 
-template<typename el>
-using UniquePtr = std::unique_ptr<el>;
+template<typename T>
+using UniquePtr = std::unique_ptr<T>;
 
-template<typename el>
-using Set = std::set<el>;
+template<typename T>
+using Set = std::set<T>;
 
-template<typename el>
-using List = std::deque<el>;
+template<typename T>
+using List = std::deque<T>;
 
-template<typename k, typename el>
-using HashMap = std::unordered_map<k,el>;
+template<typename K, typename T>
+using HashMap = std::unordered_map<K, T>;
 
-template<typename k, typename el>
-using HashMultiMap = std::unordered_multimap<k,el>;
+template<typename K, typename T>
+using HashMultiMap = std::unordered_multimap<K, T>;
 
 using String = std::string;
 
 
 // game specific types
-enum { InvalidID = -1 };
 
 using FrameCount = u64;
 using Flags = u32;
 using BlendingMode = u16;
-using ErrorCode = u8;
 using ColourComp = f32;
 using SpaceDim = f32;
 using TimeDim = f32;
@@ -76,6 +74,13 @@ using TimeDim = f32;
 using EntityID = u32 ;
 using TypeID = EntityID;
 using ResourceID = EntityID;
+
+enum { InvalidID = -1 };
+enum ErrorCode
+{
+  UNKNOWN_ERROR = 0,
+  NO_ERROR = 1,
+};
 
 // creates a new random ID < MAX_IDS
 EntityID rndId();
@@ -202,6 +207,6 @@ enum eAudioState
 
 } // end namespace Utils
 
-} // end namespace Engine
+} // end namespace W2E
 
 #endif // UTILS_TYPES_HPP

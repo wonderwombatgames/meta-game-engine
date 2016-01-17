@@ -1,6 +1,6 @@
 #include "system_graphics.hpp"
 
-namespace Engine
+namespace W2E
 {
 
 namespace System
@@ -15,7 +15,7 @@ namespace System
           , _components(components)
   {}
 
-  bool GraphicResourceBinder::toEntity(EntityBase * entity)
+  ErrorCode GraphicResourceBinder::toEntity(EntityBase * entity)
   {
     if(_system != nullptr)
     {
@@ -24,10 +24,10 @@ namespace System
       if (it != this->_components->end())
       {
         it->second.resource = _resource;
-        return true;
+        return NO_ERROR;
       }
     }
-    return false;
+    return UNKNOWN_ERROR;
   }
 
   void Graphics::insert(Component::EntityPod & entity)
@@ -70,4 +70,4 @@ namespace System
 
 } // end namespace System
 
-} // end namespace Engine
+} // end namespace W2E

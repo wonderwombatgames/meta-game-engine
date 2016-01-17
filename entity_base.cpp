@@ -6,7 +6,7 @@
 #include "system_interface.hpp"
 #include "entity_base.hpp"
 
-namespace Engine
+namespace W2E
 {
 using namespace std;
 using namespace System;
@@ -36,24 +36,24 @@ EntityBase::~EntityBase()
   this->tearDownComponents();
 }
 
-bool EntityBase::suspend()
+ErrorCode EntityBase::suspend()
 {
   if (this->_entityData.isActive)
   {
     this->_entityData.isActive = false;
-    return true;
+    return NO_ERROR;
   }
-  return false;
+  return UNKNOWN_ERROR;
 }
 
-bool EntityBase::resume()
+ErrorCode EntityBase::resume()
 {
   if (!this->_entityData.isActive)
   {
     this->_entityData.isActive = true;
-    return true;
+    return NO_ERROR;
   }
-  return false;
+  return UNKNOWN_ERROR;
 }
 
 // tear down (de register) components from systems
@@ -77,8 +77,8 @@ EntityID EntityBase::addComponent(SystemsInterface & system)
     system.insertEntity(this->_entityData);
     return this->_entityData.entityId;
     }
-  return -1;
+  return InvalidID;
 }
 
 
-} // end namespace Engine
+} // end namespace W2E

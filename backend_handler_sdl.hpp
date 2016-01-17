@@ -13,12 +13,12 @@
 #include "component_graphic_image.hpp"
 
 
-namespace Engine
+namespace W2E
 {
 using namespace std;
 using namespace Utils;
 
-namespace BackEnd
+namespace BE
 {
 
 namespace SDL2
@@ -57,7 +57,7 @@ namespace SDL2
   };
 
   // graphic functions
-  bool initGraphicSystem(Flags flags = 0);
+  ErrorCode initGraphicSystem(Flags flags = 0);
   void quitGraphicSystem();
 
   // converts the float values from Colour into SDL RGB8
@@ -65,15 +65,15 @@ namespace SDL2
 
 } // end namespace SDL2
 
-} // end namespace BackEnd
+} // end namespace BE
 
 
-namespace SDL2BackEnd
+namespace SDL2BE
 {
-using Handler = Engine::BackEnd::SDL2::Handler;
+using Handler = W2E::BE::SDL2::Handler;
 using Image = Component::Image< Handler >;
 }
 
-} // end namespace Engine
+} // end namespace W2E
 
 #endif // BACKEND_CONTEXT_SDL_HPP

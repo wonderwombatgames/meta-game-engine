@@ -8,7 +8,7 @@
 #include "utils_types.hpp"
 
 
-namespace Engine
+namespace W2E
 {
 
 namespace Utils
@@ -38,4 +38,4 @@ EntityID seqId()
 
 } // end namespace Utils
 
-} // end namespace Engine
+} // end namespace W2E

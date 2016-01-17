@@ -15,7 +15,7 @@
 #include "system_interface.hpp"
 #include "component_graphic.hpp"
 
-namespace Engine
+namespace W2E
 {
 using namespace std;
 
@@ -68,7 +68,7 @@ namespace System
       ComponentsHashMap * components);
 
     // bind this resource to entity
-    bool toEntity(EntityBase * entity);
+    ErrorCode toEntity(EntityBase * entity);
 
   private:
     SystemsInterface * _system;
@@ -95,8 +95,6 @@ namespace System
     // ResourceID loadResourceFromAtlas(const ImageAtlas & atlas);
     // ResourceID loadResourceFromNet(const NetworkResource & netRes)
 
-    // bool setEntityAsset(EntityID entityId, int assetId);
-
   protected:
     virtual void insert(Component::EntityPod & entity) override;
     virtual void remove(const Component::EntityPod & entity) override;
@@ -119,6 +117,6 @@ namespace System
 
 } // end namespace System
 
-} // end namespace Engine
+} // end namespace W2E
 
 #endif // GRAPHIC_SYSTEMS_HPP

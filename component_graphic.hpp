@@ -8,7 +8,7 @@
 #include "utils_colour.hpp"
 #include "component_transform.hpp"
 
-namespace Engine
+namespace W2E
 {
 using namespace Utils;
 
@@ -63,6 +63,6 @@ namespace Component
 
 } // namespace Component
 
-} // end namespace Engine
+} // end namespace W2E
 
 #endif // GRAPHIC_COMPONENT_HPP
