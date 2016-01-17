@@ -1,9 +1,6 @@
 # TO DO
 https://trello.com/b/vs9Ajlx5/game-engine-ecs#
 
-* [ ] - Not Done
-* [X] - Done
-
 
 * [ ] update unit tests -> add graphic system rendering and transform to the entity then remove manual rendering
 
