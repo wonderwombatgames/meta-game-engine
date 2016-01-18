@@ -28,7 +28,7 @@ namespace System
     virtual ~ResourceBinder(){}
 
     // bind this resource to entity
-    ErrorCode toEntity(EntityBase * entity){ return UNKNOWN_ERROR; }
+    virtual ErrorCode toEntity(EntityBase * entity){ return UNKNOWN_ERROR; }
   };
 
   using ResourceBinderPtr = SharedPtr<ResourceBinder>;

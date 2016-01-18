@@ -20,11 +20,11 @@ namespace Component
     // position
     // absolute in pixels (float values)
     // can contain z-order for 2d spaces
-    Vector3 position;//{ .x = 0.0f, .y = 0.0f, .zorder = 0.0f};
+    Vector3 position;
 
     // rotation
     // values between 0.0 - 1.0  (= 0 - 360)
-    Rotation3 rotation;//{ .roll = 0.0f, .pitch = 0.0f, .yaw = 0.0f};
+    Rotation3 rotation;
 
     // scales
     // <1.0 = smaller | > 1.0 = larger
@@ -32,11 +32,20 @@ namespace Component
     // this attribure is shared by physics and
     // graphics, and might have application
     // to the entity behaviour as well
-    Vector3 scale;//{ .x = 1.0f, .y = 1.0f, .z = 1.0f};
+    Vector3 scale;
 
     // kind of space 2D/3D
     eSpace kind;
 
+    // TransformPod()
+    // : position{{ 0.0f, 0.0f, 0.0f }}
+    // , rotation{{ 0.0f, 0.0f, 0.0f }}
+    // , scale{{ 1.0f, 1.0f, 1.0f }}
+    // , kind(SPACE_2D) {}
+    //
+    // TransformPod(TransformPod & other) = default;
+    // TransformPod(TransformPod && other) = default;
+    // TransformPod & operator=(TransformPod & other) = default;
   };
 
 

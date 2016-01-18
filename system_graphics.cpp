@@ -1,5 +1,7 @@
 #include "system_graphics.hpp"
 
+#include <iostream>
+
 namespace W2E
 {
 
@@ -13,13 +15,15 @@ namespace System
           : _system(system)
           , _resource(resource)
           , _components(components)
-  {}
+  {
+  }
 
   ErrorCode GraphicResourceBinder::toEntity(EntityBase * entity)
   {
     if(_system != nullptr)
     {
       EntityID id = entity->registerIntoSystem(*_system);
+
       auto it = this->_components->find(id);
       if (it != this->_components->end())
       {
@@ -32,11 +36,22 @@ namespace System
 
   void Graphics::insert(Component::EntityPod & entity)
   {
-    Component::TransformPod * transform = entity.transform;
-    if (transform != nullptr)
+    if (entity.transform)
     {
       Component::GraphicPod pod;
       this->_components.emplace(entity.entityId, pod);
+      this->_components[entity.entityId].transformData = entity.transform;
+      this->_components[entity.entityId].anchor = {{ 0.5f, 0.5f, 0.0f }};
+      this->_components[entity.entityId].blendingMode = 1;
+      this->_components[entity.entityId].alphaMode = 1.0f;
+      this->_components[entity.entityId].isVisible = true;
+      //tint colour
+      Colour c;
+      c.kind = RGB;
+      c.rgb = {1.0f, 1.0f, 1.0f};
+      this->_components[entity.entityId].colourTint = c;
+
+
     }
   }
 
@@ -47,6 +62,12 @@ namespace System
     {
       this->_components.erase(it);
     }
+  }
+
+  ErrorCode Graphics::setCameraTransform(Component::TransformPod & transformData)
+  {
+    this->_camera = transformData;
+    return NO_ERROR;
   }
 
   void Graphics::tick(TimeDim delta)
@@ -73,13 +94,6 @@ namespace System
     }
     return retVal;
   }
-
-  ErrorCode Graphics::setCameraTransform(Component::TransformPod & transformData)
-  {
-    this->_camera = transformData;
-    return NO_ERROR;
-  }
-
 
 } // end namespace System
 

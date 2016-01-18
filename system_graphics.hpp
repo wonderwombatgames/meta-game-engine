@@ -68,7 +68,7 @@ namespace System
       ComponentsHashMap * components);
 
     // bind this resource to entity
-    ErrorCode toEntity(EntityBase * entity);
+    virtual ErrorCode toEntity(EntityBase * entity);
 
   private:
     SystemsInterface * _system;

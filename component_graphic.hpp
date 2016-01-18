@@ -23,7 +23,7 @@ namespace Component
 
     // defines the anchor within the boudaries
     // values between 0.0 - 1.0 (in relation to entity size | UV)
-    Vector3 anchor;// = { .x = 0.5f, .y = 0.5f, .zorder = 0.0f};
+    Vector3 anchor;// = {{ 0.5f, 0.5f, 0.0f }};
 
     // colour parameters
     Colour colourTint;
@@ -31,7 +31,7 @@ namespace Component
     BlendingMode blendingMode = 0;
 
     // whether to show the entity or not
-    bool isVisible;// = true;
+    bool isVisible = true;
 
     // reference to transform data component
     TransformPod * transformData = nullptr;

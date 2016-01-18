@@ -31,7 +31,6 @@ namespace Component
 
     // pointer to transform pod
     TransformPod * transform;
-
   };
 
 } // namespace Component

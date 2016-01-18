@@ -320,9 +320,6 @@ namespace Component
         component.isVisible &&
         component.transformData != nullptr)
     {
-      int rw = _data->_view->_resolution.width;
-      int rh = _data->_view->_resolution.height;
-
       BoxBoundXYWH src;
       BoxBoundXYWH dst;
       Vector2 center;
@@ -345,53 +342,47 @@ namespace Component
       double angle = fmod((rot * 360.0), 360.0);
       SDL_Point sdl_center = {static_cast<int>(center.x), static_cast<int>(center.y)};
 
-      if(dst.topLeft.x >= 0.0 && dst.topLeft.y >= 0.0 &&
-        dst.topLeft.x <= rw && dst.topLeft.y <= rh)
+      // calculate  src and dst rectangles
+      SDL_Rect src_rect;
+      BoxBoundXYWH2SDLRect(src, src_rect);
+
+      SDL_Rect dst_rect;
+      BoxBoundXYWH2SDLRect(dst, dst_rect);
+
+      SDL_RendererFlip flip = SDL_FLIP_NONE;
+      if (sx < 0.0)
       {
-        // calculate  src and dst rectangles
-        SDL_Rect src_rect;
-        BoxBoundXYWH2SDLRect(src, src_rect);
-
-        SDL_Rect dst_rect;
-        BoxBoundXYWH2SDLRect(dst, dst_rect);
-
-        SDL_RendererFlip flip = SDL_FLIP_NONE;
-        if (sx < 0.0)
-        {
-          flip = static_cast<SDL_RendererFlip>( flip | SDL_FLIP_HORIZONTAL);
-        }
-        if (sy < 0.0)
-        {
-          flip = static_cast<SDL_RendererFlip>( flip | SDL_FLIP_VERTICAL);
-        }
-
-        // blending mode
-        SDL_SetTextureBlendMode(_data->_image->_buffer,
-            static_cast<SDL_BlendMode>(component.blendingMode));
-
-        // color modulation
-        uint8_t r = 0;
-        uint8_t g = 0;
-        uint8_t b = 0;
-        uint8_t a = 0;
-        SDL2::colour8RGBA(r, g, b, a, component.colourTint);
-        SDL_SetTextureColorMod(_data->_image->_buffer, r, g, b);
-
-        // alpha mode
-        uint8_t alpha = static_cast<uint8_t>(255 * component.alphaMode);
-        SDL_SetTextureAlphaMod(_data->_image->_buffer, alpha);
-
-        // paint the Image
-        SDL_RenderCopyEx(_data->_view->_renderer,
-                         _data->_image->_buffer,
-                         &src_rect,
-                         &dst_rect,
-                         angle,
-                         &sdl_center,
-                         flip);
+        flip = static_cast<SDL_RendererFlip>( flip | SDL_FLIP_HORIZONTAL);
       }
-      else
-        assert(false);
+      if (sy < 0.0)
+      {
+        flip = static_cast<SDL_RendererFlip>( flip | SDL_FLIP_VERTICAL);
+      }
+
+      // blending mode
+      SDL_SetTextureBlendMode(_data->_image->_buffer,
+          static_cast<SDL_BlendMode>(component.blendingMode));
+
+      // color modulation
+      uint8_t r = 0;
+      uint8_t g = 0;
+      uint8_t b = 0;
+      uint8_t a = 0;
+      SDL2::colour8RGBA(r, g, b, a, component.colourTint);
+      SDL_SetTextureColorMod(_data->_image->_buffer, r, g, b);
+
+      // alpha mode
+      uint8_t alpha = static_cast<uint8_t>(255 * component.alphaMode);
+      SDL_SetTextureAlphaMod(_data->_image->_buffer, alpha);
+
+      // paint the Image
+      SDL_RenderCopyEx(_data->_view->_renderer,
+                       _data->_image->_buffer,
+                       &src_rect,
+                       &dst_rect,
+                       angle,
+                       &sdl_center,
+                       flip);
     }
   }
 

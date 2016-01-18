@@ -29,6 +29,10 @@ namespace System
     Component::TransformPod pod;
     this->_components.emplace(entity.entityId, pod);
     entity.transform = &(this->_components[entity.entityId]);
+    entity.transform->position = {{ 0.0f, 0.0f, 0.0f }};
+    entity.transform->rotation = {{ 0.0f, 0.0f, 0.0f }};
+    entity.transform->scale    = {{ 1.0f, 1.0f, 1.0f }};
+    entity.transform->kind = SPACE_2D;
   }
   void Transform::remove(const Component::EntityPod & entity)
   {

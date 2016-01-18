@@ -9,11 +9,13 @@ https://trello.com/b/vs9Ajlx5/game-engine-ecs#
 
 * [X] ~~remove addComponent from EntitiesManager and add to Systems::BaseInterface a method to add an entity binded to an assetId~~
 
+* [X] ~~add camera control to the graphic system - changed  GraphicInterface::paint() and added Graphics::setCameraTransform.~~
+
 * [X] PARTIAL: replace all bool return for ErrorCode! - missing more error enumerations
 
-* [ ] PARTIAL: add camera control to the graphic system - changed  GraphicInterface::paint() and added Graphics::setCameraTransform.
+* [ ] PARTIAL: update unit tests -> add graphic system rendering and transform to the entity then remove manual rendering - WORKING but need to hand initialize graphicPOD and transformPOD!
 
-* [ ] PARTIAL: update unit tests -> add graphic system rendering and transform to the entity then remove manual rendering - NOT WORKING!
+* [ ] find better way to initialize the POD's
 
 * [ ] change image load to use stb_image and remove sdl_image
 
@@ -25,9 +27,7 @@ https://trello.com/b/vs9Ajlx5/game-engine-ecs#
 
 * [ ] change the RNG to Twist Mersene
 
-* [ ] find better way to initialize the POD's
-
-* [ ] find a way to remove Image::void computeClipRects(const GraphicPod & component, BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector2 & center);
+* [ ] find a way to remove Image::computeClipRects(const GraphicPod & component, BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector2 & center);
 
 * [ ] remove backend.hpp file
 
