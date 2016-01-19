@@ -3,31 +3,31 @@
   */
 
 
-#include "command_router.hpp"
+#include "command_dispatcher.hpp"
 
 namespace W2E
 {
   //using namespace std;
   using namespace Utils;
 
-  HashMultiMap< CommandType, ICommand * > CommandRouter::subscribers;
+  HashMultiMap< CommandType, ICommandee * > CommandDispatcher::subscribers;
 
-  CommandRouter::CommandRouter(){};
+  CommandDispatcher::CommandDispatcher(){};
 
-  CommandRouter::~CommandRouter(){};
+  CommandDispatcher::~CommandDispatcher(){};
 
-  CommandRouter * CommandRouter::instance()
+  CommandDispatcher * CommandDispatcher::instance()
   {
-    LOCAL_PERSISTENT CommandRouter * s_instance = nullptr;
+    LOCAL_PERSISTENT CommandDispatcher * s_instance = nullptr;
     if (nullptr == s_instance)
     {
-      s_instance = new CommandRouter();
+      s_instance = new CommandDispatcher();
     }
     return s_instance;
   }
 
 
-  ErrorCode CommandRouter::subscribe(CommandType type, ICommand * cmd)
+  ErrorCode CommandDispatcher::subscribe(CommandType type, ICommandee * cmd)
   {
     auto range = subscribers.equal_range(type);
     for (auto it = range.first; it != range.second; ++it)
@@ -44,7 +44,7 @@ namespace W2E
   }
 
 
-  ErrorCode CommandRouter::unSubscribe(const CommandType type, const ICommand * cmd)
+  ErrorCode CommandDispatcher::unSubscribe(const CommandType type, const ICommandee * cmd)
   {
     auto range = subscribers.equal_range(type);
     for (auto it = range.first; it != range.second; ++it)
@@ -62,7 +62,7 @@ namespace W2E
   }
 
 
-  void CommandRouter::dispatch(const CommandMsg & msg)
+  void CommandDispatcher::dispatch(const CommandMsg & msg)
   {
     auto range = subscribers.equal_range(msg.type);
     for (auto it = range.first; it != range.second; ++it)

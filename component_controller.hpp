@@ -2,8 +2,8 @@
   * base entities data component
   */
 
-#ifndef COMPONENT_ENTITY_HPP
-#define COMPONENT_ENTITY_HPP
+#ifndef COMPONENT_CONTROLLER_HPP
+#define COMPONENT_CONTROLLER_HPP
 
 #include "utils_types.hpp"
 
@@ -14,27 +14,17 @@ using namespace Utils;
 namespace Component
 {
 
-  // forward declaration
-  struct TransformPod;
-
-
-  struct EntityPod
+  struct ControllerPod
   {
     // entity unique identifier
     EntityID entityId;
 
-    // define to what class entity belongs
-    TypeID typeId;
-
     // whether or not this entity is active
     bool isActive = true;
-
-    // pointer to transform pod
-    TransformPod * transform = nullptr;
   };
 
 } // namespace Component
 
 } // end namespace W2E
 
-#endif // COMPONENT_ENTITY_HPP
+#endif // COMPONENT_CONTROLLER_HPP

@@ -10,7 +10,7 @@ sourcesfiles=\
 		system_transform.cpp	\
 		utils_colour.cpp	\
 		utils_types.cpp	\
-		command_router.cpp	\
+		command_dispatcher.cpp	\
 		unit_tests.cpp
 
 buildflags=`pkg-config --cflags --libs sdl2`

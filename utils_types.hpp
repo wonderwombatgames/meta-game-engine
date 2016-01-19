@@ -75,6 +75,10 @@ namespace Utils
   using TypeID = EntityID;
   using ResourceID = EntityID;
 
+
+  using  CommandType = u16;
+  using  CommandOp   = u16;
+
   enum { InvalidID = -1 };
   enum ErrorCode
   {

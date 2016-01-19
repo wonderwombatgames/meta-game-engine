@@ -13,18 +13,20 @@ namespace W2E
   // using namespace std;
   using namespace Utils;
 
-  using  CommandType = uint16_t;
-  using  CommandOp   = uint16_t;
+  enum eArgTag
+  {
+    CHAR8, INT64, UINT64, DOUBLE, STRING_PTR
+  };
 
   struct Args
   {
-      enum{CHAR8, INT64, UINT64, DOUBLE, STRING_PTR} tag;
+      eArgTag tag;
       union
       {
           char c[8];
-          int64_t i;
-          uint64_t u;
-          double d;
+          i64 i;
+          u64 u;
+          f64 d;
           String * s;
       } data;
   };
@@ -38,11 +40,11 @@ namespace W2E
   };
 
 
-  class ICommand
+  class ICommandee
   {
   public:
-    friend class CommandRouter;
-    virtual ~ICommand(){}
+    friend class CommandDispatcher;
+    virtual ~ICommandee(){}
 
     const CommandType & getType() const
     {

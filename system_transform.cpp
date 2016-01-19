@@ -6,7 +6,7 @@
 
 namespace W2E
 {
-using namespace std;
+
 namespace System
 {
 

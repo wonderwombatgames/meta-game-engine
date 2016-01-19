@@ -2,7 +2,7 @@
   *
   */
 
-#include "entity_transformable.hpp"
+#include "entity_controller.hpp"
 #include "system_interface.hpp"
 
 namespace W2E
@@ -11,17 +11,17 @@ namespace W2E
 using namespace System;
 
 
-  EntityTransformable::EntityTransformable(EntityID id)
+  EntityController::EntityController(EntityID id)
       :EntityBase(id)
   {
   }
-  EntityTransformable::~EntityTransformable()
+  EntityController::~EntityController()
   {
   }
   // can be used to register components into systems from constructor
-  void EntityTransformable::setUpComponents()
+  void EntityController::setUpComponents()
   {
-    SystemsInterface * sys = System::SystemsInterface::getSystem("Transform");
+    SystemsInterface * sys = System::SystemsInterface::getSystem("Controller");
     assert(sys != nullptr);
     registerIntoSystem(*sys);
   }

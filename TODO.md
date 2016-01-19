@@ -17,6 +17,8 @@ https://trello.com/b/vs9Ajlx5/game-engine-ecs#
 
 * [ ] PARTIAL: update unit tests -> add graphic system rendering and transform to the entity then remove manual rendering - WORKING but need to hand initialize graphicPOD and transformPOD!
 
+* [ ] reevaluate all the friend uses through out the code
+
 * [ ] change image load to use stb_image and remove sdl_image
 
 * [ ] load texture from atlas
