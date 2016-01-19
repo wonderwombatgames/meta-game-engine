@@ -14,6 +14,15 @@ namespace W2E
 namespace Utils
 {
 
+  enum eBlendMode
+  {
+    BLENDMODE_NONE,   // no blending: dstRGBA = srcRGBA
+    BLENDMODE_ALPHA,  // alpha blending:  dstRGB = (srcRGB * srcA) + (dstRGB * (1-srcA)) &
+                      //                  dstA = srcA + (dstA * (1-srcA))
+    BLENDMODE_ADD,    // additive blending: dstRGB = (srcRGB * srcA) + dstRGB & dstA = dstA
+    BLENDMODE_MULT,   // color modulate: dstRGB = srcRGB * dstRGB & dstA = dstA
+  };
+
   enum eColour
   {
     RGB,
@@ -86,20 +95,32 @@ namespace Utils
 
   struct Colour
   {
-    eColour kind = RGBA;
+    eColour kind;
     union
     {
-      ColourRGBA rgba = {  .r = 0.0f, .g = 0.0f, .b = 0.0f, .a = 0.0f };
-      ColourRGB rgb;
+      ColourRGBA rgba;
       ColourHSLA hsla;
-      ColourHSL hsl;
       ColourHSVA hsva;
-      ColourHSV hsv;
       ColourCMYK cmyk;
-      ColourHex hex;
+      ColourRGB  rgb;
+      ColourHSL  hsl;
+      ColourHSV  hsv;
+      ColourHex  hex;
     };
-
   };
+
+namespace Colours
+{
+  GLOBAL const Colour WHITE   { RGBA, {{ 1.0f, 1.0f, 1.0f, 1.0f }} };
+  GLOBAL const Colour GRAY    { RGBA, {{ 0.5f, 0.5f, 0.5f, 1.0f }} };
+  GLOBAL const Colour BLACK   { RGBA, {{ 0.0f, 0.0f, 0.0f, 1.0f }} };
+  GLOBAL const Colour RED     { RGBA, {{ 1.0f, 0.0f, 0.0f, 1.0f }} };
+  GLOBAL const Colour GREEN   { RGBA, {{ 0.0f, 1.0f, 0.0f, 1.0f }} };
+  GLOBAL const Colour BLUE    { RGBA, {{ 0.0f, 0.0f, 1.0f, 1.0f }} };
+  GLOBAL const Colour CYAN    { RGBA, {{ 0.0f, 1.0f, 1.0f, 1.0f }} };
+  GLOBAL const Colour MAGENTA { RGBA, {{ 1.0f, 0.0f, 1.0f, 1.0f }} };
+  GLOBAL const Colour YELLOW  { RGBA, {{ 1.0f, 1.0f, 0.0f, 1.0f }} };
+} // end namespace Colours
 
 void Hex2Rgb (const ColourHex  & in, ColourRGB  & out);
 void Rgb2Hex (const ColourRGB  & in, ColourHex  & out);
@@ -119,6 +140,7 @@ void Hsv2Cmyk(const ColourHSV  & in, ColourCMYK & out);
 void Cmyk2Rgb(const ColourCMYK & in, ColourRGB  & out);
 void Cmyk2Hsl(const ColourCMYK & in, ColourHSL  & out);
 void Cmyk2Hsv(const ColourCMYK & in, ColourHSV  & out);
+
 
 } // end namespace Utils
 

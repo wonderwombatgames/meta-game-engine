@@ -41,17 +41,6 @@ namespace System
       Component::GraphicPod pod;
       this->_components.emplace(entity.entityId, pod);
       this->_components[entity.entityId].transformData = entity.transform;
-      this->_components[entity.entityId].anchor = {{ 0.5f, 0.5f, 0.0f }};
-      this->_components[entity.entityId].blendingMode = 1;
-      this->_components[entity.entityId].alphaMode = 1.0f;
-      this->_components[entity.entityId].isVisible = true;
-      //tint colour
-      Colour c;
-      c.kind = RGB;
-      c.rgb = {1.0f, 1.0f, 1.0f};
-      this->_components[entity.entityId].colourTint = c;
-
-
     }
   }
 

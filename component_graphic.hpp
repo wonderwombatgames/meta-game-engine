@@ -14,21 +14,21 @@ using namespace Utils;
 
 namespace Component
 {
-
-// forward declaration
+  // forward declaration
   class GraphicInterface;
+
 
   struct GraphicPod
   {
 
     // defines the anchor within the boudaries
     // values between 0.0 - 1.0 (in relation to entity size | UV)
-    Vector3 anchor;// = {{ 0.5f, 0.5f, 0.0f }};
+    Vector3 anchor = CENTER;
 
     // colour parameters
-    Colour colourTint;
+    Colour colourTint = Colours::WHITE;
     ColourComp alphaMode = 1.0f;
-    BlendingMode blendingMode = 0;
+    eBlendMode blendingMode = BLENDMODE_ALPHA;
 
     // whether to show the entity or not
     bool isVisible = true;
@@ -39,15 +39,6 @@ namespace Component
     // graphic element data pointer
     GraphicInterface * resource = nullptr;
 
-    // GraphicPod()
-    //     :transformData(nullptr)
-    //     ,anchor{0.5f, 0.5f, 0.0f}
-    //     ,reource(nullptr)
-    //     ,colourTint()
-    //     ,alphaMode(1.0f)
-    //     ,blendingMode(0)
-    //     ,isVisible(true)
-    // {}
   };
 
 
@@ -56,9 +47,7 @@ namespace Component
   public:
     GraphicInterface(){}
     virtual ~GraphicInterface(){}
-    virtual void
-      paint(const GraphicPod & component, const TransformPod & transformData) = 0;
-    // virtual bool setParameter(const char * paramName, const float & paramValue = 0.0f) = 0;
+    virtual void paint(const GraphicPod & component, const TransformPod & transformData) = 0;
   };
 
 } // namespace Component

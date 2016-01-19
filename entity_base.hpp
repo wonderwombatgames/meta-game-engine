@@ -8,7 +8,6 @@
 #ifndef ENTITY_BASE_HPP
 #define ENTITY_BASE_HPP
 
-//#include "system_interface.hpp"
 #include "utils_types.hpp"
 #include "component_entity.hpp"
 
@@ -20,8 +19,6 @@ namespace System
   class SystemsInterface;
 }
 
-//using namespace std;
-//using namespace System;
 using namespace Utils;
 
 

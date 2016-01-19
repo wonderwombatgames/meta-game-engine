@@ -34,18 +34,6 @@ namespace Component
     // to the entity behaviour as well
     Vector3 scale;
 
-    // kind of space 2D/3D
-    eSpace kind;
-
-    // TransformPod()
-    // : position{{ 0.0f, 0.0f, 0.0f }}
-    // , rotation{{ 0.0f, 0.0f, 0.0f }}
-    // , scale{{ 1.0f, 1.0f, 1.0f }}
-    // , kind(SPACE_2D) {}
-    //
-    // TransformPod(TransformPod & other) = default;
-    // TransformPod(TransformPod && other) = default;
-    // TransformPod & operator=(TransformPod & other) = default;
   };
 
 

@@ -107,6 +107,7 @@ int main(int argc, char *argv[])
 
 #endif
 
+#if 0
   // render by hand
   /////////////////
 
@@ -156,10 +157,12 @@ int main(int argc, char *argv[])
   sprite.transformData = &_transformData;
   sprite.isVisible = true;
   sprite.anchor = {{ 0.5f, 0.5f, 0.5f }};
-  sprite.blendingMode = SDL_BLENDMODE_BLEND;
+  sprite.blendingMode = BLENDMODE_ALPHA;
   sprite.alphaMode = 1.0f;
   sprite.colourTint = c2;
   cout << "!!!OK - " << ++test_count << " => set the sprite on the world: " << sprite.transformData->position.x << " - " << sprite.transformData->position.y << endl;
+
+#endif
 
   // setting view
   Dimension2 r{{ 640.0, 480.0 }};

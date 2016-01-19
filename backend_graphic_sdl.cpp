@@ -25,6 +25,14 @@ using namespace Utils;
     rect.h = static_cast<int>(box.size.height);
   }
 
+  inline SDL_BlendMode mapBlendMode(eBlendMode mode)
+  {
+    SDL_BlendMode map[] = { SDL_BLENDMODE_NONE,
+                            SDL_BLENDMODE_BLEND,
+                            SDL_BLENDMODE_ADD,
+                            SDL_BLENDMODE_MOD };
+    return map[mode];
+  }
 }
 
 
@@ -121,10 +129,7 @@ namespace GraphicDevice
   template <>
   void Display< SDL2::Handler >::clear()
   {
-    Colour c;
-    c.kind = RGBA;
-    c.rgba = {0.0f, 0.0f, 0.0f, 1.0f};
-    setColour(c);
+    setColour({ RGBA, {{0.0f, 0.0f, 0.0f, 1.0f}} });
     SDL_RenderClear(_data->_view->_renderer);
   }
 
@@ -195,12 +200,10 @@ namespace GraphicDevice
 
   template <>
   Display< SDL2::Handler >::Display(const BoxBoundXYWH & rect, Flags flags)
-      :_data(new _HANDLER)
-      ,_rect(rect)
+      : _data(new _HANDLER)
+      , _rect(rect)
+      , _background{ RGB, {{1.0, 1.0, 1.0}} }
   {
-    this->_background.kind = RGB;
-    this->_background.rgb = {0.1, 0.5, 0.9};
-
     this->setViewRect(rect);
   }
 
@@ -252,20 +255,10 @@ namespace Component
 
   template <>
   Image< SDL2::Handler >::Image()
-      :_data(new _HANDLER)
-  {}
+      :_data(new _HANDLER) {}
 
   template <>
-  Image< SDL2::Handler >::~Image()
-  {}
-
-  // template <>
-  // bool Image< SDL2::Handler >::setParameter(
-  //     const char * paramName,
-  //     const float & paramValue)
-  // {
-  //   return true;
-  // }
+  Image< SDL2::Handler >::~Image() {}
 
   template <>
   void Image< SDL2::Handler >::computeClipRects(const GraphicPod & component, BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector2 & center)
@@ -361,7 +354,7 @@ namespace Component
 
       // blending mode
       SDL_SetTextureBlendMode(_data->_image->_buffer,
-          static_cast<SDL_BlendMode>(component.blendingMode));
+          static_cast<SDL_BlendMode>(mapBlendMode(component.blendingMode)));
 
       // color modulation
       uint8_t r = 0;

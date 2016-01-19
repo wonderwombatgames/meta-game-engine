@@ -13,9 +13,9 @@ https://trello.com/b/vs9Ajlx5/game-engine-ecs#
 
 * [X] PARTIAL: replace all bool return for ErrorCode! - missing more error enumerations
 
-* [ ] PARTIAL: update unit tests -> add graphic system rendering and transform to the entity then remove manual rendering - WORKING but need to hand initialize graphicPOD and transformPOD!
+* [X] ~~find better way to initialize the POD's - Only transformPod is not initialized. Colours and Vectors are purposefully let without default to allow list instantiation. Constants were set for init with a copy constructor~~
 
-* [ ] find better way to initialize the POD's
+* [ ] PARTIAL: update unit tests -> add graphic system rendering and transform to the entity then remove manual rendering - WORKING but need to hand initialize graphicPOD and transformPOD!
 
 * [ ] change image load to use stb_image and remove sdl_image
 

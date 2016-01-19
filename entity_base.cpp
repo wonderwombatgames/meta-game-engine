@@ -20,15 +20,8 @@ EntityBase::EntityBase(EntityID id)
 {
   // defaults
   this->_entityData.entityId = id;
-
-  // whether or not this entity is active
-  this->_entityData.isActive = true;
-
   // this is the base entity so we set it to 1
   this->_entityData.typeId = 1;
-
-  // pointer to transformation component (used by several systems)
-  this->_entityData.transform = nullptr;
 }
 
 EntityBase::~EntityBase()

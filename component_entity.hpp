@@ -27,10 +27,10 @@ namespace Component
     TypeID typeId;
 
     // whether or not this entity is active
-    bool isActive;
+    bool isActive = true;
 
     // pointer to transform pod
-    TransformPod * transform;
+    TransformPod * transform = nullptr;
   };
 
 } // namespace Component
