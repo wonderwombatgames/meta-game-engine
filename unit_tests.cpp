@@ -18,29 +18,30 @@ using namespace W2E;
 
 int main(int argc, char* argv[])
 {
-    int test_count = 0;
+  int test_count = 0;
 
-    EntitiesManager* em = EntitiesManager::instance();
-    cout << "!!!OK - " << ++test_count << " => Instantiated Entities Manager. " << endl;
+  EntitiesManager* em = EntitiesManager::instance();
+  cout << "!!!OK - " << ++test_count << " => Instantiated Entities Manager. " << endl;
 
-    System::Transform transform;
-    cout << "!!!OK - " << ++test_count << " => Started Transform System. " << endl;
+  System::Transform transform;
+  cout << "!!!OK - " << ++test_count << " => Started Transform System. " << endl;
 
-    System::Graphics graphics;
-    cout << "!!!OK - " << ++test_count << " => Started Graphics System. " << endl;
+  System::Graphics graphics;
+  cout << "!!!OK - " << ++test_count << " => Started Graphics System. " << endl;
 
-    DisplayHandler view = graphics.createDisplay({ { { 0.0, 0.0 } }, { { 320.0, 240.0 } } });
-    cout << "!!!OK - " << ++test_count << " => Created a viewport. " << endl;
+  DisplayHandler view = graphics.createDisplay({{{0.0, 0.0}}, {{320.0, 240.0}}});
+  cout << "!!!OK - " << ++test_count << " => Created a viewport. " << endl;
 
-    EntityID entId = em->createEntity<EntityTransformable>("Player");
-    cout << "!!!OK - " << ++test_count << " => Created a Trasnformable entity. " << endl;
+  EntityID entId = em->createEntity< EntityTransformable >("Player");
+  cout << "!!!OK - " << ++test_count << " => Created a Trasnformable entity. " << endl;
 
-    ResourceID imgId = graphics.loadResourceFromFile<SDL2BE::Image>("img/sample.png");
-    cout << "!!!OK - " << ++test_count << " => load texture in graphic system " << endl;
+  ResourceID imgId = graphics.loadResourceFromFile< SDL2BE::Image >("img/sample.png");
+  cout << "!!!OK - " << ++test_count << " => load texture in graphic system " << endl;
 
-    // graphics.setEntityAsset(entId, imgId);
-    graphics.bindResource(imgId)->toEntity(em->registrar(entId));
-    cout << "!!!OK - " << ++test_count << " => assigned newly created texture to transformable entity " << endl;
+  // graphics.setEntityAsset(entId, imgId);
+  graphics.bindResource(imgId)->toEntity(em->registrar(entId));
+  cout << "!!!OK - " << ++test_count
+       << " => assigned newly created texture to transformable entity " << endl;
 
 #if 0 // just basic features test
 
@@ -162,48 +163,47 @@ int main(int argc, char* argv[])
 
 #endif
 
-    // setting view
-    Dimension2 r{ { 640.0, 480.0 } };
-    view->setResolution(r);
-    cout << "!!!OK - " << ++test_count << " => reset resolution " << endl;
-    //view->setFullscreen(true);
+  // setting view
+  Dimension2 r{{640.0, 480.0}};
+  view->setResolution(r);
+  cout << "!!!OK - " << ++test_count << " => reset resolution " << endl;
+  // view->setFullscreen(true);
 
-    // background colour
-    Colour c1;
-    c1.kind = RGB;
-    c1.rgb = { 0.5f, 0.5f, 0.5f };
+  // background colour
+  Colour c1;
+  c1.kind = RGB;
+  c1.rgb = {0.5f, 0.5f, 0.5f};
 
-    // float rand_x = 0;
-    // float rand_y = 0;
+  // float rand_x = 0;
+  // float rand_y = 0;
 
-    bool running = true;
-    SDL_Event event;
-    for (int i = 0; running && (i < 250); ++i) {
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                running = false;
-                break;
-            }
-        }
-
-        // rand_x += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
-        // rand_y += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
-        Component::TransformPod offset{
-            { { -150.0f, -150.0f, 0.0f } },
-            { { 0.0f, 0.0f, 0.0f } },
-            { { 1.0f } }
-        };
-
-        view->clear(c1);
-        // tex2.paint(sprite, offset);
-        graphics.setCameraTransform(offset);
-        graphics.update(0.0f);
-        view->render();
-
-        SDL_Delay(1000 / 25);
+  bool running = true;
+  SDL_Event event;
+  for(int i = 0; running && (i < 250); ++i)
+  {
+    while(SDL_PollEvent(&event))
+    {
+      if(event.type == SDL_QUIT)
+      {
+        running = false;
+        break;
+      }
     }
-    // SDL_Delay(1000);
-    // view->setFullscreen(false);
 
-    return 0;
+    // rand_x += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
+    // rand_y += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
+    Component::TransformPod offset{{{-150.0f, -150.0f, 0.0f}}, {{0.0f, 0.0f, 0.0f}}, {{1.0f}}};
+
+    view->clear(c1);
+    // tex2.paint(sprite, offset);
+    graphics.setCameraTransform(offset);
+    graphics.update(0.0f);
+    view->render();
+
+    SDL_Delay(1000 / 25);
+  }
+  // SDL_Delay(1000);
+  // view->setFullscreen(false);
+
+  return 0;
 }

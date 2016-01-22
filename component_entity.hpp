@@ -14,24 +14,23 @@ using namespace Utils;
 namespace Component
 {
 
-  // forward declaration
-  struct TransformPod;
+// forward declaration
+struct TransformPod;
 
+struct EntityPod
+{
+  // entity unique identifier
+  EntityID entityId;
 
-  struct EntityPod
-  {
-    // entity unique identifier
-    EntityID entityId;
+  // define to what class entity belongs
+  TypeID typeId;
 
-    // define to what class entity belongs
-    TypeID typeId;
+  // whether or not this entity is active
+  bool isActive = true;
 
-    // whether or not this entity is active
-    bool isActive = true;
-
-    // pointer to transform pod
-    TransformPod * transform = nullptr;
-  };
+  // pointer to transform pod
+  TransformPod* transform = nullptr;
+};
 
 } // namespace Component
 

@@ -12,7 +12,6 @@
 #include "system_graphics.hpp"
 #include "component_graphic_image.hpp"
 
-
 namespace W2E
 {
 using namespace std;
@@ -24,49 +23,47 @@ namespace BE
 namespace SDL2
 {
 
-  // wrapper around window and renderer
-  struct Renderer
-  {
-    Renderer();
-    ~Renderer();
-    GLOBAL Dimension2 _resolution;
-    GLOBAL SDL_Window * _window;
-    GLOBAL SDL_Renderer * _renderer;
-  };
+// wrapper around window and renderer
+struct Renderer
+{
+  Renderer();
+  ~Renderer();
+  GLOBAL Dimension2 _resolution;
+  GLOBAL SDL_Window* _window;
+  GLOBAL SDL_Renderer* _renderer;
+};
 
-  // wrapper around texture
-  struct Texture
-  {
-    CLASS_METHOD SharedPtr< Texture > createTexture(
-        const String & filepath,
-        SDL_Renderer * renderer);
-    ~Texture();
-    SDL_Texture * _buffer;
-    BoxBoundXYWH _rect;
-  private:
-    Texture(const String & filepath, SDL_Renderer * renderer);
-  };
+// wrapper around texture
+struct Texture
+{
+  CLASS_METHOD SharedPtr< Texture > createTexture(const String& filepath, SDL_Renderer* renderer);
+  ~Texture();
+  SDL_Texture* _buffer;
+  BoxBoundXYWH _rect;
 
-  // context used by viewport and texture
-  struct Handler
-  {
-    Handler();
+private:
+  Texture(const String& filepath, SDL_Renderer* renderer);
+};
 
-    SharedPtr< Renderer > _view;
-    SharedPtr< Texture > _image;
-  };
+// context used by viewport and texture
+struct Handler
+{
+  Handler();
 
-  // graphic functions
-  ErrorCode initGraphicSystem(Flags flags = 0);
-  void quitGraphicSystem();
+  SharedPtr< Renderer > _view;
+  SharedPtr< Texture > _image;
+};
 
-  // converts the float values from Colour into SDL RGB8
-  void colour8RGBA(u8 & r, u8 & g, u8 & b, u8 & a, const Colour & c);
+// graphic functions
+ErrorCode initGraphicSystem(Flags flags = 0);
+void quitGraphicSystem();
+
+// converts the float values from Colour into SDL RGB8
+void colour8RGBA(u8& r, u8& g, u8& b, u8& a, const Colour& c);
 
 } // end namespace SDL2
 
 } // end namespace BE
-
 
 namespace SDL2BE
 {

@@ -6,29 +6,28 @@
 #ifndef COMMAND_DISPATCHER_HPP
 #define COMMAND_DISPATCHER_HPP
 
-
 #include "command_interface.hpp"
 
 namespace W2E
 {
-  using namespace std;
+using namespace std;
 
-  class CommandDispatcher
-  {
-  public:
-    CommandDispatcher(CommandDispatcher & other) = delete;
-    ~CommandDispatcher();
+class CommandDispatcher
+{
+public:
+  CommandDispatcher(CommandDispatcher& other) = delete;
+  ~CommandDispatcher();
 
-    CLASS_METHOD CommandDispatcher * instance();
+  CLASS_METHOD CommandDispatcher* instance();
 
-    ErrorCode subscribe(CommandType type, ICommandee * cmd);
-    ErrorCode unSubscribe(const CommandType type, const ICommandee * cmd);
-    void dispatch(const CommandMsg & msg);
+  ErrorCode subscribe(CommandType type, ICommandee* cmd);
+  ErrorCode unSubscribe(const CommandType type, const ICommandee* cmd);
+  void dispatch(const CommandMsg& msg);
 
-  protected:
-    CommandDispatcher();
-    GLOBAL HashMultiMap< CommandType, ICommandee * > subscribers;
-  };
+protected:
+  CommandDispatcher();
+  GLOBAL HashMultiMap< CommandType, ICommandee* > subscribers;
+};
 
 } // end namespace W2E
 

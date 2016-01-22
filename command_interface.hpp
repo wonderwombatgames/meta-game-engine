@@ -10,57 +10,52 @@
 
 namespace W2E
 {
-  // using namespace std;
-  using namespace Utils;
+// using namespace std;
+using namespace Utils;
 
-  enum eArgTag
+enum eArgTag
+{
+  CHAR8,
+  INT64,
+  UINT64,
+  DOUBLE,
+  STRING_PTR
+};
+
+struct Args
+{
+  eArgTag tag;
+  union
   {
-    CHAR8, INT64, UINT64, DOUBLE, STRING_PTR
-  };
+    char c[8];
+    i64 i;
+    u64 u;
+    f64 d;
+    String* s;
+  } data;
+};
 
-  struct Args
-  {
-      eArgTag tag;
-      union
-      {
-          char c[8];
-          i64 i;
-          u64 u;
-          f64 d;
-          String * s;
-      } data;
-  };
+struct CommandMsg
+{
+  CommandType type;
+  CommandOp op;
+  Args arguments[8];
+};
 
+class ICommandee
+{
+public:
+  friend class CommandDispatcher;
+  virtual ~ICommandee() {}
 
-  struct CommandMsg
-  {
-    CommandType type;
-    CommandOp op;
-    Args arguments[8];
-  };
+  const CommandType& getType() const { return _type; }
 
+protected:
+  CommandType _type;
 
-  class ICommandee
-  {
-  public:
-    friend class CommandDispatcher;
-    virtual ~ICommandee(){}
-
-    const CommandType & getType() const
-    {
-      return _type;
-    }
-
-  protected:
-    CommandType _type;
-
-    void run(const CommandMsg & cmd)
-    {
-      onCommand(cmd);
-    }
-    virtual void onCommand(const CommandMsg & cmd) = 0;
-  };
-
+  void run(const CommandMsg& cmd) { onCommand(cmd); }
+  virtual void onCommand(const CommandMsg& cmd) = 0;
+};
 
 } // end namespace W2E
 

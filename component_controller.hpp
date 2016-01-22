@@ -14,14 +14,14 @@ using namespace Utils;
 namespace Component
 {
 
-  struct ControllerPod
-  {
-    // entity unique identifier
-    EntityID entityId;
+struct ControllerPod
+{
+  // entity unique identifier
+  EntityID entityId;
 
-    // whether or not this entity is active
-    bool isActive = true;
-  };
+  // whether or not this entity is active
+  bool isActive = true;
+};
 
 } // namespace Component
 

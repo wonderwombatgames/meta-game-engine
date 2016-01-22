@@ -12,20 +12,19 @@ namespace W2E
 
 using namespace System;
 
-class EntityTransformable :  public EntityBase
+class EntityTransformable : public EntityBase
 {
 public:
   friend class EntitiesManager;
   // ctors and dtor
   EntityTransformable(EntityID id);
   EntityTransformable() = delete;
-  EntityTransformable(EntityTransformable & other) = delete;
+  EntityTransformable(EntityTransformable& other) = delete;
   virtual ~EntityTransformable();
 
 protected:
   // can be used to register components into systems from constructor
   virtual void setUpComponents() override;
-
 };
 
 } // end namespace W2E

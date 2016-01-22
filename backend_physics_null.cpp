@@ -3,11 +3,9 @@
   *
   */
 
-
-
 namespace W2E
 {
-//using namespace std;
+// using namespace std;
 
 namespace BE
 {
