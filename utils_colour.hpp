@@ -96,7 +96,8 @@ struct ColourHex
 struct Colour
 {
   eColour kind;
-  union {
+  union
+  {
     ColourRGBA rgba;
     ColourHSLA hsla;
     ColourHSVA hsva;

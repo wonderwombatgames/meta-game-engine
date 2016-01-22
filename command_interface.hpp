@@ -25,7 +25,8 @@ enum eArgTag
 struct Args
 {
   eArgTag tag;
-  union {
+  union
+  {
     char c[8];
     i64 i;
     u64 u;

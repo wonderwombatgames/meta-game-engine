@@ -90,7 +90,8 @@ enum ErrorCode
 EntityID rndId();
 EntityID seqId();
 
-union Vector2 {
+union Vector2
+{
   struct
   {
     SpaceDim x;
@@ -118,7 +119,8 @@ union Vector2 {
   };
 };
 
-union Vector3 {
+union Vector3
+{
   struct
   {
     SpaceDim x;
@@ -139,7 +141,8 @@ union Vector3 {
   };
 };
 
-union Vector4 {
+union Vector4
+{
   struct
   {
     SpaceDim x;
@@ -200,7 +203,8 @@ using BoxBoundAABB = BoxBoundTLBR;
 struct Bound
 {
   eBound kind = BOXXYWH_;
-  union {
+  union
+  {
     CircleBound circleBound;
     BoxBoundTLBR boxBoundTLBR;
     BoxBoundXYWH boxBoundXYWH;
