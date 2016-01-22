@@ -13,6 +13,7 @@
 
 #include "utils_colour.hpp"
 #include "system_interface.hpp"
+#include "component_transform.hpp"
 #include "component_graphic.hpp"
 
 namespace W2E

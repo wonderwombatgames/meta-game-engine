@@ -6,7 +6,6 @@
 #define GRAPHIC_COMPONENT_HPP
 
 #include "utils_colour.hpp"
-#include "component_transform.hpp"
 
 namespace W2E
 {
@@ -16,6 +15,7 @@ namespace Component
 {
 // forward declaration
 class GraphicInterface;
+class TransformPod;
 
 struct GraphicPod
 {

@@ -9,10 +9,34 @@
 #define ENTITY_BASE_HPP
 
 #include "utils_types.hpp"
-#include "component_entity.hpp"
 
 namespace W2E
 {
+
+using namespace Utils;
+
+namespace Component
+{
+
+// forward declaration
+struct TransformPod;
+
+struct EntityPod
+{
+  // entity unique identifier
+  EntityID entityId;
+
+  // define to what class entity belongs
+  TypeID typeId;
+
+  // whether or not this entity is active
+  bool isActive = true;
+
+  // pointer to transform pod
+  TransformPod* transform = nullptr;
+};
+
+} // namespace Component
 
 namespace System
 {

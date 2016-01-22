@@ -10,8 +10,6 @@
 
 #include <cassert>
 
-#include "component_entity.hpp"
-#include "component_transform.hpp"
 #include "entities_manager.hpp"
 
 namespace W2E
