@@ -24,7 +24,9 @@ build: unit_tests.cpp ${sourcesfiles} *.hpp
 
 clean:
 	rm -f ./*.x 2> /dev/null
-	clang-format -i -style=file *.{h,c}pp
+
+format:
+	clang-format -i -style=file *.cpp *.hpp
 
 tests: build
 	./unit_tests.x
