@@ -25,14 +25,14 @@ Controller::~Controller() {}
 void Controller::insert(Component::EntityPod& entity)
 {
   Component::ControllerPod pod;
-  this->_components.emplace(entity.entityId, pod);
+  this->components_.emplace(entity.entityId, pod);
 }
 void Controller::remove(const Component::EntityPod& entity)
 {
-  auto it = this->_components.find(entity.entityId);
-  if(it != this->_components.end())
+  auto it = this->components_.find(entity.entityId);
+  if(it != this->components_.end())
   {
-    this->_components.erase(it);
+    this->components_.erase(it);
   }
 }
 void Controller::tick(TimeDim delta) {}

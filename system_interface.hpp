@@ -23,23 +23,27 @@ namespace System
 
 class SystemsInterface;
 
-class ResourceBinder
+class ComponentBinder
 {
 public:
   // virtual dtor
-  virtual ~ResourceBinder() {}
+  virtual ~ComponentBinder() {}
 
   // bind this resource to entity
-  virtual ErrorCode toEntity(SystemProxy* sp) { return UNKNOWN_ERROR; }
+  virtual ErrorCode toEntity(EntityRegistrar* er) { return UNKNOWN_ERROR; }
 
 protected:
-  EntityID _registerIn(SystemsInterface* system, SystemProxy* sp)
+  EntityID registerIntoSystem_(SystemsInterface* sys, EntityRegistrar* er)
   {
-    return sp->registerIn(*system);
+    if(sys != nullptr && er != nullptr)
+    {
+      return er->registerIntoSystem(*sys);
+    }
+    return InvalidID;
   }
 };
 
-using ResourceBinderPtr = SharedPtr< ResourceBinder >;
+using ComponentBinderPtr = SharedPtr< ComponentBinder >;
 
 class SystemsInterface
 {
@@ -47,8 +51,8 @@ public:
   SystemsInterface() = delete;
   SystemsInterface(SystemsInterface& other) = delete;
   SystemsInterface(const char* name)
-      : _name(name)
-      , _frames(0)
+      : name_(name)
+      , frames_(0)
   {
     bool retVal = false;
     SystemsInterface::systemRegistrar(retVal, this, name, REGISTER);
@@ -58,25 +62,25 @@ public:
   virtual ~SystemsInterface()
   {
     bool retVal = false;
-    SystemsInterface::systemRegistrar(retVal, this, _name.c_str(), UNREGISTER);
+    SystemsInterface::systemRegistrar(retVal, this, name_.c_str(), UNREGISTER);
     assert(retVal);
   }
 
   // get system name
-  const String& getName() { return this->_name; }
+  const String& getName() { return this->name_; }
   // perform one step in the system
   FrameCount update(TimeDim delta);
 
   // public class methods
   // get system by name
-  CLASS_METHOD SystemsInterface* getSystem(const String& name);
+  CLASSMETHOD_ SystemsInterface* getSystem(const String& name);
   // check if the pointer actually points to a system
-  CLASS_METHOD bool isValid(SystemsInterface& system);
+  CLASSMETHOD_ bool isValid(SystemsInterface& system);
 
   // entity related methods
   void insertEntity(Component::EntityPod& entity);
   void removeEntity(const Component::EntityPod& entity);
-  ResourceBinderPtr bindResource(ResourceID resourceId);
+  ComponentBinderPtr bindComponent(ResourceID resourceId);
 
 protected:
   enum eRegistrar
@@ -90,27 +94,27 @@ protected:
   virtual void tick(TimeDim delta) {}
   virtual void insert(Component::EntityPod& entity) {}
   virtual void remove(const Component::EntityPod& entity) {}
-  virtual ResourceBinderPtr getResourceBinder(ResourceID resourceId)
+  virtual ComponentBinderPtr getComponentBinder(ResourceID resourceId)
   {
-    return make_shared< ResourceBinder >();
+    return make_shared< ComponentBinder >();
   }
 
   // class methods
-  CLASS_METHOD SystemsInterface* systemRegistrar(bool& retValue,
+  CLASSMETHOD_ SystemsInterface* systemRegistrar(bool& retValue,
                                                  SystemsInterface* system,
                                                  const char* name = nullptr,
                                                  eRegistrar op = VERIFY);
 
   // data
-  String _name;
-  FrameCount _frames;
+  String name_;
+  FrameCount frames_;
 };
 
 // inlined methods
 inline FrameCount SystemsInterface::update(TimeDim delta)
 {
   this->tick(delta);
-  return ++(this->_frames);
+  return ++(this->frames_);
 }
 
 inline void SystemsInterface::insertEntity(Component::EntityPod& entity) { this->insert(entity); }
@@ -120,9 +124,9 @@ inline void SystemsInterface::removeEntity(const Component::EntityPod& entity)
   this->remove(entity);
 }
 
-inline ResourceBinderPtr SystemsInterface::bindResource(ResourceID resourceId)
+inline ComponentBinderPtr SystemsInterface::bindComponent(ResourceID resourceId)
 {
-  return this->getResourceBinder(resourceId);
+  return this->getComponentBinder(resourceId);
 }
 
 inline bool SystemsInterface::isValid(SystemsInterface& system)
@@ -147,7 +151,7 @@ inline SystemsInterface* SystemsInterface::systemRegistrar(bool& retValue,
                                                            const char* name,
                                                            eRegistrar op)
 {
-  LOCAL_PERSISTENT HashMap< String, SystemsInterface* > s_systems;
+  LOCALPERSISTENT_ HashMap< String, SystemsInterface* > ssystems_;
   SystemsInterface* outSystem = nullptr;
 
   String searchName;
@@ -164,7 +168,7 @@ inline SystemsInterface* SystemsInterface::systemRegistrar(bool& retValue,
   {
     if(nullptr != inSystem)
     {
-      s_systems[searchName] = inSystem;
+      ssystems_[searchName] = inSystem;
       retValue = true;
       return inSystem;
     }
@@ -176,17 +180,17 @@ inline SystemsInterface* SystemsInterface::systemRegistrar(bool& retValue,
   }
   else if(op == UNREGISTER || op == VERIFY)
   {
-    for(auto s : s_systems)
+    for(auto s : ssystems_)
     {
       if(s.second->getName() == searchName)
       {
         if(op == UNREGISTER)
         {
-          s_systems.erase(searchName);
+          ssystems_.erase(searchName);
         }
         else
         {
-          outSystem = s_systems.at(searchName);
+          outSystem = ssystems_.at(searchName);
         }
         retValue = true;
         return outSystem;

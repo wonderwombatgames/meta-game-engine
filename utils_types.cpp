@@ -13,7 +13,7 @@ namespace W2E
 namespace Utils
 {
 
-// creates a new random ID < MAX_IDS
+// creates a new random ID < MAXIDS_
 EntityID rndId()
 {
 
@@ -22,14 +22,14 @@ EntityID rndId()
   nanoseconds ns = duration_cast< nanoseconds >(p.time_since_epoch());
   std::time_t t = ns.count();
 
-  uint32_t rndPrefix = static_cast< uint32_t >(rand() * 0xff) << 24;
-  uint32_t rId = rndPrefix + (static_cast< uint32_t >(t) & 0xffffff);
+  u32 rndPrefix = static_cast< u32 >(rand() * 0xff) << 24;
+  u32 rId = rndPrefix + (static_cast< u32 >(t) & 0xffffff);
   return rId;
 }
 
 EntityID seqId()
 {
-  LOCAL_PERSISTENT EntityID sId = 0;
+  LOCALPERSISTENT_ EntityID sId = 0;
   return ++sId;
 }
 

@@ -17,12 +17,12 @@ CommandDispatcher::~CommandDispatcher(){};
 
 CommandDispatcher* CommandDispatcher::instance()
 {
-  LOCAL_PERSISTENT CommandDispatcher* s_instance = nullptr;
-  if(nullptr == s_instance)
+  LOCALPERSISTENT_ CommandDispatcher* sinstance_ = nullptr;
+  if(nullptr == sinstance_)
   {
-    s_instance = new CommandDispatcher();
+    sinstance_ = new CommandDispatcher();
   }
-  return s_instance;
+  return sinstance_;
 }
 
 ErrorCode CommandDispatcher::subscribe(CommandType type, ICommandee* cmd)

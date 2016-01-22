@@ -5,8 +5,8 @@
   *
   */
 
-#ifndef UTILS_TYPES_HPP
-#define UTILS_TYPES_HPP
+#ifndef UTILSTYPES_HPP_
+#define UTILSTYPES_HPP_
 
 #include <cstdint>
 #include <memory>
@@ -23,9 +23,9 @@ namespace Utils
 
 // based on Ginger Bill DUNJUN
 #define GLOBAL static           // global variables
-#define CLASS_METHOD static     // class methods work without instantiation
+#define CLASSMETHOD_ static     // class methods work without instantiation
 #define INTERNAL static         // internal linkage
-#define LOCAL_PERSISTENT static // local persisting variables
+#define LOCALPERSISTENT_ static // local persisting variables
 
 // basic types
 using u8 = uint8_t;
@@ -86,12 +86,11 @@ enum ErrorCode
   NO_ERROR = 1,
 };
 
-// creates a new random ID < MAX_IDS
+// creates a new random ID < MAXIDS_
 EntityID rndId();
 EntityID seqId();
 
-union Vector2
-{
+union Vector2 {
   struct
   {
     SpaceDim x;
@@ -119,8 +118,7 @@ union Vector2
   };
 };
 
-union Vector3
-{
+union Vector3 {
   struct
   {
     SpaceDim x;
@@ -141,8 +139,7 @@ union Vector3
   };
 };
 
-union Vector4
-{
+union Vector4 {
   struct
   {
     SpaceDim x;
@@ -166,10 +163,10 @@ using Rotation2 = Vector2;
 using Rotation3 = Vector3;
 
 GLOBAL const Vector3 CENTER{{0.5f, 0.5f, 0.0f}};
-GLOBAL const Vector3 TOP_LEFT{{0.0f, 0.0f, 0.0f}};
-GLOBAL const Vector3 TOP_RIGHT{{1.0f, 0.0f, 0.0f}};
-GLOBAL const Vector3 BOT_LEFT{{0.0f, 1.0f, 0.0f}};
-GLOBAL const Vector3 BOT_RIGHT{{1.0f, 1.0f, 0.0f}};
+GLOBAL const Vector3 TOPLEFT_{{0.0f, 0.0f, 0.0f}};
+GLOBAL const Vector3 TOPRIGHT_{{1.0f, 0.0f, 0.0f}};
+GLOBAL const Vector3 BOTLEFT_{{0.0f, 1.0f, 0.0f}};
+GLOBAL const Vector3 BOTRIGHT_{{1.0f, 1.0f, 0.0f}};
 GLOBAL const Vector3 ZERO{{0.0f, 0.0f, 0.0f}};
 GLOBAL const Vector3 HALF{{0.5f, 0.5f, 0.0f}};
 GLOBAL const Vector3 ONE{{1.0f, 1.0f, 0.0f}};
@@ -177,8 +174,8 @@ GLOBAL const Vector3 ONE{{1.0f, 1.0f, 0.0f}};
 enum eBound
 {
   CIRCLE,
-  BOX_TLBR,
-  BOX_XYWH,
+  BOXTLBR_,
+  BOXXYWH_,
 };
 
 struct CircleBound
@@ -202,9 +199,8 @@ using BoxBoundAABB = BoxBoundTLBR;
 
 struct Bound
 {
-  eBound kind = BOX_XYWH;
-  union
-  {
+  eBound kind = BOXXYWH_;
+  union {
     CircleBound circleBound;
     BoxBoundTLBR boxBoundTLBR;
     BoxBoundXYWH boxBoundXYWH;
@@ -222,4 +218,4 @@ enum eAudioState
 
 } // end namespace W2E
 
-#endif // UTILS_TYPES_HPP
+#endif // UTILSTYPES_HPP_

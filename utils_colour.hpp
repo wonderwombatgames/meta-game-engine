@@ -16,11 +16,11 @@ namespace Utils
 
 enum eBlendMode
 {
-  BLENDMODE_NONE,  // no blending: dstRGBA = srcRGBA
-  BLENDMODE_ALPHA, // alpha blending:  dstRGB = (srcRGB * srcA) + (dstRGB * (1-srcA)) &
+  BLENDMODENONE_,  // no blending: dstRGBA = srcRGBA
+  BLENDMODEALPHA_, // alpha blending:  dstRGB = (srcRGB * srcA) + (dstRGB * (1-srcA)) &
                    //                  dstA = srcA + (dstA * (1-srcA))
-  BLENDMODE_ADD,   // additive blending: dstRGB = (srcRGB * srcA) + dstRGB & dstA = dstA
-  BLENDMODE_MULT,  // color modulate: dstRGB = srcRGB * dstRGB & dstA = dstA
+  BLENDMODEADD_,   // additive blending: dstRGB = (srcRGB * srcA) + dstRGB & dstA = dstA
+  BLENDMODEMULT_,  // color modulate: dstRGB = srcRGB * dstRGB & dstA = dstA
 };
 
 enum eColour
@@ -96,8 +96,7 @@ struct ColourHex
 struct Colour
 {
   eColour kind;
-  union
-  {
+  union {
     ColourRGBA rgba;
     ColourHSLA hsla;
     ColourHSVA hsva;

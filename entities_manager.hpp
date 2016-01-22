@@ -20,13 +20,13 @@ using namespace System;
 class EntitiesManager
 {
 public:
-  CLASS_METHOD EntitiesManager* instance();
+  CLASSMETHOD_ EntitiesManager* instance();
   int count();
 
   // entity related methods
   template < class EntityType = EntityBase >
   EntityID createEntity(const char* name);
-  SystemProxy* registrar(EntityID entityId);
+  EntityRegistrar* registrar(EntityID entityId);
 
   // const String * lookUpEntityName(EntityID entityId);
   EntityID lookUpEntityId(const String& name);
@@ -35,12 +35,12 @@ public:
 protected:
   enum
   {
-    MAX_ENTITIES_AMOUNT = 99999
+    MAXENTITIES_AMOUNT_ = 99999
   };
 
   // CTOR
   EntitiesManager()
-      : _count(0){};
+      : count_(0){};
 
   // private type defs
   using IEntityPtr = SharedPtr< EntityBase >;
@@ -48,9 +48,9 @@ protected:
   using EntitiesLookUp = HashMap< String, EntityID >;
 
   // data
-  int _count;
-  Entities _entities;
-  EntitiesLookUp _lookUp;
+  int count_;
+  Entities entities_;
+  EntitiesLookUp lookUp_;
 };
 
 template < class EntityType >
@@ -59,13 +59,13 @@ inline EntityID EntitiesManager::createEntity(const char* name)
   EntityID id = rndId();
   EntityType* entity = new EntityType(id);
   entity->setUpComponents();
-  this->_entities[id].reset(entity);
-  this->_lookUp[name] = id;
+  this->entities_[id].reset(entity);
+  this->lookUp_[name] = id;
   this->refreshEntities();
   return id;
 }
 
-inline int EntitiesManager::count() { return this->_count; }
+inline int EntitiesManager::count() { return this->count_; }
 
 } // end namespace W2E
 

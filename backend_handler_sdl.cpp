@@ -21,7 +21,7 @@ class SDLWrapper
 public:
   ~SDLWrapper();
 
-  CLASS_METHOD SDLWrapper* instance();
+  CLASSMETHOD_ SDLWrapper* instance();
 
   ErrorCode initVideo();
   ErrorCode initEvents();
@@ -39,13 +39,13 @@ protected:
 
 inline SDLWrapper* SDLWrapper::instance()
 {
-  LOCAL_PERSISTENT SDLWrapper* s_instance = nullptr;
+  LOCALPERSISTENT_ SDLWrapper* sinstance_ = nullptr;
 
-  if(nullptr == s_instance)
+  if(nullptr == sinstance_)
   {
-    s_instance = new SDLWrapper();
+    sinstance_ = new SDLWrapper();
   }
-  return s_instance;
+  return sinstance_;
 }
 
 inline SDLWrapper::SDLWrapper() { this->init(); }
@@ -209,35 +209,35 @@ void colour8RGBA(u8& r, u8& g, u8& b, u8& a, const W2E::Colour& c)
 // wrapper around window and renderer
 
 // only one instance of the window is allowed
-Dimension2 Renderer::_resolution = {{640.0, 480.0}};
-SDL_Window* Renderer::_window = nullptr;
-SDL_Renderer* Renderer::_renderer = nullptr;
+Dimension2 Renderer::resolution_ = {{640.0, 480.0}};
+SDL_Window* Renderer::window_ = nullptr;
+SDL_Renderer* Renderer::renderer_ = nullptr;
 
 Renderer::Renderer()
 {
-  if(SDL_WasInit(SDL_INIT_VIDEO) && nullptr == this->_window && nullptr == this->_renderer)
+  if(SDL_WasInit(SDL_INIT_VIDEO) && nullptr == this->window_ && nullptr == this->renderer_)
   {
-    if(SDL_CreateWindowAndRenderer(static_cast< int >(_resolution.width),
-                                   static_cast< int >(_resolution.height),
+    if(SDL_CreateWindowAndRenderer(static_cast< int >(resolution_.width),
+                                   static_cast< int >(resolution_.height),
                                    SDL_WINDOW_OPENGL,
-                                   &this->_window,
-                                   &this->_renderer))
+                                   &this->window_,
+                                   &this->renderer_))
     {
       SDL_LogError(
           SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window and renderer: %s", SDL_GetError());
     }
   }
-  assert(this->_window && this->_renderer);
+  assert(this->window_ && this->renderer_);
 }
 
 Renderer::~Renderer()
 {
-  if(SDL_WasInit(SDL_INIT_VIDEO) && nullptr == this->_window && nullptr == this->_renderer)
+  if(SDL_WasInit(SDL_INIT_VIDEO) && nullptr == this->window_ && nullptr == this->renderer_)
   {
-    SDL_DestroyRenderer(this->_renderer);
-    this->_renderer = nullptr;
-    SDL_DestroyWindow(this->_window);
-    this->_window = nullptr;
+    SDL_DestroyRenderer(this->renderer_);
+    this->renderer_ = nullptr;
+    SDL_DestroyWindow(this->window_);
+    this->window_ = nullptr;
   }
 }
 
@@ -253,17 +253,17 @@ Texture::Texture(const String& filepath, SDL_Renderer* renderer)
   }
   else
   {
-    this->_buffer = SDL_CreateTextureFromSurface(renderer, surface);
-    if(!this->_buffer)
+    this->buffer_ = SDL_CreateTextureFromSurface(renderer, surface);
+    if(!this->buffer_)
     {
       SDL_LogError(
           SDL_LOG_CATEGORY_APPLICATION, "Couldn't create texture from surface: %s", SDL_GetError());
     }
-    _rect.topLeft = {{0.0f, 0.0f}};
-    _rect.size = {{static_cast< SpaceDim >(surface->w), static_cast< SpaceDim >(surface->h)}};
+    rect_.topLeft = {{0.0f, 0.0f}};
+    rect_.size = {{static_cast< SpaceDim >(surface->w), static_cast< SpaceDim >(surface->h)}};
     SDL_FreeSurface(surface);
   }
-  assert(this->_buffer);
+  assert(this->buffer_);
 }
 
 SharedPtr< Texture > Texture::createTexture(const String& filepath, SDL_Renderer* renderer)
@@ -287,18 +287,18 @@ SharedPtr< Texture > Texture::createTexture(const String& filepath, SDL_Renderer
 Texture::~Texture()
 {
   // if this texture was shared it might have been destroye already!
-  if(nullptr != this->_buffer)
+  if(nullptr != this->buffer_)
   {
-    SDL_DestroyTexture(this->_buffer);
-    this->_buffer = nullptr;
+    SDL_DestroyTexture(this->buffer_);
+    this->buffer_ = nullptr;
   }
 }
 
 // context used by viewport and texture
 
 Handler::Handler()
-    : _view(new Renderer())
-    , _image(nullptr)
+    : view_(new Renderer())
+    , image_(nullptr)
 {
 }
 

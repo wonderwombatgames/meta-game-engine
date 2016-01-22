@@ -11,11 +11,15 @@ https://trello.com/b/vs9Ajlx5/game-engine-ecs#
 
 * [X] ~~add camera control to the graphic system - changed  GraphicInterface::paint() and added Graphics::setCameraTransform.~~
 
-* [X] PARTIAL: replace all bool return for ErrorCode! - missing more error enumerations
+* [X] ~~find a way to remove Image::computeClipRects(const GraphicPod & component, BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector2 & center);~~
 
 * [X] ~~find better way to initialize the POD's - Only transformPod is not initialized. Colours and Vectors are purposefully let without default to allow list instantiation. Constants were set for init with a copy constructor~~
 
+* [X] PARTIAL: replace all bool return for ErrorCode! - missing more error enumerations
+
 * [ ] PARTIAL: update unit tests -> add graphic system rendering and transform to the entity then remove manual rendering - WORKING but need to hand initialize graphicPOD and transformPOD!
+
+* [ ] reduce include dependency => reorganize files and use forward declaration
 
 * [ ] reevaluate all the friend uses through out the code
 
@@ -28,8 +32,6 @@ https://trello.com/b/vs9Ajlx5/game-engine-ecs#
 * [ ] add custom allocator to the types alias in utils_types.hpp
 
 * [ ] change the RNG to Twist Mersene
-
-* [ ] find a way to remove Image::computeClipRects(const GraphicPod & component, BoxBoundXYWH & src, BoxBoundXYWH & dst, Vector2 & center);
 
 * [ ] remove backend.hpp file
 

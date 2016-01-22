@@ -20,7 +20,7 @@ void EntityTransformable::setUpComponents()
 {
   SystemsInterface* sys = System::SystemsInterface::getSystem("Transform");
   assert(sys != nullptr);
-  registerIntoSystem(*sys);
+  registerIntoSystem_(*sys);
 }
 
 } // end namespace W2E

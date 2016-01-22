@@ -25,18 +25,18 @@ Transform::~Transform() {}
 void Transform::insert(Component::EntityPod& entity)
 {
   Component::TransformPod pod;
-  this->_components.emplace(entity.entityId, pod);
-  entity.transform = &(this->_components[entity.entityId]);
+  this->components_.emplace(entity.entityId, pod);
+  entity.transform = &(this->components_[entity.entityId]);
   entity.transform->position = {{0.0f, 0.0f, 0.0f}};
   entity.transform->rotation = {{0.0f, 0.0f, 0.0f}};
   entity.transform->scale = {{1.0f, 1.0f, 1.0f}};
 }
 void Transform::remove(const Component::EntityPod& entity)
 {
-  auto it = this->_components.find(entity.entityId);
-  if(it != this->_components.end())
+  auto it = this->components_.find(entity.entityId);
+  if(it != this->components_.end())
   {
-    this->_components.erase(it);
+    this->components_.erase(it);
   }
 }
 void Transform::tick(TimeDim delta) {}

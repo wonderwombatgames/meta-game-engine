@@ -19,14 +19,13 @@ enum eArgTag
   INT64,
   UINT64,
   DOUBLE,
-  STRING_PTR
+  STRINGPTR_
 };
 
 struct Args
 {
   eArgTag tag;
-  union
-  {
+  union {
     char c[8];
     i64 i;
     u64 u;
@@ -48,10 +47,10 @@ public:
   friend class CommandDispatcher;
   virtual ~ICommandee() {}
 
-  const CommandType& getType() const { return _type; }
+  const CommandType& getType() const { return type_; }
 
 protected:
-  CommandType _type;
+  CommandType type_;
 
   void run(const CommandMsg& cmd) { onCommand(cmd); }
   virtual void onCommand(const CommandMsg& cmd) = 0;

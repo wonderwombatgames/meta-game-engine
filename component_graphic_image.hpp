@@ -46,16 +46,11 @@ public:
   //     const float & paramValue = 0.0f) override;
 
 protected:
-  using _HANDLER = T;
-  UniquePtr< _HANDLER > _data;
+  using HANDLER_ = T;
+  UniquePtr< HANDLER_ > data_;
 
   // size - between 0.0 - 1.0 (in relation to viewport size)
-  Dimension2 _textureSize;
-
-  void computeClipRects(const GraphicPod& component,
-                        BoxBoundXYWH& src,
-                        BoxBoundXYWH& dst,
-                        Vector2& center);
+  Dimension2 textureSize_;
 };
 
 } // end namespace Component

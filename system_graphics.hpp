@@ -54,24 +54,24 @@ using DisplayHandler = SharedPtr< GraphicDevice::DisplayInterface >;
 using ComponentsHashMap = HashMap< EntityID, Component::GraphicPod >;
 using ResourcesHashMap = HashMap< ResourceID, SharedPtr< Component::GraphicInterface > >;
 
-class GraphicResourceBinder : public ResourceBinder
+class GraphicComponentBinder : public ComponentBinder
 {
 public:
   // virtual dtor
-  virtual ~GraphicResourceBinder() {}
+  virtual ~GraphicComponentBinder() {}
 
   // ctor
-  GraphicResourceBinder(SystemsInterface* system,
-                        Component::GraphicInterface* resource,
-                        ComponentsHashMap* components);
+  GraphicComponentBinder(SystemsInterface* system,
+                         Component::GraphicInterface* resource,
+                         ComponentsHashMap* components);
 
   // bind this resource to entity
-  virtual ErrorCode toEntity(SystemProxy* sp) override;
+  virtual ErrorCode toEntity(EntityRegistrar* sp) override;
 
 private:
-  SystemsInterface* _system;
-  Component::GraphicInterface* _resource;
-  ComponentsHashMap* _components;
+  SystemsInterface* system_;
+  Component::GraphicInterface* resource_;
+  ComponentsHashMap* components_;
 };
 
 class Graphics : public SystemsInterface
@@ -99,18 +99,18 @@ protected:
   virtual void insert(Component::EntityPod& entity) override;
   virtual void remove(const Component::EntityPod& entity) override;
   virtual void tick(TimeDim delta) override;
-  virtual ResourceBinderPtr getResourceBinder(ResourceID resourceId) override;
+  virtual ComponentBinderPtr getComponentBinder(ResourceID resourceId) override;
 
-  Component::TransformPod _camera;
-  ComponentsHashMap _components;
-  ResourcesHashMap _resources;
+  Component::TransformPod camera_;
+  ComponentsHashMap components_;
+  ResourcesHashMap resources_;
 };
 
 template < typename T >
 ResourceID Graphics::loadResourceFromFile(const String& filepath)
 {
   ResourceID resCounter = seqId();
-  this->_resources.emplace(resCounter, make_shared< T >(filepath));
+  this->resources_.emplace(resCounter, make_shared< T >(filepath));
 
   return resCounter;
 }

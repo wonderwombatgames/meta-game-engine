@@ -18,7 +18,7 @@ public:
   CommandDispatcher(CommandDispatcher& other) = delete;
   ~CommandDispatcher();
 
-  CLASS_METHOD CommandDispatcher* instance();
+  CLASSMETHOD_ CommandDispatcher* instance();
 
   ErrorCode subscribe(CommandType type, ICommandee* cmd);
   ErrorCode unSubscribe(const CommandType type, const ICommandee* cmd);

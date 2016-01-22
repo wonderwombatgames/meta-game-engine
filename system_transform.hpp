@@ -28,7 +28,7 @@ protected:
   virtual void remove(const Component::EntityPod& entity) override;
   virtual void tick(TimeDim delta) override;
 
-  HashMap< EntityID, Component::TransformPod > _components;
+  HashMap< EntityID, Component::TransformPod > components_;
 };
 
 } // end namespace System

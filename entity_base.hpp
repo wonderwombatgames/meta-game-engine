@@ -18,30 +18,29 @@ namespace System
 {
 // forward declaration
 class SystemsInterface;
-class ResourceBinder;
+class ComponentBinder;
+}
 
-class SystemProxy
+class EntityRegistrar
 {
 private:
-  friend class ResourceBinder;
-  EntityID registerIn(SystemsInterface& system) { return this->registerIntoSystem(system); }
-  ErrorCode registerOff(SystemsInterface& system) { return this->deregisterFromSystem(system); }
+  friend class System::ComponentBinder;
+  EntityID registerIntoSystem(System::SystemsInterface& system)
+  {
+    return this->registerIntoSystem_(system);
+  }
 
 protected:
-  SystemProxy() {}
-  virtual ~SystemProxy() {}
+  EntityRegistrar() {}
+  virtual ~EntityRegistrar() {}
 
   // add one more component to the entity
-  virtual EntityID registerIntoSystem(System::SystemsInterface& system) = 0;
-  // remove one more component to the entity
-  virtual ErrorCode deregisterFromSystem(System::SystemsInterface& system) = 0;
-  // verify if entity has component
+  virtual EntityID registerIntoSystem_(System::SystemsInterface& system) = 0;
 };
-}
 
 using namespace Utils;
 
-class EntityBase : public System::SystemProxy
+class EntityBase : public EntityRegistrar
 {
 public:
   friend class EntitiesManager;
@@ -63,9 +62,7 @@ public:
 
 protected:
   // add one more component to the entity
-  virtual EntityID registerIntoSystem(System::SystemsInterface& system) override;
-  // remove one more component to the entity
-  virtual ErrorCode deregisterFromSystem(System::SystemsInterface& system) override;
+  virtual EntityID registerIntoSystem_(System::SystemsInterface& system) override;
 
   // can be used to register components into systems from constructor
   virtual void setUpComponents(){};
@@ -74,28 +71,28 @@ protected:
   void tearDownComponents();
 
   // data
-  bool _destroy;
+  bool destroy_;
 
   // set holds the systems to wich this entity was added
-  Set< System::SystemsInterface* > _componentSystems;
+  Set< System::SystemsInterface* > componentSystems_;
 
   // this POD is to be used by the component systems
-  Component::EntityPod _entityData;
+  Component::EntityPod entityData_;
 };
 
-inline bool EntityBase::isActive() const { return this->_entityData.isActive; }
+inline bool EntityBase::isActive() const { return this->entityData_.isActive; }
 
 inline ErrorCode EntityBase::destroy(bool mustDestroy)
 {
-  this->_destroy = mustDestroy;
-  return (this->_destroy) ? NO_ERROR : UNKNOWN_ERROR;
+  this->destroy_ = mustDestroy;
+  return (this->destroy_) ? NO_ERROR : UNKNOWN_ERROR;
 }
 
-inline bool EntityBase::willDestroy() { return this->_destroy; }
+inline bool EntityBase::willDestroy() { return this->destroy_; }
 
 inline bool EntityBase::containedInSystem(System::SystemsInterface& system)
 {
-  return (0 < this->_componentSystems.count(&system));
+  return (0 < this->componentSystems_.count(&system));
 }
 
 } // end namespace W2E

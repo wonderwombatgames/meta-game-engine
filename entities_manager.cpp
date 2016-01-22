@@ -16,18 +16,18 @@ using namespace System;
 
 EntitiesManager* EntitiesManager::instance()
 {
-  LOCAL_PERSISTENT EntitiesManager* s_instance = nullptr;
-  if(nullptr == s_instance)
+  LOCALPERSISTENT_ EntitiesManager* sinstance_ = nullptr;
+  if(nullptr == sinstance_)
   {
-    s_instance = new EntitiesManager();
+    sinstance_ = new EntitiesManager();
   }
-  return s_instance;
+  return sinstance_;
 }
 
-SystemProxy* EntitiesManager::registrar(EntityID entityId)
+EntityRegistrar* EntitiesManager::registrar(EntityID entityId)
 {
-  auto entity = this->_entities.find(entityId);
-  if(entity != this->_entities.end())
+  auto entity = this->entities_.find(entityId);
+  if(entity != this->entities_.end())
   {
     return entity->second.get();
   }
@@ -37,8 +37,8 @@ SystemProxy* EntitiesManager::registrar(EntityID entityId)
 // const String * EntitiesManager::lookUpEntityName(EntityID entityId)
 // {
 //
-//   auto entity = this->_entities.find(entityId);
-//   if (entity != this->_entities.end())
+//   auto entity = this->entities_.find(entityId);
+//   if (entity != this->entities_.end())
 //   {
 //     return &(entity->second->getName());
 //   }
@@ -47,8 +47,8 @@ SystemProxy* EntitiesManager::registrar(EntityID entityId)
 
 EntityID EntitiesManager::lookUpEntityId(const String& name)
 {
-  auto entity = this->_lookUp.find(name);
-  if(entity != this->_lookUp.end())
+  auto entity = this->lookUp_.find(name);
+  if(entity != this->lookUp_.end())
   {
     return entity->second;
   }
@@ -59,21 +59,21 @@ int EntitiesManager::refreshEntities()
 {
   // find all entities marked to be destroied
   List< EntityID > toDestroy;
-  for(auto entity : this->_entities)
+  for(auto entity : this->entities_)
   {
     if(entity.second->willDestroy())
     {
-      toDestroy.push_back(entity.second->_entityData.entityId);
+      toDestroy.push_back(entity.second->entityData_.entityId);
     }
   }
   // destroy the marked entities
   for(auto id : toDestroy)
   {
-    this->_entities.erase(id);
+    this->entities_.erase(id);
   }
-  this->_count = this->_entities.size();
+  this->count_ = this->entities_.size();
   // return number of entities after clean up
-  return this->_count;
+  return this->count_;
 }
 
 } // end namespace W2E

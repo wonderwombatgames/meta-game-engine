@@ -15,22 +15,22 @@ using namespace System;
 //
 
 EntityBase::EntityBase(EntityID id)
-    : SystemProxy()
-    , _destroy(false)
+    : EntityRegistrar()
+    , destroy_(false)
 {
   // defaults
-  this->_entityData.entityId = id;
+  this->entityData_.entityId = id;
   // this is the base entity so we set it to 1
-  this->_entityData.typeId = 1;
+  this->entityData_.typeId = 1;
 }
 
 EntityBase::~EntityBase() { this->tearDownComponents(); }
 
 ErrorCode EntityBase::suspend()
 {
-  if(this->_entityData.isActive)
+  if(this->entityData_.isActive)
   {
-    this->_entityData.isActive = false;
+    this->entityData_.isActive = false;
     return NO_ERROR;
   }
   return UNKNOWN_ERROR;
@@ -38,9 +38,9 @@ ErrorCode EntityBase::suspend()
 
 ErrorCode EntityBase::resume()
 {
-  if(!this->_entityData.isActive)
+  if(!this->entityData_.isActive)
   {
-    this->_entityData.isActive = true;
+    this->entityData_.isActive = true;
     return NO_ERROR;
   }
   return UNKNOWN_ERROR;
@@ -49,43 +49,29 @@ ErrorCode EntityBase::resume()
 // tear down (de register) components from systems
 void EntityBase::tearDownComponents()
 {
-  for(auto system : this->_componentSystems)
+  for(auto system : this->componentSystems_)
   {
     if(SystemsInterface::isValid(*system))
     {
-      system->removeEntity(this->_entityData);
+      system->removeEntity(this->entityData_);
     }
   }
-  this->_componentSystems.clear();
+  this->componentSystems_.clear();
 }
 
 // add one more component to the entity
-EntityID EntityBase::registerIntoSystem(SystemsInterface& system)
+EntityID EntityBase::registerIntoSystem_(SystemsInterface& system)
 {
   if(SystemsInterface::isValid(system))
   {
-    if(this->_componentSystems.count(&system) == 0)
+    if(this->componentSystems_.count(&system) == 0)
     {
-      this->_componentSystems.insert(&system);
-      system.insertEntity(this->_entityData);
+      this->componentSystems_.insert(&system);
+      system.insertEntity(this->entityData_);
     }
-    return this->_entityData.entityId;
+    return this->entityData_.entityId;
   }
   return InvalidID;
-}
-
-ErrorCode EntityBase::deregisterFromSystem(System::SystemsInterface& system)
-{
-  if(SystemsInterface::isValid(system))
-  {
-    if(this->_componentSystems.count(&system) > 0)
-    {
-      system.removeEntity(this->_entityData);
-      this->_componentSystems.erase(&system);
-      return NO_ERROR;
-    }
-  }
-  return UNKNOWN_ERROR;
 }
 
 } // end namespace W2E

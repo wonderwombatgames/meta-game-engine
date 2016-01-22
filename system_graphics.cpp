@@ -8,25 +8,25 @@ namespace W2E
 namespace System
 {
 
-GraphicResourceBinder::GraphicResourceBinder(SystemsInterface* system,
-                                             Component::GraphicInterface* resource,
-                                             ComponentsHashMap* components)
-    : _system(system)
-    , _resource(resource)
-    , _components(components)
+GraphicComponentBinder::GraphicComponentBinder(SystemsInterface* system,
+                                               Component::GraphicInterface* resource,
+                                               ComponentsHashMap* components)
+    : system_(system)
+    , resource_(resource)
+    , components_(components)
 {
 }
 
-ErrorCode GraphicResourceBinder::toEntity(SystemProxy* sp)
+ErrorCode GraphicComponentBinder::toEntity(EntityRegistrar* sp)
 {
-  if(_system != nullptr)
+  if(system_ != nullptr)
   {
-    EntityID id = this->_registerIn(_system, sp);
+    EntityID id = this->registerIntoSystem_(system_, sp);
 
-    auto it = this->_components->find(id);
-    if(it != this->_components->end())
+    auto it = this->components_->find(id);
+    if(it != this->components_->end())
     {
-      it->second.resource = _resource;
+      it->second.resource = resource_;
       return NO_ERROR;
     }
   }
@@ -38,44 +38,44 @@ void Graphics::insert(Component::EntityPod& entity)
   if(entity.transform)
   {
     Component::GraphicPod pod;
-    this->_components.emplace(entity.entityId, pod);
-    this->_components[entity.entityId].transformData = entity.transform;
+    this->components_.emplace(entity.entityId, pod);
+    this->components_[entity.entityId].transformData = entity.transform;
   }
 }
 
 void Graphics::remove(const Component::EntityPod& entity)
 {
-  auto it = this->_components.find(entity.entityId);
-  if(it != this->_components.end())
+  auto it = this->components_.find(entity.entityId);
+  if(it != this->components_.end())
   {
-    this->_components.erase(it);
+    this->components_.erase(it);
   }
 }
 
 ErrorCode Graphics::setCameraTransform(Component::TransformPod& transformData)
 {
-  this->_camera = transformData;
+  this->camera_ = transformData;
   return NO_ERROR;
 }
 
 void Graphics::tick(TimeDim delta)
 {
-  for(auto comp : this->_components)
+  for(auto comp : this->components_)
   {
     if(comp.second.isVisible && comp.second.resource)
     {
-      comp.second.resource->paint(comp.second, this->_camera);
+      comp.second.resource->paint(comp.second, this->camera_);
     }
   }
 }
 
-ResourceBinderPtr Graphics::getResourceBinder(ResourceID resourceId)
+ComponentBinderPtr Graphics::getComponentBinder(ResourceID resourceId)
 {
-  ResourceBinderPtr retVal;
-  auto it = _resources.find(resourceId);
-  if(it != _resources.end())
+  ComponentBinderPtr retVal;
+  auto it = resources_.find(resourceId);
+  if(it != resources_.end())
   {
-    retVal.reset(new GraphicResourceBinder(this, it->second.get(), &_components));
+    retVal.reset(new GraphicComponentBinder(this, it->second.get(), &components_));
   }
   return retVal;
 }

@@ -3,8 +3,8 @@
   * All other contexts should follow more or less the same structure;
   */
 
-#ifndef BACKEND_CONTEXT_SDL_HPP
-#define BACKEND_CONTEXT_SDL_HPP
+#ifndef BACKEND_HANDLER_SDL_HPP
+#define BACKEND_HANDLER_SDL_HPP
 
 #include <SDL2/SDL.h>
 #include "utils_types.hpp"
@@ -28,18 +28,18 @@ struct Renderer
 {
   Renderer();
   ~Renderer();
-  GLOBAL Dimension2 _resolution;
-  GLOBAL SDL_Window* _window;
-  GLOBAL SDL_Renderer* _renderer;
+  GLOBAL Dimension2 resolution_;
+  GLOBAL SDL_Window* window_;
+  GLOBAL SDL_Renderer* renderer_;
 };
 
 // wrapper around texture
 struct Texture
 {
-  CLASS_METHOD SharedPtr< Texture > createTexture(const String& filepath, SDL_Renderer* renderer);
+  CLASSMETHOD_ SharedPtr< Texture > createTexture(const String& filepath, SDL_Renderer* renderer);
   ~Texture();
-  SDL_Texture* _buffer;
-  BoxBoundXYWH _rect;
+  SDL_Texture* buffer_;
+  BoxBoundXYWH rect_;
 
 private:
   Texture(const String& filepath, SDL_Renderer* renderer);
@@ -50,8 +50,8 @@ struct Handler
 {
   Handler();
 
-  SharedPtr< Renderer > _view;
-  SharedPtr< Texture > _image;
+  SharedPtr< Renderer > view_;
+  SharedPtr< Texture > image_;
 };
 
 // graphic functions
@@ -73,4 +73,4 @@ using Image = Component::Image< Handler >;
 
 } // end namespace W2E
 
-#endif // BACKEND_CONTEXT_SDL_HPP
+#endif // BACKEND_HANDLER_SDL_HPP

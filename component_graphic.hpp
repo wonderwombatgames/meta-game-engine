@@ -27,7 +27,7 @@ struct GraphicPod
   // colour parameters
   Colour colourTint = Colours::WHITE;
   ColourComp alphaMode = 1.0f;
-  eBlendMode blendingMode = BLENDMODE_ALPHA;
+  eBlendMode blendingMode = BLENDMODEALPHA_;
 
   // whether to show the entity or not
   bool isVisible = true;
