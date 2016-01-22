@@ -16,6 +16,9 @@ sourcesfiles=\
 buildflags=`pkg-config --cflags --libs sdl2`
 buildflags+=`pkg-config --cflags --libs SDL2_image`
 
+unity:
+	$(shell ./unity.sh)
+	g++ -g -std=c++11 -o unit_test.x unity.cpp ${buildflags}
 
 all: tests
 
@@ -24,6 +27,7 @@ build: unit_tests.cpp ${sourcesfiles} *.hpp
 
 clean:
 	rm -f ./*.x 2> /dev/null
+	rm unity.cpp
 
 format:
 	clang-format -i -style=file *.cpp *.hpp
