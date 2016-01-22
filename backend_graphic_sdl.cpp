@@ -83,9 +83,6 @@ namespace W2E
 using namespace std;
 using namespace BE;
 
-namespace GraphicDevice
-{
-
 template < typename T >
 class Display : public DisplayInterface
 {
@@ -247,8 +244,6 @@ Display< SDL2::Handler >::Display(const BoxBoundXYWH& rect, Flags flags)
   this->setViewRect(rect);
 }
 
-} // end namespace GraphicDevice
-
 namespace Component
 {
 
@@ -384,7 +379,7 @@ namespace System
 
 DisplayHandler Graphics::createDisplay(const BoxBoundXYWH& rect, Flags flags)
 {
-  this->display = make_shared< GraphicDevice::Display< SDL2::Handler > >(rect, flags);
+  this->display = make_shared< Display< SDL2::Handler > >(rect, flags);
   return this->display;
 }
 

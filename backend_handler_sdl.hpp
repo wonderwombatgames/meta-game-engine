@@ -10,7 +10,7 @@
 #include "utils_types.hpp"
 #include "utils_colour.hpp"
 #include "system_graphics.hpp"
-#include "component_graphic_image.hpp"
+#include "component_graphic.hpp"
 
 namespace W2E
 {

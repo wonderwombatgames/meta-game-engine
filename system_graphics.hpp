@@ -19,9 +19,6 @@ namespace W2E
 {
 using namespace std;
 
-namespace GraphicDevice
-{
-
 class DisplayInterface
 {
 public:
@@ -45,12 +42,10 @@ public:
   virtual const bool isFullscreen() const = 0;
 };
 
-} // end namespace  GraphicDevice
-
 namespace System
 {
 
-using DisplayHandler = SharedPtr< GraphicDevice::DisplayInterface >;
+using DisplayHandler = SharedPtr< DisplayInterface >;
 using ComponentsHashMap = HashMap< EntityID, Component::GraphicPod >;
 using ResourcesHashMap = HashMap< ResourceID, SharedPtr< Component::GraphicInterface > >;
 
