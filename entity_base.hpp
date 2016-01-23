@@ -9,7 +9,7 @@
 #define ENTITY_BASE_HPP
 
 #include "utils_types.hpp"
-
+#include "component_binder.hpp"
 namespace W2E
 {
 
@@ -38,33 +38,32 @@ struct EntityPod
 
 } // namespace Component
 
-namespace System
-{
-// forward declaration
-class SystemsInterface;
-class ComponentBinder;
-}
-
-class EntityRegistrar
-{
-private:
-  friend class System::ComponentBinder;
-  EntityID registerIntoSystem(System::SystemsInterface& system)
-  {
-    return this->registerIntoSystem_(system);
-  }
-
-protected:
-  EntityRegistrar() {}
-  virtual ~EntityRegistrar() {}
-
-  // add one more component to the entity
-  virtual EntityID registerIntoSystem_(System::SystemsInterface& system) = 0;
-};
+// namespace System
+// {
+// // forward declaration
+// class SystemsInterface;
+// }
+//
+// class EntityRegistrar
+// {
+// private:
+//   friend class System::ComponentBinderInterface;
+//   EntityID registerIntoSystem(System::SystemsInterface& system)
+//   {
+//     return this->registerIntoSystem_(system);
+//   }
+//
+// protected:
+//   EntityRegistrar() {}
+//   virtual ~EntityRegistrar() {}
+//
+//   // add one more component to the entity
+//   virtual EntityID registerIntoSystem_(System::SystemsInterface& system) = 0;
+// };
 
 using namespace Utils;
 
-class EntityBase : public EntityRegistrar
+class EntityBase : public EntityRegistrarInterface
 {
 public:
   friend class EntitiesManager;

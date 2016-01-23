@@ -18,55 +18,33 @@
 namespace W2E
 {
 
-// class DisplayInterface
-// {
-// public:
-//   virtual ~DisplayInterface(){};
-//
-//   // rendering
-//   virtual void render() = 0;
-//   virtual void clear() = 0;
-//   virtual void clear(const Colour& c) = 0;
-//
-//   // reseting the viewport
-//   virtual void setColour(const Colour& c) = 0;
-//   virtual const Colour& getColour() const = 0;
-//   virtual void setResolution(Dimension2& res) = 0;
-//   virtual const Dimension2& getResolution() const = 0;
-//   virtual void setViewRect(const BoxBoundXYWH& rect) = 0;
-//   virtual const BoxBoundXYWH& getViewRect() const = 0;
-//   virtual void setTitle(const String& title) = 0;
-//   virtual const char* getTitle() const = 0;
-//   virtual void setFullscreen(bool fs) = 0;
-//   virtual const bool isFullscreen() const = 0;
-// };
-
 namespace System
 {
 
 using DisplayHandler = SharedPtr< DisplayInterface >;
 using ComponentsHashMap = HashMap< EntityID, Component::GraphicPod >;
-using ResourcesHashMap = HashMap< ResourceID, SharedPtr< Component::GraphicInterface > >;
+using GraphicResource = SharedPtr< Component::GraphicInterface >;
+using ResourcesHashMap = HashMap< ResourceID, GraphicResource >;
 
-class GraphicComponentBinder : public ComponentBinder
-{
-public:
-  // virtual dtor
-  virtual ~GraphicComponentBinder() {}
-
-  // ctor
-  GraphicComponentBinder(SystemsInterface* system,
-                         Component::GraphicInterface* resource,
-                         ComponentsHashMap* components);
-
-  // bind this resource to entity
-  virtual ErrorCode toEntity(EntityRegistrar* sp) override;
-
-private:
-  SystemsInterface* system_;
-  Component::GraphicInterface* resource_;
-  ComponentsHashMap* components_;
-};
+// class GraphicComponentBinder : public ComponentBinder
+// {
+// public:
+//   // virtual dtor
+//   virtual ~GraphicComponentBinder() {}
+//
+//   // ctor
+//   GraphicComponentBinder(SystemsInterface* system,
+//                          Component::GraphicInterface* resource,
+//                          ComponentsHashMap* components);
+//
+//   // bind this resource to entity
+//   virtual ErrorCode toEntity(EntityRegistrar* sp) override;
+//
+// private:
+//   SystemsInterface* system_;
+//   Component::GraphicInterface* resource_;
+//   ComponentsHashMap* components_;
+// };
 
 class Graphics : public SystemsInterface
 {

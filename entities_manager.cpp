@@ -24,7 +24,7 @@ EntitiesManager* EntitiesManager::instance()
   return sinstance_;
 }
 
-EntityRegistrar* EntitiesManager::registrar(EntityID entityId)
+EntityRegistrarInterface* EntitiesManager::registrar(EntityID entityId)
 {
   auto entity = this->entities_.find(entityId);
   if(entity != this->entities_.end())

@@ -1,5 +1,8 @@
 img/
 klib/
 stb/
-*.x
+nbproject/
 unity.cpp
+.cproject
+.project
+*.x

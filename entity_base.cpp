@@ -15,7 +15,7 @@ using namespace System;
 //
 
 EntityBase::EntityBase(EntityID id)
-    : EntityRegistrar()
+    : EntityRegistrarInterface()
     , destroy_(false)
 {
   // defaults

@@ -10,6 +10,7 @@
 
 #include <cassert>
 
+#include "component_binder.hpp"
 #include "entities_manager.hpp"
 
 namespace W2E
@@ -18,30 +19,6 @@ using namespace std;
 
 namespace System
 {
-
-class SystemsInterface;
-
-class ComponentBinder
-{
-public:
-  // virtual dtor
-  virtual ~ComponentBinder() {}
-
-  // bind this resource to entity
-  virtual ErrorCode toEntity(EntityRegistrar* er) { return UNKNOWN_ERROR; }
-
-protected:
-  EntityID registerIntoSystem_(SystemsInterface* sys, EntityRegistrar* er)
-  {
-    if(sys != nullptr && er != nullptr)
-    {
-      return er->registerIntoSystem(*sys);
-    }
-    return InvalidID;
-  }
-};
-
-using ComponentBinderPtr = SharedPtr< ComponentBinder >;
 
 class SystemsInterface
 {
@@ -94,7 +71,7 @@ protected:
   virtual void remove(const Component::EntityPod& entity) {}
   virtual ComponentBinderPtr getComponentBinder(ResourceID resourceId)
   {
-    return make_shared< ComponentBinder >();
+    return ComponentBinderPtr(nullptr);
   }
 
   // class methods

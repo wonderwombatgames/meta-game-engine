@@ -26,7 +26,7 @@ public:
   // entity related methods
   template < class EntityType = EntityBase >
   EntityID createEntity(const char* name);
-  EntityRegistrar* registrar(EntityID entityId);
+  EntityRegistrarInterface* registrar(EntityID entityId);
 
   // const String * lookUpEntityName(EntityID entityId);
   EntityID lookUpEntityId(const String& name);
