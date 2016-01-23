@@ -2,6 +2,7 @@ img/
 klib/
 stb/
 nbproject/
+.codelite/
 unity.cpp
 .cproject
 .project

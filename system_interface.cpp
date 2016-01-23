@@ -12,21 +12,21 @@ namespace System
 {
 
 // inlined methods
-inline void SystemsInterface::update(TimeDim delta) { this->tick(delta); }
+void SystemsInterface::update(TimeDim delta) { this->tick(delta); }
 
-inline void SystemsInterface::insertEntity(Component::EntityPod& entity) { this->insert(entity); }
+void SystemsInterface::insertEntity(Component::EntityPod& entity) { this->insert(entity); }
 
-inline void SystemsInterface::removeEntity(const Component::EntityPod& entity)
+void SystemsInterface::removeEntity(const Component::EntityPod& entity)
 {
   this->remove(entity);
 }
 
-inline ComponentBinderPtr SystemsInterface::bindComponent(ResourceID resourceId)
+ComponentBinderPtr SystemsInterface::bindComponent(ResourceID resourceId)
 {
   return this->getComponentBinder(resourceId);
 }
 
-inline bool SystemsInterface::isValid(SystemsInterface& system)
+bool SystemsInterface::isValid(SystemsInterface& system)
 {
   bool retVal = false;
   SystemsInterface::systemRegistrar(retVal, &system, nullptr, VERIFY);
@@ -34,7 +34,7 @@ inline bool SystemsInterface::isValid(SystemsInterface& system)
 }
 
 // class methods
-inline SystemsInterface* SystemsInterface::getSystem(const String& name)
+SystemsInterface* SystemsInterface::getSystem(const String& name)
 {
   bool success = false;
   SystemsInterface* retPtr = nullptr;
@@ -43,7 +43,7 @@ inline SystemsInterface* SystemsInterface::getSystem(const String& name)
   return retPtr;
 }
 
-inline SystemsInterface* SystemsInterface::systemRegistrar(bool& retValue,
+SystemsInterface* SystemsInterface::systemRegistrar(bool& retValue,
                                                            SystemsInterface* inSystem,
                                                            const char* name,
                                                            eRegistrar op)
