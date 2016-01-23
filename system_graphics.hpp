@@ -22,29 +22,9 @@ namespace System
 {
 
 using DisplayHandler = SharedPtr< DisplayInterface >;
-using ComponentsHashMap = HashMap< EntityID, Component::GraphicPod >;
-using GraphicResource = SharedPtr< Component::GraphicInterface >;
-using ResourcesHashMap = HashMap< ResourceID, GraphicResource >;
-
-// class GraphicComponentBinder : public ComponentBinder
-// {
-// public:
-//   // virtual dtor
-//   virtual ~GraphicComponentBinder() {}
-//
-//   // ctor
-//   GraphicComponentBinder(SystemsInterface* system,
-//                          Component::GraphicInterface* resource,
-//                          ComponentsHashMap* components);
-//
-//   // bind this resource to entity
-//   virtual ErrorCode toEntity(EntityRegistrar* sp) override;
-//
-// private:
-//   SystemsInterface* system_;
-//   Component::GraphicInterface* resource_;
-//   ComponentsHashMap* components_;
-// };
+using GraphicComponents = HashMap< EntityID, Component::GraphicPod >;
+using GraphicResourcePtr = SharedPtr< Component::GraphicInterface >;
+using GraphicResources = HashMap< ResourceID, GraphicResourcePtr >;
 
 class Graphics : public SystemsInterface
 {
@@ -74,8 +54,8 @@ protected:
   virtual ComponentBinderPtr getComponentBinder(ResourceID resourceId) override;
 
   Component::TransformPod camera_;
-  ComponentsHashMap components_;
-  ResourcesHashMap resources_;
+  GraphicComponents components_;
+  GraphicResources resources_;
 };
 
 template < typename T >

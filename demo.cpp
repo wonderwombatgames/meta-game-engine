@@ -8,8 +8,6 @@
 #include <SDL2/SDL.h>
 
 #include "entities_manager.hpp"
-#include "entity_transformable.hpp"
-#include "system_interface.hpp"
 #include "backend_handler_sdl.hpp"
 #include "system_graphics.hpp"
 #include "system_transform.hpp"
@@ -32,16 +30,18 @@ int main(int argc, char* argv[])
   DisplayHandler view = graphics.createDisplay({{{0.0, 0.0}}, {{320.0, 240.0}}});
   cout << "!!!OK - " << ++testcount_ << " => Created a viewport. " << endl;
 
-  EntityID entId = em->createEntity< EntityTransformable >("Player");
-  cout << "!!!OK - " << ++testcount_ << " => Created a Trasnformable entity. " << endl;
+  EntityID playerId = em->createEntity< EntityBase >("Player");
+  cout << "!!!OK - " << ++testcount_ << " => Created a Base entity. " << endl;
 
-  ResourceID imgId = graphics.loadResourceFromFile< SDL2BE::Image >("img/sample.png");
-  cout << "!!!OK - " << ++testcount_ << " => load texture in graphic system " << endl;
+  transform.bindComponent(0)->toEntity(em->registrar(playerId));
+  cout << "!!!OK - " << ++testcount_ << " => Binded Base entity to a transform component. " << endl;
 
-  // graphics.setEntityAsset(entId, imgId);
-  graphics.bindComponent(imgId)->toEntity(em->registrar(entId));
-  cout << "!!!OK - " << ++testcount_
-       << " => assigned newly created texture to transformable entity " << endl;
+  ResourceID imgId1 = graphics.loadResourceFromFile< SDL2BE::Image >("img/sample.png");
+  cout << "!!!OK - " << ++testcount_ << " => load 1st texture in graphic system " << endl;
+
+  graphics.bindComponent(imgId1)->toEntity(em->registrar(playerId));
+  cout << "!!!OK - " << ++testcount_ << " => assigned newly created texture to base entity "
+       << endl;
 
 #if 0 // just basic features test
 

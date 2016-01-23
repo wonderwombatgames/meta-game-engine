@@ -9,31 +9,6 @@ namespace W2E
 namespace System
 {
 
-// GraphicComponentBinder::GraphicComponentBinder(SystemsInterface* system,
-//                                                Component::GraphicInterface* resource,
-//                                                ComponentsHashMap* components)
-//     : system_(system)
-//     , resource_(resource)
-//     , components_(components)
-// {
-// }
-
-// ErrorCode GraphicComponentBinder::toEntity(EntityRegistrar* sp)
-// {
-//   if(system_ != nullptr)
-//   {
-//     EntityID id = this->registerIntoSystem_(system_, sp);
-//
-//     auto it = this->components_->find(id);
-//     if(it != this->components_->end())
-//     {
-//       it->second.resource = resource_;
-//       return NO_ERROR;
-//     }
-//   }
-//   return UNKNOWN_ERROR;
-// }
-
 void Graphics::insert(Component::EntityPod& entity)
 {
   if(entity.transform)
@@ -72,7 +47,7 @@ void Graphics::tick(TimeDim delta)
 
 ComponentBinderPtr Graphics::getComponentBinder(ResourceID resourceId)
 {
-  using GraphicComponentBinder = ComponentBinder< Component::GraphicInterface, ComponentsHashMap >;
+  using GraphicComponentBinder = ComponentBinder< Component::GraphicInterface, GraphicComponents >;
   ComponentBinderPtr retVal;
   auto it = resources_.find(resourceId);
   if(it != resources_.end())

@@ -41,6 +41,14 @@ void Transform::remove(const Component::EntityPod& entity)
 }
 void Transform::tick(TimeDim delta) {}
 
+ComponentBinderPtr Transform::getComponentBinder(ResourceID resourceId)
+{
+  using TransformComponentBinder = ComponentBinder< void, TransformComponents >;
+  ComponentBinderPtr retVal;
+  retVal.reset(new TransformComponentBinder(this, nullptr, &components_));
+  return retVal;
+}
+
 } // end namespace System;
 
 } // end namespace W2E

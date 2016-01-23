@@ -33,6 +33,9 @@ struct TransformPod
   // graphics, and might have application
   // to the entity behaviour as well
   Vector3 scale;
+
+  // just for compatibility with the binder mechanisms
+  void* resource;
 };
 
 } // namespace Component

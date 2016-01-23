@@ -21,6 +21,7 @@ class SystemsInterface;
 class ComponentBinderInterface;
 }
 
+// interface implemented by base class to support registering components
 class EntityRegistrarInterface
 {
 private:
@@ -41,6 +42,7 @@ protected:
 namespace System
 {
 
+// interface used to provide access to register a component to an entity and into its system
 class ComponentBinderInterface
 {
 public:
@@ -58,6 +60,8 @@ protected:
   }
 };
 
+// template concrete class to provide binders to each system
+// systems will return the resolved template pointing to their own data types
 template < class Resource, class Container >
 class ComponentBinder : public ComponentBinderInterface
 {

@@ -27,7 +27,6 @@ public:
   template < class EntityType = EntityBase >
   EntityID createEntity(const char* name);
   EntityRegistrarInterface* registrar(EntityID entityId);
-
   // const String * lookUpEntityName(EntityID entityId);
   EntityID lookUpEntityId(const String& name);
   int refreshEntities();
