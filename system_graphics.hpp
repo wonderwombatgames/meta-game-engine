@@ -1,6 +1,4 @@
 /**
-  * entities manager contains all entities
-  * entities are just containers to components
   *
   *
   */
@@ -11,37 +9,37 @@
 #include <cassert>
 #include <memory>
 
-#include "utils_colour.hpp"
+// #include "utils_colour.hpp"
 #include "system_interface.hpp"
 #include "component_transform.hpp"
 #include "component_graphic.hpp"
+#include "display_interface.hpp"
 
 namespace W2E
 {
-using namespace std;
 
-class DisplayInterface
-{
-public:
-  virtual ~DisplayInterface(){};
-
-  // rendering
-  virtual void render() = 0;
-  virtual void clear() = 0;
-  virtual void clear(const Colour& c) = 0;
-
-  // reseting the viewport
-  virtual void setColour(const Colour& c) = 0;
-  virtual const Colour& getColour() const = 0;
-  virtual void setResolution(Dimension2& res) = 0;
-  virtual const Dimension2& getResolution() const = 0;
-  virtual void setViewRect(const BoxBoundXYWH& rect) = 0;
-  virtual const BoxBoundXYWH& getViewRect() const = 0;
-  virtual void setTitle(const String& title) = 0;
-  virtual const char* getTitle() const = 0;
-  virtual void setFullscreen(bool fs) = 0;
-  virtual const bool isFullscreen() const = 0;
-};
+// class DisplayInterface
+// {
+// public:
+//   virtual ~DisplayInterface(){};
+//
+//   // rendering
+//   virtual void render() = 0;
+//   virtual void clear() = 0;
+//   virtual void clear(const Colour& c) = 0;
+//
+//   // reseting the viewport
+//   virtual void setColour(const Colour& c) = 0;
+//   virtual const Colour& getColour() const = 0;
+//   virtual void setResolution(Dimension2& res) = 0;
+//   virtual const Dimension2& getResolution() const = 0;
+//   virtual void setViewRect(const BoxBoundXYWH& rect) = 0;
+//   virtual const BoxBoundXYWH& getViewRect() const = 0;
+//   virtual void setTitle(const String& title) = 0;
+//   virtual const char* getTitle() const = 0;
+//   virtual void setFullscreen(bool fs) = 0;
+//   virtual const bool isFullscreen() const = 0;
+// };
 
 namespace System
 {

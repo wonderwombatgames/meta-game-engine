@@ -15,7 +15,7 @@ namespace Component
 {
 // forward declaration
 class GraphicInterface;
-class TransformPod;
+struct TransformPod;
 
 struct GraphicPod
 {

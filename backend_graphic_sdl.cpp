@@ -83,7 +83,6 @@ namespace W2E
 using namespace std;
 using namespace BE;
 
-template < typename T >
 class Display : public DisplayInterface
 {
 public:
@@ -110,7 +109,7 @@ public:
   virtual const bool isFullscreen() const override;
 
 protected:
-  using HANDLER_ = T;
+  using HANDLER_ = SDL2::Handler;
 
   // data
   UniquePtr< HANDLER_ > data_;
@@ -119,14 +118,9 @@ protected:
 };
 
 // Display
-template <>
-void Display< SDL2::Handler >::render()
-{
-  SDL_RenderPresent(data_->view_->renderer_);
-}
+void Display::render() { SDL_RenderPresent(data_->view_->renderer_); }
 
-template <>
-void Display< SDL2::Handler >::setColour(const Colour& c)
+void Display::setColour(const Colour& c)
 {
   this->background_ = c;
   u8 r = 0;
@@ -138,40 +132,28 @@ void Display< SDL2::Handler >::setColour(const Colour& c)
   SDL_SetRenderDrawColor(data_->view_->renderer_, r, g, b, a);
 }
 
-template <>
-const Colour& Display< SDL2::Handler >::getColour() const
-{
-  return this->background_;
-}
+const Colour& Display::getColour() const { return this->background_; }
 
-template <>
-void Display< SDL2::Handler >::setTitle(const String& title)
+void Display::setTitle(const String& title)
 {
   SDL_SetWindowTitle(data_->view_->window_, title.c_str());
 }
 
-template <>
-const char* Display< SDL2::Handler >::getTitle() const
-{
-  return SDL_GetWindowTitle(data_->view_->window_);
-}
+const char* Display::getTitle() const { return SDL_GetWindowTitle(data_->view_->window_); }
 
-template <>
-void Display< SDL2::Handler >::clear(const Colour& c)
+void Display::clear(const Colour& c)
 {
   this->setColour(c);
   SDL_RenderClear(data_->view_->renderer_);
 }
 
-template <>
-void Display< SDL2::Handler >::clear()
+void Display::clear()
 {
   setColour({RGBA, {{0.0f, 0.0f, 0.0f, 1.0f}}});
   SDL_RenderClear(data_->view_->renderer_);
 }
 
-template <>
-void Display< SDL2::Handler >::setFullscreen(bool fs)
+void Display::setFullscreen(bool fs)
 {
   int flag = 0;
   if(fs)
@@ -183,14 +165,12 @@ void Display< SDL2::Handler >::setFullscreen(bool fs)
   this->setColour(this->background_);
 }
 
-template <>
-const bool Display< SDL2::Handler >::isFullscreen() const
+const bool Display::isFullscreen() const
 {
   return (SDL_GetWindowFlags(data_->view_->window_) == SDL_WINDOW_FULLSCREEN);
 }
 
-template <>
-void Display< SDL2::Handler >::setResolution(Dimension2& res)
+void Display::setResolution(Dimension2& res)
 {
   // only update if different
   if(rect_.size.width != res.width || rect_.size.height != res.height)
@@ -214,14 +194,9 @@ void Display< SDL2::Handler >::setResolution(Dimension2& res)
   }
 }
 
-template <>
-const Dimension2& Display< SDL2::Handler >::getResolution() const
-{
-  return rect_.size;
-}
+const Dimension2& Display::getResolution() const { return rect_.size; }
 
-template <>
-void Display< SDL2::Handler >::setViewRect(const BoxBoundXYWH& rect)
+void Display::setViewRect(const BoxBoundXYWH& rect)
 {
   rect_ = rect;
 
@@ -229,14 +204,9 @@ void Display< SDL2::Handler >::setViewRect(const BoxBoundXYWH& rect)
   this->setColour(this->background_);
 }
 
-template <>
-const BoxBoundXYWH& Display< SDL2::Handler >::getViewRect() const
-{
-  return rect_;
-}
+const BoxBoundXYWH& Display::getViewRect() const { return rect_; }
 
-template <>
-Display< SDL2::Handler >::Display(const BoxBoundXYWH& rect, Flags flags)
+Display::Display(const BoxBoundXYWH& rect, Flags flags)
     : data_(new HANDLER_)
     , rect_(rect)
     , background_{RGB, {{1.0, 1.0, 1.0}}}
@@ -379,7 +349,7 @@ namespace System
 
 DisplayHandler Graphics::createDisplay(const BoxBoundXYWH& rect, Flags flags)
 {
-  this->display = make_shared< Display< SDL2::Handler > >(rect, flags);
+  this->display = make_shared< Display >(rect, flags);
   return this->display;
 }
 
