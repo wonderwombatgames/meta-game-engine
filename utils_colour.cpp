@@ -3,10 +3,11 @@
 
 namespace W2E
 {
-using namespace std;
 
 namespace Utils
 {
+
+using namespace std;
 
 inline u8 hexChar2Val(const char* ch)
 {

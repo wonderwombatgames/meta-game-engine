@@ -15,11 +15,21 @@ https://trello.com/b/vs9Ajlx5/game-engine-ecs#
 
 * [X] ~~find better way to initialize the POD's - Only transformPod is not initialized. Colours and Vectors are purposefully let without default to allow list instantiation. Constants were set for init with a copy constructor~~
 
+* [X] ~~update unit tests -> add graphic system rendering and transform to the entity then remove manual rendering~~
+
 * [X] PARTIAL: replace all bool return for ErrorCode! - missing more error enumerations
 
-* [ ] PARTIAL: update unit tests -> add graphic system rendering and transform to the entity then remove manual rendering - WORKING but need to hand initialize graphicPOD and transformPOD!
+* [X] ~~reduce include dependency => reorganize files and use forward declaration~~
 
-* [ ] reduce include dependency => reorganize files and use forward declaration
+* [X] ~~remove backend.hpp file~~
+
+* [ ] add input system - 6 axis + 12 buttons + keyboard ring buffer
+
+* [ ] rename component_ and resources_  to dataPod_ and componentImpl_ at the Systems
+
+* [ ] rename resource to componentImpl at the component_*.hpp Pod's
+
+* [ ] rename ResourceId to ComponenteId
 
 * [ ] reevaluate all the friend uses through out the code
 
@@ -31,8 +41,9 @@ https://trello.com/b/vs9Ajlx5/game-engine-ecs#
 
 * [ ] add custom allocator to the types alias in utils_types.hpp
 
-* [ ] change the RNG to Twist Mersene
-
-* [ ] remove backend.hpp file
+* [ ] change the RNG to Twisted Mersene
 
 * [ ] reduce usage of STL
+  * [ ] replace unordered_map for a custom Container
+  * [ ] replace strings for a custom fixed size string
+  * [ ] replace allocator

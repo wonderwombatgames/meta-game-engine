@@ -5,7 +5,7 @@
 namespace // anonymous
 {
 // holds pointers to loaded textures to avoid reloading textures more than once.
-using namespace std;
+
 using namespace W2E::BE;
 using namespace W2E::Utils;
 
@@ -113,7 +113,7 @@ inline void SDLWrapper::quitInput() { quitSubsystem(SDL_INIT_GAMECONTROLLER | SD
 
 namespace W2E
 {
-using namespace std;
+
 using namespace Utils;
 
 namespace BE

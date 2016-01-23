@@ -35,7 +35,7 @@ struct GraphicPod
   // reference to transform data component
   TransformPod* transformData = nullptr;
 
-  // graphic element data pointer
+  // graphic component data pointer
   GraphicInterface* resource = nullptr;
 };
 

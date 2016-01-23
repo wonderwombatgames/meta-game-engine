@@ -13,6 +13,7 @@
 #include "system_transform.hpp"
 
 using namespace W2E;
+using namespace std;
 
 int main(int argc, char* argv[])
 {

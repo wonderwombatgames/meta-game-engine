@@ -16,11 +16,11 @@ namespace Utils
 // creates a new random ID < MAXIDS_
 EntityID rndId()
 {
-
+  using namespace std;
   using namespace std::chrono;
   high_resolution_clock::time_point p = high_resolution_clock::now();
   nanoseconds ns = duration_cast< nanoseconds >(p.time_since_epoch());
-  std::time_t t = ns.count();
+  time_t t = ns.count();
 
   u32 rndPrefix = static_cast< u32 >(rand() * 0xff) << 24;
   u32 rId = rndPrefix + (static_cast< u32 >(t) & 0xffffff);

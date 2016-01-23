@@ -65,7 +65,7 @@ template < typename T >
 ResourceID Graphics::loadResourceFromFile(const String& filepath)
 {
   ResourceID resCounter = seqId();
-  this->resources_.emplace(resCounter, make_shared< T >(filepath));
+  this->resources_.emplace(resCounter, std::make_shared< T >(filepath));
 
   return resCounter;
 }

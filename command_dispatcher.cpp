@@ -6,7 +6,7 @@
 
 namespace W2E
 {
-// using namespace std;
+//
 using namespace Utils;
 
 HashMultiMap< CommandType, ICommandee* > CommandDispatcher::subscribers;

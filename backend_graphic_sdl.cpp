@@ -56,8 +56,8 @@ void computeClipRects(const W2E::Component::GraphicPod& component,
 
   f32 ax = component.anchor.x;
   f32 ay = component.anchor.y;
-  i32 w = static_cast< i32 >(tw * abs(sx));
-  i32 h = static_cast< i32 >(th * abs(sy));
+  i32 w = static_cast< i32 >(tw * std::abs(sx));
+  i32 h = static_cast< i32 >(th * std::abs(sy));
   i32 cx = static_cast< i32 >(ax * w);
   i32 cy = static_cast< i32 >(ay * h);
   i32 x = tx - cx;
@@ -80,7 +80,7 @@ void computeClipRects(const W2E::Component::GraphicPod& component,
 
 namespace W2E
 {
-using namespace std;
+
 using namespace BE;
 
 class Display : public DisplayInterface
@@ -350,7 +350,7 @@ namespace System
 
 DisplayHandler Graphics::createDisplay(const BoxBoundXYWH& rect, Flags flags)
 {
-  this->display = make_shared< Display >(rect, flags);
+  this->display = std::make_shared< Display >(rect, flags);
   return this->display;
 }
 

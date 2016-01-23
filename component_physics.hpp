@@ -15,6 +15,10 @@ using namespace Utils;
 namespace Component
 {
 
+// forward declaration
+class PhysicsInterface;
+struct TransformPod;
+
 struct PhysicsPod
 {
   // values between 0.0 - 1.0 (in relation to world size) / t / t
@@ -23,18 +27,32 @@ struct PhysicsPod
   Rotation3 angVelocity;
   Rotation3 angAcceleration;
 
-  // arbritary value in relation to other entities
-  f32 mass;
+  // body
+  Bound bodyContour;
 
   // defines the center of the body
   // values between 0.0 - 1.0 (in relation to entity Contour)
   Vector3 centerOfMass;
 
+  // arbritary value in relation to other entities
+  f32 mass;
+
   // values between 0.0 - 1.0
   f32 elasticity;
 
-  // body
-  Bound bodyContour;
+  // reference to transform data component
+  TransformPod* transformData = nullptr;
+
+  // physics component data pointer
+  PhysicsInterface* resource = nullptr;
+};
+
+class PhysicsInterface
+{
+public:
+  PhysicsInterface() {}
+  virtual ~PhysicsInterface() {}
+  virtual void step(const PhysicsPod& component, const TransformPod& transformData) = 0;
 };
 
 } // namespace Component

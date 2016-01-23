@@ -62,7 +62,6 @@ using String = std::string;
 
 // game specific types
 
-using FrameCount = u64;
 using Flags = u32;
 using BlendingMode = u16;
 using ColourComp = f32;

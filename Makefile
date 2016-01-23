@@ -3,7 +3,7 @@ buildflags+=`pkg-config --cflags --libs SDL2_image`
 
 unity:
 	$(shell ./unify.sh)
-	g++ -g -std=c++11 -o unit_tests.x unity.cpp ${buildflags}
+	g++ -g -std=c++11 -o demo.x unity.cpp ${buildflags}
 
 all: tests
 
@@ -15,4 +15,4 @@ format:
 	clang-format -i -style=file *.cpp *.hpp
 
 tests: unity
-	./unit_tests.x
+	./demo.x
