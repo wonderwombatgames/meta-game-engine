@@ -36,6 +36,7 @@ public:
   Graphics(Graphics& other) = delete;
   virtual ~Graphics();
 
+  // methods specific to the graphic system
   DisplayHandler createDisplay(const BoxBoundXYWH& rect, Flags flags = 0);
 
   template < typename T >
@@ -48,11 +49,13 @@ public:
   ErrorCode setCameraTransform(Component::TransformPod& transformData);
 
 protected:
+  // this methods override the base class to create the specific graphic system behaviour
   virtual void insert(Component::EntityPod& entity) override;
   virtual void remove(const Component::EntityPod& entity) override;
   virtual void tick(TimeDim delta) override;
   virtual ComponentBinderPtr getComponentBinder(ResourceID resourceId) override;
 
+  // data
   Component::TransformPod camera_;
   GraphicComponents components_;
   GraphicResources resources_;

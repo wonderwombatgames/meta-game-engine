@@ -174,6 +174,9 @@ int main(int argc, char* argv[])
   c1.kind = RGB;
   c1.rgb = {0.5f, 0.5f, 0.5f};
 
+  view->setColour(c1);
+  cout << "!!!OK - " << ++testcount_ << " => reset bg colour " << endl;
+
   // float randx_ = 0;
   // float randy_ = 0;
 
@@ -194,11 +197,11 @@ int main(int argc, char* argv[])
     // randy_ += -5.0f + ((rand() % 10)+(rand() % 10)+(rand() % 10)) / 3.0f;
     Component::TransformPod offset{{{-150.0f, -150.0f, 0.0f}}, {{0.0f, 0.0f, 0.0f}}, {{1.0f}}};
 
-    view->clear(c1);
+    // view->clear(c1);
     // tex2.paint(sprite, offset);
+    // view->render();
     graphics.setCameraTransform(offset);
     graphics.update(0.0f);
-    view->render();
 
     SDL_Delay(1000 / 25);
   }

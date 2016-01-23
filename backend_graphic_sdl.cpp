@@ -149,7 +149,7 @@ void Display::clear(const Colour& c)
 
 void Display::clear()
 {
-  setColour({RGBA, {{0.0f, 0.0f, 0.0f, 1.0f}}});
+  this->setColour(this->background_);
   SDL_RenderClear(data_->view_->renderer_);
 }
 
@@ -209,9 +209,10 @@ const BoxBoundXYWH& Display::getViewRect() const { return rect_; }
 Display::Display(const BoxBoundXYWH& rect, Flags flags)
     : data_(new HANDLER_)
     , rect_(rect)
-    , background_{RGB, {{1.0, 1.0, 1.0}}}
+    , background_{RGBA, {{0.0, 0.0, 0.0, 1.0}}}
 {
   this->setViewRect(rect);
+  this->setColour(this->background_);
 }
 
 namespace Component

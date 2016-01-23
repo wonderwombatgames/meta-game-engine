@@ -36,6 +36,7 @@ ErrorCode Graphics::setCameraTransform(Component::TransformPod& transformData)
 
 void Graphics::tick(TimeDim delta)
 {
+  display->clear();
   for(auto comp : this->components_)
   {
     if(comp.second.isVisible && comp.second.resource)
@@ -43,6 +44,7 @@ void Graphics::tick(TimeDim delta)
       comp.second.resource->paint(comp.second, this->camera_);
     }
   }
+  display->render();
 }
 
 ComponentBinderPtr Graphics::getComponentBinder(ResourceID resourceId)
