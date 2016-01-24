@@ -42,7 +42,8 @@ protected:
       : count_{0}
       , entities_{}
       , lookUp_{}
-      {}
+  {
+  }
 
   // private type defs
   using IEntityPtr = SharedPtr< EntityBase >;

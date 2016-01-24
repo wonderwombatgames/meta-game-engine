@@ -38,11 +38,13 @@ struct Texture
 {
   CLASSMETHOD_ SharedPtr< Texture > createTexture(const String& filepath, SDL_Renderer* renderer);
   ~Texture();
-  SDL_Texture* buffer_;
-  BoxBoundXYWH rect_;
+  SDL_Texture* buffer_{nullptr};
+  BoxBoundXYWH rect_{};
 
 private:
   Texture(const String& filepath, SDL_Renderer* renderer);
+  Texture(const Texture&) = delete;
+  Texture& operator=(Texture&) = delete;
 };
 
 // context used by viewport and texture

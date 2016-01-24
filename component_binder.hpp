@@ -33,6 +33,8 @@ private:
 
 protected:
   EntityRegistrarInterface() {}
+  EntityRegistrarInterface(EntityRegistrarInterface& ) = delete;
+  EntityRegistrarInterface& operator=(EntityRegistrarInterface&) = delete;
   virtual ~EntityRegistrarInterface() {}
 
   // add one more component to the entity
@@ -75,6 +77,12 @@ public:
   virtual ErrorCode toEntity(EntityRegistrarInterface* er);
 
 private:
+  ComponentBinder() = delete;
+  ComponentBinder(const ComponentBinder&) = delete;
+  ComponentBinder& operator=(ComponentBinder&) = delete;
+
+
+  // data
   SystemsInterface* system_;
   Resource* resource_;
   Container* components_;
@@ -84,9 +92,9 @@ template < class Resource, class Container >
 ComponentBinder< Resource, Container >::ComponentBinder(SystemsInterface* system,
                                                         Resource* resource,
                                                         Container* components)
-    : system_(system)
-    , resource_(resource)
-    , components_(components)
+    : system_{system}
+    , resource_{resource}
+    , components_{components}
 {
 }
 

@@ -23,11 +23,14 @@ struct InputPod
   // values between -1.0 and +1.0
   f32 axis[6];
 
-  // values between 0.0 and 1.0
-  f32 buttons[12];
+  // values bitmask of up to 16 buttons
+  u16 buttons;
+
+  // keyboard buffer
+  char keysBuffer[32];
 
   // graphic element data pointer
-  InputInterface* resource = nullptr;
+  InputInterface* resource;
 };
 
 class InputInterface

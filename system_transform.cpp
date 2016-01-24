@@ -11,12 +11,14 @@ namespace System
 {
 
 Transform::Transform()
-    : SystemsInterface("Transform")
+    : SystemsInterface{"Transform"}
+    , components_{}
 {
 }
 
 Transform::Transform(const char* name)
-    : SystemsInterface(name)
+    : SystemsInterface{name}
+    , components_{}
 {
 }
 

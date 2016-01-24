@@ -17,13 +17,15 @@ https://trello.com/b/vs9Ajlx5/game-engine-ecs#
 
 * [X] ~~update unit tests -> add graphic system rendering and transform to the entity then remove manual rendering~~
 
-* [X] PARTIAL: replace all bool return for ErrorCode! - missing more error enumerations
-
 * [X] ~~reduce include dependency => reorganize files and use forward declaration~~
 
 * [X] ~~remove backend.hpp file~~
 
-* [ ] add input system - 6 axis + 12 buttons + keyboard ring buffer
+* [X] ~~change the initializers to use init_list {} instead of constructor~~
+
+* [X] PARTIAL: replace all bool return for ErrorCode! - missing more error enumerations
+
+* [ ] PARTIAL: add input system - 6 axis + 12 buttons + keyboard ring buffer
 
 * [ ] rename component_ and resources_  to dataPod_ and componentImpl_ at the Systems
 

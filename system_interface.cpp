@@ -16,10 +16,7 @@ void SystemsInterface::update(TimeDim delta) { this->tick(delta); }
 
 void SystemsInterface::insertEntity(Component::EntityPod& entity) { this->insert(entity); }
 
-void SystemsInterface::removeEntity(const Component::EntityPod& entity)
-{
-  this->remove(entity);
-}
+void SystemsInterface::removeEntity(const Component::EntityPod& entity) { this->remove(entity); }
 
 ComponentBinderPtr SystemsInterface::bindComponent(ResourceID resourceId)
 {
@@ -44,9 +41,9 @@ SystemsInterface* SystemsInterface::getSystem(const String& name)
 }
 
 SystemsInterface* SystemsInterface::systemRegistrar(bool& retValue,
-                                                           SystemsInterface* inSystem,
-                                                           const char* name,
-                                                           eRegistrar op)
+                                                    SystemsInterface* inSystem,
+                                                    const char* name,
+                                                    eRegistrar op)
 {
   LOCALPERSISTENT_ HashMap< String, SystemsInterface* > ssystems_;
   SystemsInterface* outSystem = nullptr;

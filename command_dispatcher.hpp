@@ -14,7 +14,6 @@ namespace W2E
 class CommandDispatcher
 {
 public:
-  CommandDispatcher(CommandDispatcher& other) = delete;
   ~CommandDispatcher();
 
   CLASSMETHOD_ CommandDispatcher* instance();
@@ -24,6 +23,8 @@ public:
   void dispatch(const CommandMsg& msg);
 
 protected:
+  CommandDispatcher(CommandDispatcher&) = delete;
+  CommandDispatcher operator=(CommandDispatcher&) = delete;
   CommandDispatcher();
   GLOBAL HashMultiMap< CommandType, ICommandee* > subscribers;
 };

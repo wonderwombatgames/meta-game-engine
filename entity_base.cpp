@@ -15,13 +15,11 @@ using namespace System;
 //
 
 EntityBase::EntityBase(EntityID id)
-    : EntityRegistrarInterface()
-    , destroy_(false)
+    : EntityRegistrarInterface{}
+    , componentSystems_{}
+    , entityData_{id, 1, true, nullptr}
+    , destroy_{false}
 {
-  // defaults
-  this->entityData_.entityId = id;
-  // this is the base entity so we set it to 1
-  this->entityData_.typeId = 1;
 }
 
 EntityBase::~EntityBase() { this->tearDownComponents(); }

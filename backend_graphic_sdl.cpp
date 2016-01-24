@@ -207,8 +207,8 @@ void Display::setViewRect(const BoxBoundXYWH& rect)
 const BoxBoundXYWH& Display::getViewRect() const { return rect_; }
 
 Display::Display(const BoxBoundXYWH& rect, Flags flags)
-    : data_(new HANDLER_)
-    , rect_(rect)
+    : data_{new HANDLER_}
+    , rect_{rect}
     , background_{RGBA, {{0.0, 0.0, 0.0, 1.0}}}
 {
   this->setViewRect(rect);
@@ -250,14 +250,16 @@ ErrorCode Image< SDL2::Handler >::loadFromFile(const String& filepath)
 
 template <>
 Image< SDL2::Handler >::Image(const String& filepath)
-    : data_(new HANDLER_)
+    : data_{new HANDLER_}
+    , textureSize_{{0.0f, 0.0f}}
 {
   this->loadFromFile(filepath);
 }
 
 template <>
 Image< SDL2::Handler >::Image()
-    : data_(new HANDLER_)
+    : data_{new HANDLER_}
+    , textureSize_{{0.0f, 0.0f}}
 {
 }
 
@@ -355,14 +357,22 @@ DisplayHandler Graphics::createDisplay(const BoxBoundXYWH& rect, Flags flags)
 }
 
 Graphics::Graphics()
-    : SystemsInterface("Graphics")
+    : SystemsInterface{"Graphics"}
+    , display{nullptr}
+    , camera_{{{0.0f, 0.0f, 0.0f}}, {{0.0f, 0.0f, 0.0f}}, {{1.0f}}}
+    , components_{}
+    , resources_{}
 {
   SDL2::initGraphicSystem();
   this->camera_ = {{{0.0f, 0.0f, 0.0f}}, {{0.0f, 0.0f, 0.0f}}, {{1.0f}}};
 }
 
 Graphics::Graphics(const char* name)
-    : SystemsInterface(name)
+    : SystemsInterface{name}
+    , display{nullptr}
+    , camera_{{{0.0f, 0.0f, 0.0f}}, {{0.0f, 0.0f, 0.0f}}, {{1.0f}}}
+    , components_{}
+    , resources_{}
 {
   SDL2::initGraphicSystem();
   SDL2::initGraphicSystem();

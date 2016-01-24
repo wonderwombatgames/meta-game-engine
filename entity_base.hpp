@@ -30,36 +30,14 @@ struct EntityPod
   TypeID typeId;
 
   // whether or not this entity is active
-  bool isActive = true;
+  bool isActive;
 
   // pointer to transform pod
-  TransformPod* transform = nullptr;
+  TransformPod* transform;
 };
 
 } // namespace Component
 
-// namespace System
-// {
-// // forward declaration
-// class SystemsInterface;
-// }
-//
-// class EntityRegistrar
-// {
-// private:
-//   friend class System::ComponentBinderInterface;
-//   EntityID registerIntoSystem(System::SystemsInterface& system)
-//   {
-//     return this->registerIntoSystem_(system);
-//   }
-//
-// protected:
-//   EntityRegistrar() {}
-//   virtual ~EntityRegistrar() {}
-//
-//   // add one more component to the entity
-//   virtual EntityID registerIntoSystem_(System::SystemsInterface& system) = 0;
-// };
 
 using namespace Utils;
 
@@ -93,14 +71,14 @@ protected:
   // tear down (de register) components from systems
   void tearDownComponents();
 
-  // data
-  bool destroy_;
-
   // set holds the systems to wich this entity was added
   Set< System::SystemsInterface* > componentSystems_;
 
   // this POD is to be used by the component systems
   Component::EntityPod entityData_;
+
+  // data
+  bool destroy_;
 };
 
 inline bool EntityBase::isActive() const { return this->entityData_.isActive; }

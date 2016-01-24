@@ -11,12 +11,16 @@ namespace System
 {
 
 Input::Input()
-    : SystemsInterface("Input")
+    : SystemsInterface{"Input"}
+    , components_{}
+    , resources_{}
 {
 }
 
 Input::Input(const char* name)
-    : SystemsInterface(name)
+    : SystemsInterface{name}
+    , components_{}
+    , resources_{}
 {
 }
 
@@ -24,7 +28,7 @@ Input::~Input() {}
 
 void Input::insert(Component::EntityPod& entity)
 {
-  Component::InputPod pod;
+  Component::InputPod pod{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0x0000, {0}, nullptr};
   this->components_.emplace(entity.entityId, pod);
   // TODO: init the inputPod to 0.0
 }
