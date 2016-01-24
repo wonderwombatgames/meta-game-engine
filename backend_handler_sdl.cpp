@@ -305,6 +305,19 @@ ErrorCode initGraphicSystem(Flags flags) { return SDLWrapper::instance()->initVi
 
 void quitGraphicSystem() { SDLWrapper::instance()->quitVideo(); }
 
+// input functions
+ErrorCode initInputSystem(Flags flags)
+{
+  return static_cast< ErrorCode >(SDLWrapper::instance()->initEvents() |
+                                  SDLWrapper::instance()->initInput());
+}
+
+void quitInputSystem()
+{
+  SDLWrapper::instance()->quitEvents();
+  SDLWrapper::instance()->quitInput();
+}
+
 } // end namespace SDL2
 
 } // end namespace BE

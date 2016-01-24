@@ -60,6 +60,10 @@ struct Handler
 ErrorCode initGraphicSystem(Flags flags = 0);
 void quitGraphicSystem();
 
+// input functions
+ErrorCode initInputSystem(Flags flags = 0);
+void quitInputSystem();
+
 // converts the float values from Colour into SDL RGB8
 void colour8RGBA(u8& r, u8& g, u8& b, u8& a, const Colour& c);
 

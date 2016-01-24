@@ -5,8 +5,8 @@
 
 #include <cassert>
 #include <cmath>
-#include <iostream>
 #include <algorithm>
+//#include <iostream>
 
 #include "backend_handler_sdl.hpp"
 #include "system_graphics.hpp"

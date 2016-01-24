@@ -10,22 +10,6 @@ namespace W2E
 namespace System
 {
 
-Input::Input()
-    : SystemsInterface{"Input"}
-    , components_{}
-    , resources_{}
-{
-}
-
-Input::Input(const char* name)
-    : SystemsInterface{name}
-    , components_{}
-    , resources_{}
-{
-}
-
-Input::~Input() {}
-
 void Input::insert(Component::EntityPod& entity)
 {
   Component::InputPod pod{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0x0000, {0}, nullptr};
@@ -40,7 +24,6 @@ void Input::remove(const Component::EntityPod& entity)
     this->components_.erase(it);
   }
 }
-void Input::tick(TimeDim delta) {}
 
 ComponentBinderPtr Input::getComponentBinder(ResourceID resourceId)
 {
@@ -53,6 +36,7 @@ ComponentBinderPtr Input::getComponentBinder(ResourceID resourceId)
   }
   return retVal;
 }
+
 
 } // end namespace System;
 

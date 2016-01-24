@@ -2,9 +2,6 @@ g++flags = -g -std=c++11 -Wall -Weffc++
 buildflags=`pkg-config --cflags --libs sdl2`
 buildflags+=`pkg-config --cflags --libs SDL2_image`
 
-pch: *.hpp
-	g++ ${g++flags} *.hpp
-
 build:
 	rm -f unity.cpp
 	g++ ${g++flags} -o demo.x *.cpp ${buildflags}
@@ -30,5 +27,8 @@ tests: unity
 
 rebuild: clean
 	g++ ${g++flags} -o demo.x *.cpp ${buildflags}
+
+pch: *.hpp
+	g++ ${g++flags} *.hpp
 
 all: unity

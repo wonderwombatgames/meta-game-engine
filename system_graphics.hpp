@@ -61,11 +61,11 @@ protected:
   GraphicResources resources_;
 };
 
-template < typename T >
+template < typename ResourceType >
 ResourceID Graphics::loadResourceFromFile(const String& filepath)
 {
   ResourceID resCounter = seqId();
-  this->resources_.emplace(resCounter, std::make_shared< T >(filepath));
+  this->resources_.emplace(resCounter, std::make_shared< ResourceType >(filepath));
 
   return resCounter;
 }

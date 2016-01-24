@@ -25,7 +25,7 @@ https://trello.com/b/vs9Ajlx5/game-engine-ecs#
 
 * [X] PARTIAL: replace all bool return for ErrorCode! - missing more error enumerations
 
-* [ ] PARTIAL: add input system - 6 axis + 12 buttons + keyboard ring buffer
+* [X] PARTIAL: add input system - 6 axis + 12 buttons + keyboard ring buffer - needs to support multiple components per entity!!!
 
 * [ ] rename component_ and resources_  to dataPod_ and componentImpl_ at the Systems
 
@@ -44,6 +44,8 @@ https://trello.com/b/vs9Ajlx5/game-engine-ecs#
 * [ ] add custom allocator to the types alias in utils_types.hpp
 
 * [ ] change the RNG to Twisted Mersene
+
+* [ ] replace enum for enum class where applicable
 
 * [ ] reduce usage of STL
   * [ ] replace unordered_map for a custom Container

@@ -15,6 +15,12 @@ using namespace Utils;
 namespace Component
 {
 
+struct Event
+{
+  u32 type;
+  u32 value;
+};
+
 // forward declaration
 class InputInterface;
 
@@ -38,8 +44,40 @@ class InputInterface
 public:
   InputInterface() {}
   virtual ~InputInterface() {}
-  virtual void poll(const InputPod& component) = 0;
+  virtual void poll(const Event& event, InputPod& component) = 0;
 };
+
+class WasdInput : public InputInterface
+{
+public:
+  WasdInput() {}
+  virtual ~WasdInput() {}
+  virtual void poll(const Event& event, InputPod& component) override;
+};
+
+class ArrowsInput : public InputInterface
+{
+public:
+  ArrowsInput() {}
+  virtual ~ArrowsInput() {}
+  virtual void poll(const Event& event, InputPod& component) override;
+};
+
+// class XInput : public InputInterface
+//{
+// public:
+//  XInput() {}
+//  virtual ~XInput() {}
+//  virtual void poll(const Event& event, InputPod& component) override;
+//};
+//
+// class NumPadInput : public InputInterface
+//{
+// public:
+//  NumPadInput() {}
+//  virtual ~NumPadInput() {}
+//  virtual void poll(const Event& event, InputPod& component) override;
+//};
 
 } // namespace Component
 

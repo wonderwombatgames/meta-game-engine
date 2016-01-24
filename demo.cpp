@@ -11,6 +11,7 @@
 #include "backend_handler_sdl.hpp"
 #include "system_graphics.hpp"
 #include "system_transform.hpp"
+#include "system_input.hpp"
 
 using namespace W2E;
 using namespace std;
@@ -28,6 +29,12 @@ int main(int argc, char* argv[])
   System::Graphics graphics;
   cout << "!!!OK - " << ++testcount_ << " => Started Graphics System. " << endl;
 
+  System::Input controls;
+  cout << "!!!OK - " << ++testcount_ << " => Started Iput System. " << endl;
+
+  ResourceID wasd = controls.loadComponent<Component::WasdInput>();
+  cout << "!!!OK - " << ++testcount_ << " => Loaded WASD input control " << endl;
+
   DisplayHandler view = graphics.createDisplay({{{0.0, 0.0}}, {{320.0, 240.0}}});
   cout << "!!!OK - " << ++testcount_ << " => Created a viewport. " << endl;
 
@@ -43,6 +50,11 @@ int main(int argc, char* argv[])
   graphics.bindComponent(imgId1)->toEntity(em->registrar(playerId));
   cout << "!!!OK - " << ++testcount_ << " => assigned newly created texture to base entity "
        << endl;
+
+  controls.bindComponent(wasd)->toEntity(em->registrar(playerId));
+  cout << "!!!OK - " << ++testcount_ << " => assigned wasd input to base entity "
+       << endl;
+
 
 #if 0 // just basic features test
 
@@ -182,9 +194,9 @@ int main(int argc, char* argv[])
   // float randy_ = 0;
 
   bool running = true;
-  SDL_Event event;
   for(int i = 0; running && (i < 250); ++i)
   {
+    SDL_Event event;
     while(SDL_PollEvent(&event))
     {
       if(event.type == SDL_QUIT)
@@ -203,6 +215,8 @@ int main(int argc, char* argv[])
     // view->render();
     graphics.setCameraTransform(offset);
     graphics.update(0.0f);
+
+    controls.update(0.0f);
 
     SDL_Delay(1000 / 25);
   }

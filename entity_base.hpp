@@ -38,7 +38,6 @@ struct EntityPod
 
 } // namespace Component
 
-
 using namespace Utils;
 
 class EntityBase : public EntityRegistrarInterface

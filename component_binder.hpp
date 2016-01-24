@@ -33,7 +33,7 @@ private:
 
 protected:
   EntityRegistrarInterface() {}
-  EntityRegistrarInterface(EntityRegistrarInterface& ) = delete;
+  EntityRegistrarInterface(EntityRegistrarInterface&) = delete;
   EntityRegistrarInterface& operator=(EntityRegistrarInterface&) = delete;
   virtual ~EntityRegistrarInterface() {}
 
@@ -80,7 +80,6 @@ private:
   ComponentBinder() = delete;
   ComponentBinder(const ComponentBinder&) = delete;
   ComponentBinder& operator=(ComponentBinder&) = delete;
-
 
   // data
   SystemsInterface* system_;

@@ -14,6 +14,8 @@ namespace W2E
 namespace System
 {
 
+// FIXME: this system needs to support multiple componts per entity!!!
+// TODO: can the other system support more than one component as well???
 using InputComponents = HashMap< EntityID, Component::InputPod >;
 using InputResourcePtr = SharedPtr< Component::InputInterface >;
 using InputResources = HashMap< ResourceID, InputResourcePtr >;
@@ -26,6 +28,9 @@ public:
   Input(Input& other) = delete;
   virtual ~Input();
 
+  template < class ComponentType >
+  ResourceID loadComponent();
+
 protected:
   virtual void insert(Component::EntityPod& entity) override;
   virtual void remove(const Component::EntityPod& entity) override;
@@ -35,6 +40,15 @@ protected:
   InputComponents components_;
   InputResources resources_;
 };
+
+template < typename ComponentType >
+ResourceID Input::loadComponent()
+{
+  ResourceID resCounter = seqId();
+  this->resources_.emplace(resCounter, std::make_shared< ComponentType >());
+
+  return resCounter;
+}
 
 } // end namespace System
 
