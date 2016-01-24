@@ -7,3 +7,4 @@ unity.cpp
 .cproject
 .project
 *.x
+*.gch
