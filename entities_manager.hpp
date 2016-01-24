@@ -39,7 +39,10 @@ protected:
 
   // CTOR
   EntitiesManager()
-      : count_(0){};
+      : count_{0}
+      , entities_{}
+      , lookUp_{}
+      {}
 
   // private type defs
   using IEntityPtr = SharedPtr< EntityBase >;
