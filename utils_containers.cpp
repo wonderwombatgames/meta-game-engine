@@ -1,10 +1,19 @@
 #include "utils_containers.hpp"
 #include <algorithm>
+#include <iostream>
+
+/// FIXME: simplify!!! make it work just as a ring buffer!
+/// FIXME: this probably should be a hpp not cpp because of templates
+/// TODO: break into 2 containers: stack and de-queue
+
+namespace W2E
+{
+
+namespace Utils
+{
 
 namespace
 {
-using namespace W2E::Utils;
-
 inline cSize logic2real(cSize first, cSize last, cSize length, cSize total, cSize pos)
 {
   cSize index = 0;
@@ -19,11 +28,6 @@ inline cSize logic2real(cSize first, cSize last, cSize length, cSize total, cSiz
 }
 }
 
-namespace W2E
-{
-
-namespace Utils
-{
 const cSize maxStride = 8;
 
 template < typename ElementType, cSize Capacity >
@@ -31,7 +35,13 @@ ErrorCode push_back(FixedDeQueue< ElementType, Capacity >& container, const Elem
 {
   if(container.length_ < container.maxLength)
   {
-    if(container.firstPos_ > container.lastPos_)
+    if(container.lastPos_ >= container.firstPos_)
+    {
+      ++container.lastPos_;
+      container.array_[container.lastPos_] = el;
+      ++container.internalLength_;
+    }
+    else // (container.firstPos_ > container.lastPos_)
     {
       if((container.firstPos_ - container.lastPos_) == 1)
       {
@@ -69,12 +79,6 @@ ErrorCode push_back(FixedDeQueue< ElementType, Capacity >& container, const Elem
         container.array_[container.lastPos_] = el;
       }
     }
-    else if(container.firstPos_ < container.lastPos_)
-    {
-      ++container.lastPos_;
-      container.array_[container.lastPos_] = el;
-      ++container.internalLength_;
-    }
     ++container.length_;
     return NO_ERROR;
   }
@@ -89,10 +93,9 @@ ErrorCode push_front(FixedDeQueue< ElementType, Capacity >& container, const Ele
     if(container.firstPos_ > 0)
     {
       if(container.lastPos_ >= container.firstPos_)
-
       {
         --container.firstPos_;
-        container.array_[--container.firstPos_] = el;
+        container.array_[container.firstPos_] = el;
         ++container.internalLength_;
       }
       else
@@ -131,7 +134,7 @@ ErrorCode push_front(FixedDeQueue< ElementType, Capacity >& container, const Ele
         else if((container.firstPos_ - container.lastPos_) > 1)
         {
           --container.firstPos_;
-          container.array_[--container.firstPos_] = el;
+          container.array_[container.firstPos_] = el;
         }
       }
     }
@@ -153,13 +156,13 @@ ErrorCode push_front(FixedDeQueue< ElementType, Capacity >& container, const Ele
 template < typename ElementType, cSize Capacity >
 ElementType pop_back(FixedDeQueue< ElementType, Capacity >& container, ElementType fallback)
 {
-  if(container.length > 0)
+  if(container.length_ > 0)
   {
     if(container.lastPos_ > container.firstPos_)
     {
       --container.internalLength_;
     }
-    --container.length;
+    --container.length_;
     --container.lastPos_;
     return container.array_[container.lastPos_ + 1];
   }
@@ -169,13 +172,13 @@ ElementType pop_back(FixedDeQueue< ElementType, Capacity >& container, ElementTy
 template < typename ElementType, cSize Capacity >
 ElementType pop_front(FixedDeQueue< ElementType, Capacity >& container, ElementType fallback)
 {
-  if(container.length > 0)
+  if(container.length_ > 0)
   {
     if(container.lastPos_ > container.firstPos_)
     {
       --container.internalLength_;
     }
-    --container.length;
+    --container.length_;
     ++container.firstPos_;
     return container.array_[container.firstPos_ - 1];
   }
@@ -197,7 +200,7 @@ ElementType* back(FixedDeQueue< ElementType, Capacity >& container)
 template < typename ElementType, cSize Capacity >
 ElementType* at(FixedDeQueue< ElementType, Capacity >& container, cSize pos)
 {
-  if(pos < container.lenght_)
+  if(pos < container.length_)
   {
     cSize index = logic2real(
         container.firstPos_, container.lastPos_, container.length_, container.internalLength_, pos);
@@ -211,11 +214,11 @@ ElementType* at(FixedDeQueue< ElementType, Capacity >& container, cSize pos)
 }
 
 template < typename ElementType, cSize Capacity >
-ErrorCode erase(FixedDeQueue< ElementType, Capacity >& container, cSize pos)
+ErrorCode del(FixedDeQueue< ElementType, Capacity >& container, cSize pos)
 {
-  if(pos < container.lenght_)
+  if(pos < container.length_)
   {
-    if(pos < (container.lenght_ / 2))
+    if(pos < (container.length_ / 2))
     {
       for(cSize ndx = pos; ndx > 0; --ndx)
       {
@@ -229,6 +232,7 @@ ErrorCode erase(FixedDeQueue< ElementType, Capacity >& container, cSize pos)
                                 container.length_,
                                 container.internalLength_,
                                 (ndx - 1));
+        std::cout << "del pos -> to / from " << ndx << " -> " << to << " / " << from << std::endl;
         container.array_[to] = container.array_[from];
       }
       --container.internalLength_;
@@ -237,7 +241,7 @@ ErrorCode erase(FixedDeQueue< ElementType, Capacity >& container, cSize pos)
     }
     else
     {
-      for(cSize ndx = pos; ndx < container.lenght_; ++ndx)
+      for(cSize ndx = pos; ndx < container.length_; ++ndx)
       {
         cSize to = logic2real(container.firstPos_,
                               container.lastPos_,

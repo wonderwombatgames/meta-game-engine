@@ -3,6 +3,9 @@
   *
   */
 
+/// FIXME: simplify!!! make it work just as a ring buffer!
+/// TODO: break into 2 containers: stack and de-queue
+
 #ifndef UTILS_CONTAINERS_HPP
 #define UTILS_CONTAINERS_HPP
 
@@ -42,7 +45,7 @@ template < typename ElementType, cSize Capacity >
 ElementType* at(FixedDeQueue< ElementType, Capacity >& container, cSize pos);
 
 template < typename ElementType, cSize Capacity >
-ErrorCode erase(FixedDeQueue< ElementType, Capacity >& container, cSize pos);
+ErrorCode del(FixedDeQueue< ElementType, Capacity >& container, cSize pos);
 
 template < typename ElementType, cSize Capacity >
 cSize length(FixedDeQueue< ElementType, Capacity >& container);
@@ -54,7 +57,8 @@ struct FixedDeQueue
   using Type = ElementType;
   const cSize maxLength = Capacity;
 
-  FixedDeQueue();
+  FixedDeQueue() = delete;
+  explicit FixedDeQueue(const ElementType& init);
   FixedDeQueue(const FixedDeQueue& other);
   FixedDeQueue& operator=(const FixedDeQueue& other);
 
@@ -83,19 +87,20 @@ private:
 
   friend ElementType* at< ElementType, Capacity >(FixedDeQueue& container, cSize pos);
 
-  friend ErrorCode erase< ElementType, Capacity >(FixedDeQueue& container, cSize pos);
+  friend ErrorCode del< ElementType, Capacity >(FixedDeQueue& container, cSize pos);
 
   friend cSize length< ElementType, Capacity >(FixedDeQueue& container);
 };
 
 template < typename ElementType, cSize Capacity >
-FixedDeQueue< ElementType, Capacity >::FixedDeQueue()
+FixedDeQueue< ElementType, Capacity >::FixedDeQueue(const ElementType& init)
     : array_{}
     , length_{0}
     , internalLength_{0}
-    , firstPos_{0}
-    , lastPos_{0}
+    , firstPos_{Capacity >> 1}
+    , lastPos_{Capacity >> 1}
 {
+  std::fill(array_, array_ + Capacity, init);
 }
 
 template < typename ElementType, cSize Capacity >
