@@ -3,8 +3,8 @@
   *
   */
 
-#ifndef UTILS_CONTAINERS_HPP
-#define UTILS_CONTAINERS_HPP
+#ifndef UTILS_FIXCONTAINERS_HPP
+#define UTILS_FIXCONTAINERS_HPP
 
 #include "utils_types.hpp"
 
@@ -59,6 +59,15 @@ operator=(const FixedArray& other)
 }
 
 // accessor methods
+
+template < typename ElementType, cSize Capacity >
+bool equalUpTo(FixedArray< ElementType, Capacity >& container,
+               const FixedArray< ElementType, Capacity >& other)
+{
+  return std::equal(other.array_,
+                    (other.array_ + std::min(other.maxLength_, container.maxLength_)),
+                    container.array_);
+}
 
 template < typename ElementType, cSize Capacity >
 ElementType* at(FixedArray< ElementType, Capacity >& container, cSize pos)
@@ -368,4 +377,4 @@ cSize length(FixedDEQueue< ElementType, Capacity >& container)
 
 } // end namespace W2E
 
-#endif // UTILS_CONTAINERS_HPP
+#endif // UTILS_FIXCONTAINERS_HPP
