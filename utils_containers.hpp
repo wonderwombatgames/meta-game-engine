@@ -3,9 +3,6 @@
   *
   */
 
-/// FIXME: simplify!!! make it work just as a ring buffer!
-/// TODO: break into 2 containers: stack and de-queue
-
 #ifndef UTILS_CONTAINERS_HPP
 #define UTILS_CONTAINERS_HPP
 
@@ -19,23 +16,148 @@ namespace Utils
 
 using cSize = u32;
 
+///////////////////////////////////////////////////////////////////////////////
+// Stack : Fixed size Stack with random accessor
+///////////////////////////////////////////////////////////////////////////////
+
+// declarations
+template < typename ElementType, cSize Capacity >
+struct FixedStack
+{
+  using Type = ElementType;
+  const cSize maxLength = Capacity;
+  Type array_[Capacity];
+  cSize length_;
+  cSize lastPos_;
+
+  FixedStack() = delete;
+  explicit FixedStack(const ElementType& init);
+  FixedStack(const FixedStack& other);
+  // TODO: Move constructor???
+  FixedStack& operator=(const FixedStack& other);
+};
+
+// implents the constructors
+template < typename ElementType, cSize Capacity >
+FixedStack< ElementType, Capacity >::FixedStack(const ElementType& init)
+    : array_{}
+    , length_{0}
+    , lastPos_{0}
+{
+  std::fill(array_, (array_ + Capacity), init);
+}
+
+template < typename ElementType, cSize Capacity >
+FixedStack< ElementType, Capacity >::FixedStack(const FixedStack& other)
+    : array_{}
+    , length_{other.length}
+    , lastPos_{other.lastPos}
+{
+  std::copy(other.array_, (other.array_ + other.internalLength), array_);
+}
+
+template < typename ElementType, cSize Capacity >
+FixedStack< ElementType, Capacity >& FixedStack< ElementType, Capacity >::
+operator=(const FixedStack& other)
+{
+  length_ = other.length;
+  lastPos_ = other.lastPos;
+  std::copy(other.array_, (other.array_ + other.internalLength), array_);
+  return *this;
+}
+
+// accessor methods
+template < typename ElementType, cSize Capacity >
+ErrorCode push(FixedStack< ElementType, Capacity >& container, const ElementType& el)
+{
+  if(container.length_ < container.maxLength)
+  {
+    if(container.length_ > 0)
+    {
+      ++container.lastPos_;
+    }
+    container.array_[container.lastPos_] = el;
+    ++container.length_;
+    return NO_ERROR;
+  }
+  return UNKNOWN_ERROR;
+}
+
+template < typename ElementType, cSize Capacity >
+ElementType pop(FixedStack< ElementType, Capacity >& container, ElementType fallback)
+{
+  if(container.length_ > 0)
+  {
+    --container.length_;
+    --container.lastPos_;
+    return container.array_[container.lastPos_ + 1];
+  }
+  return fallback;
+}
+
+template < typename ElementType, cSize Capacity >
+ElementType* first(FixedStack< ElementType, Capacity >& container)
+{
+  if(container.length_ > 0)
+  {
+    return &(container.array_[0]);
+  }
+  return nullptr;
+}
+
+template < typename ElementType, cSize Capacity >
+ElementType* last(FixedStack< ElementType, Capacity >& container)
+{
+  if(container.length_ > 0)
+  {
+    return &(container.array_[container.lastPos_]);
+  }
+  return nullptr;
+}
+
+template < typename ElementType, cSize Capacity >
+ElementType* at(FixedStack< ElementType, Capacity >& container, cSize pos)
+{
+  if(pos < container.length_)
+  {
+    return &(container.array_[pos]);
+  }
+  return nullptr;
+}
+
+template < typename ElementType, cSize Capacity >
+void clear(FixedStack< ElementType, Capacity >& container)
+{
+  container.length_ = 0;
+  container.lastPos_ = 0;
+}
+
+template < typename ElementType, cSize Capacity >
+cSize length(FixedStack< ElementType, Capacity >& container)
+{
+  return container.length_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// DEQueue : fixex size double ended queue with random accessor
+///////////////////////////////////////////////////////////////////////////////
+
 // declarations
 template < typename ElementType, cSize Capacity >
 struct FixedDEQueue
 {
   using Type = ElementType;
   const cSize maxLength = Capacity;
+  Type array_[Capacity];
+  cSize length_;
+  cSize firstPos_;
+  cSize lastPos_;
 
   FixedDEQueue() = delete;
   explicit FixedDEQueue(const ElementType& init);
   FixedDEQueue(const FixedDEQueue& other);
+  // TODO: Move constructor???
   FixedDEQueue& operator=(const FixedDEQueue& other);
-
-  Type array_[Capacity];
-  cSize length_;
-  cSize internalLength_;
-  cSize firstPos_;
-  cSize lastPos_;
 };
 
 // implents the constructors
@@ -43,22 +165,20 @@ template < typename ElementType, cSize Capacity >
 FixedDEQueue< ElementType, Capacity >::FixedDEQueue(const ElementType& init)
     : array_{}
     , length_{0}
-    , internalLength_{0}
     , firstPos_{Capacity >> 1}
     , lastPos_{Capacity >> 1}
 {
-  std::fill(array_, array_ + Capacity, init);
+  std::fill(array_, (array_ + Capacity), init);
 }
 
 template < typename ElementType, cSize Capacity >
 FixedDEQueue< ElementType, Capacity >::FixedDEQueue(const FixedDEQueue& other)
     : array_{}
     , length_{other.length}
-    , internalLength_{other.nternalLentgth}
     , firstPos_{other.firstPos}
     , lastPos_{other.lastPos}
 {
-  std::copy(other.array_, other.array_ + other.internalLength, array_);
+  std::copy(other.array_, (other.array_ + other.internalLength), array_);
 }
 
 template < typename ElementType, cSize Capacity >
@@ -66,15 +186,13 @@ FixedDEQueue< ElementType, Capacity >& FixedDEQueue< ElementType, Capacity >::
 operator=(const FixedDEQueue& other)
 {
   length_ = other.length;
-  internalLength_ = other.internalLentgth;
   firstPos_ = other.firstPos;
   lastPos_ = other.lastPos;
-  std::copy(other.array_, other.array_ + other.internalLength, array_);
+  std::copy(other.array_, (other.array_ + other.internalLength), array_);
   return *this;
 }
 
 // accessor methods
-
 template < typename ElementType, cSize Capacity >
 ErrorCode push_back(FixedDEQueue< ElementType, Capacity >& container, const ElementType& el)
 {
