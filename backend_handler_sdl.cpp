@@ -18,7 +18,7 @@ class SDLWrapper
 public:
   ~SDLWrapper();
 
-  CLASSMETHOD_ SDLWrapper* instance();
+  CLASS_METHOD SDLWrapper* instance();
 
   ErrorCode initVideo();
   ErrorCode initEvents();
@@ -36,7 +36,7 @@ protected:
 
 inline SDLWrapper* SDLWrapper::instance()
 {
-  LOCALPERSISTENT_ SDLWrapper* sinstance_ = nullptr;
+  LOCAL_PERSISTENT SDLWrapper* sinstance_ = nullptr;
 
   if(nullptr == sinstance_)
   {

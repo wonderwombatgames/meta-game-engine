@@ -17,7 +17,7 @@ CommandDispatcher::~CommandDispatcher(){};
 
 CommandDispatcher* CommandDispatcher::instance()
 {
-  LOCALPERSISTENT_ CommandDispatcher* sinstance_ = nullptr;
+  LOCAL_PERSISTENT CommandDispatcher* sinstance_ = nullptr;
   if(nullptr == sinstance_)
   {
     sinstance_ = new CommandDispatcher();

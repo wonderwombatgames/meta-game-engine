@@ -20,7 +20,7 @@ using namespace System;
 class EntitiesManager
 {
 public:
-  CLASSMETHOD_ EntitiesManager* instance();
+  CLASS_METHOD EntitiesManager* instance();
   int count();
 
   // entity related methods

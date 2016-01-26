@@ -32,9 +32,9 @@ inline T& Deref(T* ptr)
 
 // based on Ginger Bill DUNJUN: github.com/gingerBill/Dunjun/
 #define GLOBAL static           // global variables
-#define CLASSMETHOD_ static     // class methods work without instantiation
+#define CLASS_METHOD static     // class methods work without instantiation
 #define INTERNAL static         // internal linkage
-#define LOCALPERSISTENT_ static // local persisting variables
+#define LOCAL_PERSISTENT static // local persisting variables
 
 // basic types
 using u8 = uint8_t;

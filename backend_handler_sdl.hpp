@@ -36,7 +36,7 @@ struct Renderer
 // wrapper around texture
 struct Texture
 {
-  CLASSMETHOD_ SharedPtr< Texture > createTexture(const String& filepath, SDL_Renderer* renderer);
+  CLASS_METHOD SharedPtr< Texture > createTexture(const String& filepath, SDL_Renderer* renderer);
   ~Texture();
   SDL_Texture* buffer_{nullptr};
   BoxBoundXYWH rect_{};

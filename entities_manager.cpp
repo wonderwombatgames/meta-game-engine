@@ -16,7 +16,7 @@ using namespace System;
 
 EntitiesManager* EntitiesManager::instance()
 {
-  LOCALPERSISTENT_ EntitiesManager* sinstance_ = nullptr;
+  LOCAL_PERSISTENT EntitiesManager* sinstance_ = nullptr;
   if(nullptr == sinstance_)
   {
     sinstance_ = new EntitiesManager();

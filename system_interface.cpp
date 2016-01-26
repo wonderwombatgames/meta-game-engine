@@ -45,7 +45,7 @@ SystemsInterface* SystemsInterface::systemRegistrar(bool& retValue,
                                                     const char* name,
                                                     eRegistrar op)
 {
-  LOCALPERSISTENT_ HashMap< String, SystemsInterface* > ssystems_;
+  LOCAL_PERSISTENT HashMap< String, SystemsInterface* > ssystems_;
   SystemsInterface* outSystem = nullptr;
 
   String searchName;

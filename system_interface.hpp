@@ -44,9 +44,9 @@ public:
 
   // public class's methods
   // get system by name
-  CLASSMETHOD_ SystemsInterface* getSystem(const String& name);
+  CLASS_METHOD SystemsInterface* getSystem(const String& name);
   // check if the pointer actually points to a system
-  CLASSMETHOD_ bool isValid(SystemsInterface& system);
+  CLASS_METHOD bool isValid(SystemsInterface& system);
 
   // entity related methods
   void insertEntity(Component::EntityPod& entity);
@@ -71,7 +71,7 @@ protected:
   }
 
   // class methods
-  CLASSMETHOD_ SystemsInterface* systemRegistrar(bool& retValue,
+  CLASS_METHOD SystemsInterface* systemRegistrar(bool& retValue,
                                                  SystemsInterface* system,
                                                  const char* name = nullptr,
                                                  eRegistrar op = VERIFY);
