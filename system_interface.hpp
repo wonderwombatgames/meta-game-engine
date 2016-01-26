@@ -8,8 +8,6 @@
 #ifndef SYSTEM_INTERFACE_HPP
 #define SYSTEM_INTERFACE_HPP
 
-#include <cassert>
-
 #include "component_binder.hpp"
 #include "entities_manager.hpp"
 

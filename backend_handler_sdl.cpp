@@ -1,6 +1,5 @@
-#include <cassert>
-#include <SDL2/SDL_image.h>
 #include "backend_handler_sdl.hpp"
+#include <SDL2/SDL_image.h>
 
 namespace // anonymous
 {

@@ -3,10 +3,8 @@
   *
   */
 
-#include <cassert>
-#include <cmath>
 #include <algorithm>
-//#include <iostream>
+#include <cmath>
 
 #include "backend_handler_sdl.hpp"
 #include "system_graphics.hpp"

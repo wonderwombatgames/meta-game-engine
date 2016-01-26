@@ -6,14 +6,11 @@
 #ifndef GRAPHIC_SYSTEMS_HPP
 #define GRAPHIC_SYSTEMS_HPP
 
-#include <cassert>
-#include <memory>
-
 // #include "utils_colour.hpp"
-#include "system_interface.hpp"
-#include "component_transform.hpp"
 #include "component_graphic.hpp"
+#include "component_transform.hpp"
 #include "display_interface.hpp"
+#include "system_interface.hpp"
 
 namespace W2E
 {

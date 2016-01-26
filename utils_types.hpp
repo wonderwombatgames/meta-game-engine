@@ -8,12 +8,13 @@
 #ifndef UTILSTYPES_HPP_
 #define UTILSTYPES_HPP_
 
+#include <cassert>
 #include <cstdint>
+#include <deque>
 #include <memory>
 #include <set>
-#include <unordered_map>
-#include <deque>
 #include <string>
+#include <unordered_map>
 
 namespace W2E
 {
@@ -21,7 +22,15 @@ namespace W2E
 namespace Utils
 {
 
-// based on Ginger Bill DUNJUN
+// safe ptr deref with asssert
+template < typename T >
+inline T& Deref(T* ptr)
+{
+  assert(ptr != nullptr);
+  return *ptr;
+}
+
+// based on Ginger Bill DUNJUN: github.com/gingerBill/Dunjun/
 #define GLOBAL static           // global variables
 #define CLASSMETHOD_ static     // class methods work without instantiation
 #define INTERNAL static         // internal linkage
@@ -89,8 +98,7 @@ enum ErrorCode
 EntityID rndId();
 EntityID seqId();
 
-union Vector2
-{
+union Vector2 {
   struct
   {
     SpaceDim x;
@@ -118,8 +126,7 @@ union Vector2
   };
 };
 
-union Vector3
-{
+union Vector3 {
   struct
   {
     SpaceDim x;
@@ -140,8 +147,7 @@ union Vector3
   };
 };
 
-union Vector4
-{
+union Vector4 {
   struct
   {
     SpaceDim x;
@@ -202,8 +208,7 @@ using BoxBoundAABB = BoxBoundTLBR;
 struct Bound
 {
   eBound kind = BOXXYWH_;
-  union
-  {
+  union {
     CircleBound circleBound;
     BoxBoundTLBR boxBoundTLBR;
     BoxBoundXYWH boxBoundXYWH;

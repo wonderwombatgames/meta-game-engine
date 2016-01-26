@@ -3,8 +3,6 @@
   *
   */
 
-#include <cassert>
-
 #include "backend_handler_sdl.hpp"
 #include "system_input.hpp"
 

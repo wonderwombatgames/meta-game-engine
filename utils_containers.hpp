@@ -17,6 +17,72 @@ namespace Utils
 using cSize = u32;
 
 ///////////////////////////////////////////////////////////////////////////////
+// Stack : Fixed size Array with random accessor
+///////////////////////////////////////////////////////////////////////////////
+
+// declarations
+template < typename ElementType, cSize Capacity >
+struct FixedArray
+{
+  using Type = ElementType;
+  const cSize maxLength_ = Capacity;
+  Type array_[Capacity];
+
+  FixedArray() = delete;
+  explicit FixedArray(const ElementType& init);
+  FixedArray(const FixedArray& other);
+  // TODO: Move constructor???
+  FixedArray& operator=(const FixedArray& other);
+};
+
+// implents the constructors
+template < typename ElementType, cSize Capacity >
+FixedArray< ElementType, Capacity >::FixedArray(const ElementType& init)
+    : array_{}
+{
+  std::fill(array_, (array_ + maxLength_), init);
+}
+
+template < typename ElementType, cSize Capacity >
+FixedArray< ElementType, Capacity >::FixedArray(const FixedArray& other)
+    : array_{}
+{
+  std::copy(other.array_, (other.array_ + std::min(other.maxLength_, maxLength_)), array_);
+}
+
+template < typename ElementType, cSize Capacity >
+FixedArray< ElementType, Capacity >& FixedArray< ElementType, Capacity >::
+operator=(const FixedArray& other)
+{
+  std::copy(other.array_, (other.array_ + std::min(other.maxLength_, maxLength_)), array_);
+  return *this;
+}
+
+// accessor methods
+
+template < typename ElementType, cSize Capacity >
+ElementType* at(FixedArray< ElementType, Capacity >& container, cSize pos)
+{
+  if(pos < container.maxLength_)
+  {
+    return &(container.array_[pos]);
+  }
+  return nullptr;
+}
+
+template < typename ElementType, cSize Capacity >
+void clear(FixedArray< ElementType, Capacity >& container, const ElementType& init)
+{
+  std::fill(container.array_, (container.array_ + container.maxLength_), init);
+}
+
+template < typename ElementType, cSize Capacity >
+cSize length(FixedArray< ElementType, Capacity >& container)
+{
+  return container.maxLength_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // Stack : Fixed size Stack with random accessor
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -25,7 +91,7 @@ template < typename ElementType, cSize Capacity >
 struct FixedStack
 {
   using Type = ElementType;
-  const cSize maxLength = Capacity;
+  const cSize maxLength_ = Capacity;
   Type array_[Capacity];
   cSize length_;
   cSize lastPos_;
@@ -44,7 +110,7 @@ FixedStack< ElementType, Capacity >::FixedStack(const ElementType& init)
     , length_{0}
     , lastPos_{0}
 {
-  std::fill(array_, (array_ + Capacity), init);
+  std::fill(array_, (array_ + maxLength_), init);
 }
 
 template < typename ElementType, cSize Capacity >
@@ -53,7 +119,7 @@ FixedStack< ElementType, Capacity >::FixedStack(const FixedStack& other)
     , length_{other.length}
     , lastPos_{other.lastPos}
 {
-  std::copy(other.array_, (other.array_ + other.internalLength), array_);
+  std::copy(other.array_, (other.array_ + std::min(other.maxLength_, maxLength_)), array_);
 }
 
 template < typename ElementType, cSize Capacity >
@@ -62,7 +128,7 @@ operator=(const FixedStack& other)
 {
   length_ = other.length;
   lastPos_ = other.lastPos;
-  std::copy(other.array_, (other.array_ + other.internalLength), array_);
+  std::copy(other.array_, (other.array_ + std::min(other.maxLength_, maxLength_)), array_);
   return *this;
 }
 
@@ -70,7 +136,7 @@ operator=(const FixedStack& other)
 template < typename ElementType, cSize Capacity >
 ErrorCode push(FixedStack< ElementType, Capacity >& container, const ElementType& el)
 {
-  if(container.length_ < container.maxLength)
+  if(container.length_ < container.maxLength_)
   {
     if(container.length_ > 0)
     {
@@ -126,8 +192,9 @@ ElementType* at(FixedStack< ElementType, Capacity >& container, cSize pos)
 }
 
 template < typename ElementType, cSize Capacity >
-void clear(FixedStack< ElementType, Capacity >& container)
+void clear(FixedStack< ElementType, Capacity >& container, const ElementType& init)
 {
+  std::fill(container.array_, (container.array_ + container.maxLength_), init);
   container.length_ = 0;
   container.lastPos_ = 0;
 }
@@ -147,7 +214,7 @@ template < typename ElementType, cSize Capacity >
 struct FixedDEQueue
 {
   using Type = ElementType;
-  const cSize maxLength = Capacity;
+  const cSize maxLength_ = Capacity;
   Type array_[Capacity];
   cSize length_;
   cSize firstPos_;
@@ -168,7 +235,7 @@ FixedDEQueue< ElementType, Capacity >::FixedDEQueue(const ElementType& init)
     , firstPos_{Capacity >> 1}
     , lastPos_{Capacity >> 1}
 {
-  std::fill(array_, (array_ + Capacity), init);
+  std::fill(array_, (array_ + maxLength_), init);
 }
 
 template < typename ElementType, cSize Capacity >
@@ -178,7 +245,7 @@ FixedDEQueue< ElementType, Capacity >::FixedDEQueue(const FixedDEQueue& other)
     , firstPos_{other.firstPos}
     , lastPos_{other.lastPos}
 {
-  std::copy(other.array_, (other.array_ + other.internalLength), array_);
+  std::copy(other.array_, (other.array_ + std::min(other.maxLength_, maxLength_)), array_);
 }
 
 template < typename ElementType, cSize Capacity >
@@ -188,7 +255,7 @@ operator=(const FixedDEQueue& other)
   length_ = other.length;
   firstPos_ = other.firstPos;
   lastPos_ = other.lastPos;
-  std::copy(other.array_, (other.array_ + other.internalLength), array_);
+  std::copy(other.array_, (other.array_ + std::min(other.maxLength_, maxLength_)), array_);
   return *this;
 }
 
@@ -196,9 +263,9 @@ operator=(const FixedDEQueue& other)
 template < typename ElementType, cSize Capacity >
 ErrorCode push_back(FixedDEQueue< ElementType, Capacity >& container, const ElementType& el)
 {
-  if(container.length_ < container.maxLength)
+  if(container.length_ < container.maxLength_)
   {
-    container.lastPos_ = (container.lastPos_ + 1) % container.maxLength;
+    container.lastPos_ = (container.lastPos_ + 1) % container.maxLength_;
     container.array_[container.lastPos_] = el;
     if(container.length_ == 0)
     {
@@ -213,9 +280,9 @@ ErrorCode push_back(FixedDEQueue< ElementType, Capacity >& container, const Elem
 template < typename ElementType, cSize Capacity >
 ErrorCode push_front(FixedDEQueue< ElementType, Capacity >& container, const ElementType& el)
 {
-  if(container.length_ < container.maxLength)
+  if(container.length_ < container.maxLength_)
   {
-    container.firstPos_ = (container.firstPos_ - 1 + container.maxLength) % container.maxLength;
+    container.firstPos_ = (container.firstPos_ - 1 + container.maxLength_) % container.maxLength_;
     container.array_[container.firstPos_] = el;
     if(container.length_ == 0)
     {
@@ -276,15 +343,16 @@ ElementType* at(FixedDEQueue< ElementType, Capacity >& container, cSize pos)
 {
   if(pos < container.length_)
   {
-    cSize index = (pos + container.firstPos_) % container.maxLength;
+    cSize index = (pos + container.firstPos_) % container.maxLength_;
     return &(container.array_[index]);
   }
   return nullptr;
 }
 
 template < typename ElementType, cSize Capacity >
-void clear(FixedDEQueue< ElementType, Capacity >& container)
+void clear(FixedDEQueue< ElementType, Capacity >& container, const ElementType& init)
 {
+  std::fill(container.array_, (container.array_ + container.maxLength_), init);
   container.length_ = 0;
   container.firstPos_ = Capacity >> 1;
   container.lastPos_ = container.firstPos_;
