@@ -70,6 +70,7 @@ using HashMultiMap = std::unordered_multimap< K, T >;
 using String = std::string;
 
 // game specific types
+using cSize = W2E::Utils::u32;
 
 using Flags = u32;
 using BlendingMode = u16;

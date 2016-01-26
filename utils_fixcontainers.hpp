@@ -6,6 +6,8 @@
 #ifndef UTILS_FIXCONTAINERS_HPP
 #define UTILS_FIXCONTAINERS_HPP
 
+#include <algorithm>
+
 #include "utils_types.hpp"
 
 namespace W2E
@@ -13,55 +15,6 @@ namespace W2E
 
 namespace Utils
 {
-
-using cSize = u32;
-
-///////////////////////////////////////////////////////////////////////////////
-// String : Fixed size String pool
-///////////////////////////////////////////////////////////////////////////////
-
-// declarations
-
-template < cSize Capacity >
-class StringPool
-{
-  class StringWrapper
-  {
-    StringWrapper() = delete;
-    StringWrapper(StringWrapper& otherStr);
-    StringWrapper& operator=(const char* initStr); // write on change
-    StringWrapper& operator=(StringWrapper& otherStr);
-    const char* operator[](u16 pos) const;
-    char* operator[](u16 pos); // write on change
-
-  private:
-    friend class StringPool;
-    explicit StringWrapper(const char* initStr);
-    const u16 size_;
-    u16* referenceCounter_;
-    char* str_;
-  };
-
-  StringPool(StringPool&) = delete;
-  StringPool& operator=(StringPool&) = delete;
-
-  CLASS_METHOD StringPool& instance()
-  {
-    LOCAL_PERSISTENT StringPool* instance_ = nullptr;
-    if(instance_ == nullptr)
-    {
-      instance_ = new StringPool;
-    }
-    return Deref(instance_);
-  }
-
-  StringWrapper& get(const char* initStr, u16 length);
-
-private:
-  StringPool();
-  GLOBAL const cSize maxLength_ = Capacity;
-  GLOBAL char array_[Capacity];
-};
 
 ///////////////////////////////////////////////////////////////////////////////
 // Stack : Fixed size Array with random accessor
