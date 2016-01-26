@@ -108,9 +108,10 @@ std::tuple< ErrorCode, char*, u16* > StringPool< Capacity >::allocate(const u16&
     std::fill(refCount, (refCount + mapLen), 0);
     this->refCountCursor_ += mapLen;
 
-    // grab the string pointer
+    // grab the string pointer and clear it
     char* str = &(this->array_[this->arrayCursor_]);
     this->arrayCursor_ += len;
+    std::fill(str, (str + len), 0);
 
     return std::make_tuple(NO_ERROR, str, refCount);
   }
@@ -157,6 +158,7 @@ public:
   explicit StringWrapper(StringPoolInterface* sp);
   explicit StringWrapper(StringPoolInterface* sp, const char* initStr);
   StringWrapper(StringWrapper& otherStr);
+  // TODO: move constructor???
   StringWrapper& operator=(StringWrapper& otherStr);
   StringWrapper& operator=(const char* initStr); // write on change
   const char operator[](u16 pos) const;

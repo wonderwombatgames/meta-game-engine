@@ -35,7 +35,7 @@ struct FixedArray
   FixedArray& operator=(const FixedArray& other);
 };
 
-// implents the constructors
+// implements the constructors
 template < typename ElementType, cSize Capacity >
 FixedArray< ElementType, Capacity >::FixedArray(const ElementType& init)
     : array_{}
@@ -112,7 +112,7 @@ struct FixedStack
   FixedStack& operator=(const FixedStack& other);
 };
 
-// implents the constructors
+// implements the constructors
 template < typename ElementType, cSize Capacity >
 FixedStack< ElementType, Capacity >::FixedStack(const ElementType& init)
     : array_{}
@@ -125,7 +125,7 @@ FixedStack< ElementType, Capacity >::FixedStack(const ElementType& init)
 template < typename ElementType, cSize Capacity >
 FixedStack< ElementType, Capacity >::FixedStack(const FixedStack& other)
     : array_{}
-    , length_{other.length}
+    , length_{other.length_}
     , lastPos_{other.lastPos}
 {
   std::copy(other.array_, (other.array_ + std::min(other.maxLength_, maxLength_)), array_);
@@ -135,8 +135,8 @@ template < typename ElementType, cSize Capacity >
 FixedStack< ElementType, Capacity >& FixedStack< ElementType, Capacity >::
 operator=(const FixedStack& other)
 {
-  length_ = other.length;
-  lastPos_ = other.lastPos;
+  length_ = other.length_;
+  lastPos_ = other.lastPos_;
   std::copy(other.array_, (other.array_ + std::min(other.maxLength_, maxLength_)), array_);
   return *this;
 }
@@ -215,12 +215,12 @@ cSize length(FixedStack< ElementType, Capacity >& container)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// DEQueue : fixex size double ended queue with random accessor
+// RingQ : Fixed size circular queue with random accessor
 ///////////////////////////////////////////////////////////////////////////////
 
 // declarations
 template < typename ElementType, cSize Capacity >
-struct FixedDEQueue
+struct FixedRingQ
 {
   using Type = ElementType;
   const cSize maxLength_ = Capacity;
@@ -229,16 +229,76 @@ struct FixedDEQueue
   cSize firstPos_;
   cSize lastPos_;
 
-  FixedDEQueue() = delete;
-  explicit FixedDEQueue(const ElementType& init);
-  FixedDEQueue(const FixedDEQueue& other);
+  FixedRingQ() = delete;
+  explicit FixedRingQ(const ElementType& init);
+  FixedRingQ(const FixedRingQ& other);
   // TODO: Move constructor???
-  FixedDEQueue& operator=(const FixedDEQueue& other);
+  FixedRingQ& operator=(const FixedRingQ& other);
 };
 
-// implents the constructors
+// implements the constructors
 template < typename ElementType, cSize Capacity >
-FixedDEQueue< ElementType, Capacity >::FixedDEQueue(const ElementType& init)
+FixedRingQ< ElementType, Capacity >::FixedRingQ(const ElementType& init)
+    : array_{}
+    , length_{0}
+    , firstPos_{0}
+    , lastPos_{0}
+{
+  std::fill(array_, (array_ + maxLength_), init);
+}
+
+template < typename ElementType, cSize Capacity >
+FixedRingQ< ElementType, Capacity >::FixedRingQ(const FixedRingQ& other)
+    : array_{}
+    , length_{other.length_}
+    , firstPos_{other.firstPos_}
+    , lastPos_{other.lastPos}
+{
+  std::copy(other.array_, (other.array_ + std::min(other.maxLength_, maxLength_)), array_);
+}
+
+template < typename ElementType, cSize Capacity >
+FixedRingQ< ElementType, Capacity >& FixedRingQ< ElementType, Capacity >::
+operator=(const FixedRingQ& other)
+{
+  length_ = other.length_;
+  lastPos_ = other.lastPos_;
+  firstPos_ = other.firstPos_;
+
+  std::copy(other.array_, (other.array_ + std::min(other.maxLength_, maxLength_)), array_);
+  return *this;
+}
+
+// accessor functions
+// TODO
+
+///
+
+///////////////////////////////////////////////////////////////////////////////
+// DEQueue : fixex size double ended queue with random accessor
+///////////////////////////////////////////////////////////////////////////////
+
+// declarations
+template < typename ElementType, cSize Capacity >
+struct FixedDEQ
+{
+  using Type = ElementType;
+  const cSize maxLength_ = Capacity;
+  Type array_[Capacity];
+  cSize length_;
+  cSize firstPos_;
+  cSize lastPos_;
+
+  FixedDEQ() = delete;
+  explicit FixedDEQ(const ElementType& init);
+  FixedDEQ(const FixedDEQ& other);
+  // TODO: Move constructor???
+  FixedDEQ& operator=(const FixedDEQ& other);
+};
+
+// implements the constructors
+template < typename ElementType, cSize Capacity >
+FixedDEQ< ElementType, Capacity >::FixedDEQ(const ElementType& init)
     : array_{}
     , length_{0}
     , firstPos_{Capacity >> 1}
@@ -248,7 +308,7 @@ FixedDEQueue< ElementType, Capacity >::FixedDEQueue(const ElementType& init)
 }
 
 template < typename ElementType, cSize Capacity >
-FixedDEQueue< ElementType, Capacity >::FixedDEQueue(const FixedDEQueue& other)
+FixedDEQ< ElementType, Capacity >::FixedDEQ(const FixedDEQ& other)
     : array_{}
     , length_{other.length}
     , firstPos_{other.firstPos}
@@ -258,8 +318,8 @@ FixedDEQueue< ElementType, Capacity >::FixedDEQueue(const FixedDEQueue& other)
 }
 
 template < typename ElementType, cSize Capacity >
-FixedDEQueue< ElementType, Capacity >& FixedDEQueue< ElementType, Capacity >::
-operator=(const FixedDEQueue& other)
+FixedDEQ< ElementType, Capacity >& FixedDEQ< ElementType, Capacity >::
+operator=(const FixedDEQ& other)
 {
   length_ = other.length;
   firstPos_ = other.firstPos;
@@ -270,7 +330,7 @@ operator=(const FixedDEQueue& other)
 
 // accessor methods
 template < typename ElementType, cSize Capacity >
-ErrorCode push_back(FixedDEQueue< ElementType, Capacity >& container, const ElementType& el)
+ErrorCode push_back(FixedDEQ< ElementType, Capacity >& container, const ElementType& el)
 {
   if(container.length_ < container.maxLength_)
   {
@@ -287,7 +347,7 @@ ErrorCode push_back(FixedDEQueue< ElementType, Capacity >& container, const Elem
 }
 
 template < typename ElementType, cSize Capacity >
-ErrorCode push_front(FixedDEQueue< ElementType, Capacity >& container, const ElementType& el)
+ErrorCode push_front(FixedDEQ< ElementType, Capacity >& container, const ElementType& el)
 {
   if(container.length_ < container.maxLength_)
   {
@@ -304,7 +364,7 @@ ErrorCode push_front(FixedDEQueue< ElementType, Capacity >& container, const Ele
 }
 
 template < typename ElementType, cSize Capacity >
-ElementType pop_back(FixedDEQueue< ElementType, Capacity >& container, ElementType fallback)
+ElementType pop_back(FixedDEQ< ElementType, Capacity >& container, ElementType fallback)
 {
   if(container.length_ > 0)
   {
@@ -316,7 +376,7 @@ ElementType pop_back(FixedDEQueue< ElementType, Capacity >& container, ElementTy
 }
 
 template < typename ElementType, cSize Capacity >
-ElementType pop_front(FixedDEQueue< ElementType, Capacity >& container, ElementType fallback)
+ElementType pop_front(FixedDEQ< ElementType, Capacity >& container, ElementType fallback)
 {
   if(container.length_ > 0)
   {
@@ -328,7 +388,7 @@ ElementType pop_front(FixedDEQueue< ElementType, Capacity >& container, ElementT
 }
 
 template < typename ElementType, cSize Capacity >
-ElementType* front(FixedDEQueue< ElementType, Capacity >& container)
+ElementType* front(FixedDEQ< ElementType, Capacity >& container)
 {
   if(container.length_ > 0)
   {
@@ -338,7 +398,7 @@ ElementType* front(FixedDEQueue< ElementType, Capacity >& container)
 }
 
 template < typename ElementType, cSize Capacity >
-ElementType* back(FixedDEQueue< ElementType, Capacity >& container)
+ElementType* back(FixedDEQ< ElementType, Capacity >& container)
 {
   if(container.length_ > 0)
   {
@@ -348,7 +408,7 @@ ElementType* back(FixedDEQueue< ElementType, Capacity >& container)
 }
 
 template < typename ElementType, cSize Capacity >
-ElementType* at(FixedDEQueue< ElementType, Capacity >& container, cSize pos)
+ElementType* at(FixedDEQ< ElementType, Capacity >& container, cSize pos)
 {
   if(pos < container.length_)
   {
@@ -359,7 +419,7 @@ ElementType* at(FixedDEQueue< ElementType, Capacity >& container, cSize pos)
 }
 
 template < typename ElementType, cSize Capacity >
-void clear(FixedDEQueue< ElementType, Capacity >& container, const ElementType& init)
+void clear(FixedDEQ< ElementType, Capacity >& container, const ElementType& init)
 {
   std::fill(container.array_, (container.array_ + container.maxLength_), init);
   container.length_ = 0;
@@ -368,7 +428,7 @@ void clear(FixedDEQueue< ElementType, Capacity >& container, const ElementType& 
 }
 
 template < typename ElementType, cSize Capacity >
-cSize length(FixedDEQueue< ElementType, Capacity >& container)
+cSize length(FixedDEQ< ElementType, Capacity >& container)
 {
   return container.length_;
 }
