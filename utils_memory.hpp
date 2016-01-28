@@ -197,6 +197,43 @@ bool Freelist< Parent, minSize, maxSize, maxNum >::owns(Blk b)
   return (b.size >= minSize && b.size < maxSize) || parent_.owns(b);
 }
 
+// TODO:
+// //------------------------------------------
+// template <class A, size_t blockSize>
+// class BitmappedBlock;
+// //------------------------------------------
+// template <class Creator>
+// class CascadingAllocator;
+// ...
+// auto a = cascadingAllocator({
+// return Heap<...>();
+// });
+// //------------------------------------------
+// template <size_t threshold,
+// class SmallAllocator,
+// class LargeAllocator>
+// struct Segregator;
+// //------------------------------------------
+// template <class Allocator,
+// size_t min,
+// size_t max,
+// size_t step>
+// struct Bucketizer;
+// • [min, min + step),
+// [min + step, min + 2 * step). . .
+// • Within a bucket allocates the maximum size
+// //------------------------------------------
+// Complete API
+// static constexpr unsigned alignment;
+// static constexpr goodSize(size_t);
+// Blk allocate(size_t);
+// Blk allocateAll();
+// bool expand(Blk&, size_t delta);
+// void reallocate(Blk&, size_t);
+// bool owns(Blk);
+// void deallocate(Blk);
+// void deallocateAll();
+
 } // end namespace Utils
 
 } // end namespace W2E
