@@ -17,7 +17,7 @@ namespace Utils
 {
 
 ///////////////////////////////////////////////////////////////////////////////
-// Stack : Fixed size Array with random accessor
+// Array : Fixed size Array with random accessor
 ///////////////////////////////////////////////////////////////////////////////
 
 // declarations
@@ -25,7 +25,7 @@ template < typename ElementType, cSize Capacity >
 struct FixedArray
 {
   using Type = ElementType;
-  const cSize maxLength_ = Capacity;
+  const cSize maxLength_{Capacity};
   Type array_[Capacity];
 
   FixedArray() = delete;
@@ -100,7 +100,7 @@ template < typename ElementType, cSize Capacity >
 struct FixedStack
 {
   using Type = ElementType;
-  const cSize maxLength_ = Capacity;
+  const cSize maxLength_{Capacity};
   Type array_[Capacity];
   cSize length_;
   cSize lastPos_;
@@ -219,55 +219,56 @@ cSize length(FixedStack< ElementType, Capacity >& container)
 ///////////////////////////////////////////////////////////////////////////////
 
 // declarations
-template < typename ElementType, cSize Capacity >
-struct FixedRingQ
-{
-  using Type = ElementType;
-  const cSize maxLength_ = Capacity;
-  Type array_[Capacity];
-  cSize length_;
-  cSize firstPos_;
-  cSize lastPos_;
-
-  FixedRingQ() = delete;
-  explicit FixedRingQ(const ElementType& init);
-  FixedRingQ(const FixedRingQ& other);
-  // TODO: Move constructor???
-  FixedRingQ& operator=(const FixedRingQ& other);
-};
-
-// implements the constructors
-template < typename ElementType, cSize Capacity >
-FixedRingQ< ElementType, Capacity >::FixedRingQ(const ElementType& init)
-    : array_{}
-    , length_{0}
-    , firstPos_{0}
-    , lastPos_{0}
-{
-  std::fill(array_, (array_ + maxLength_), init);
-}
-
-template < typename ElementType, cSize Capacity >
-FixedRingQ< ElementType, Capacity >::FixedRingQ(const FixedRingQ& other)
-    : array_{}
-    , length_{other.length_}
-    , firstPos_{other.firstPos_}
-    , lastPos_{other.lastPos}
-{
-  std::copy(other.array_, (other.array_ + std::min(other.maxLength_, maxLength_)), array_);
-}
-
-template < typename ElementType, cSize Capacity >
-FixedRingQ< ElementType, Capacity >& FixedRingQ< ElementType, Capacity >::
-operator=(const FixedRingQ& other)
-{
-  length_ = other.length_;
-  lastPos_ = other.lastPos_;
-  firstPos_ = other.firstPos_;
-
-  std::copy(other.array_, (other.array_ + std::min(other.maxLength_, maxLength_)), array_);
-  return *this;
-}
+// FIXME: can be implemented with the DEQ supporting overwrite!!!
+// template < typename ElementType, cSize Capacity >
+// struct FixedRingQ
+// {
+//   using Type = ElementType;
+//   const cSize maxLength_{Capacity};
+//   Type array_[Capacity];
+//   cSize length_;
+//   cSize firstPos_;
+//   cSize lastPos_;
+//
+//   FixedRingQ() = delete;
+//   explicit FixedRingQ(const ElementType& init);
+//   FixedRingQ(const FixedRingQ& other);
+//   // TODO: Move constructor???
+//   FixedRingQ& operator=(const FixedRingQ& other);
+// };
+//
+// // implements the constructors
+// template < typename ElementType, cSize Capacity >
+// FixedRingQ< ElementType, Capacity >::FixedRingQ(const ElementType& init)
+//     : array_{}
+//     , length_{0}
+//     , firstPos_{0}
+//     , lastPos_{0}
+// {
+//   std::fill(array_, (array_ + maxLength_), init);
+// }
+//
+// template < typename ElementType, cSize Capacity >
+// FixedRingQ< ElementType, Capacity >::FixedRingQ(const FixedRingQ& other)
+//     : array_{}
+//     , length_{other.length_}
+//     , firstPos_{other.firstPos_}
+//     , lastPos_{other.lastPos}
+// {
+//   std::copy(other.array_, (other.array_ + std::min(other.maxLength_, maxLength_)), array_);
+// }
+//
+// template < typename ElementType, cSize Capacity >
+// FixedRingQ< ElementType, Capacity >& FixedRingQ< ElementType, Capacity >::
+// operator=(const FixedRingQ& other)
+// {
+//   length_ = other.length_;
+//   lastPos_ = other.lastPos_;
+//   firstPos_ = other.firstPos_;
+//
+//   std::copy(other.array_, (other.array_ + std::min(other.maxLength_, maxLength_)), array_);
+//   return *this;
+// }
 
 // accessor functions
 // TODO
@@ -283,7 +284,7 @@ template < typename ElementType, cSize Capacity >
 struct FixedDEQ
 {
   using Type = ElementType;
-  const cSize maxLength_ = Capacity;
+  const cSize maxLength_{Capacity};
   Type array_[Capacity];
   cSize length_;
   cSize firstPos_;

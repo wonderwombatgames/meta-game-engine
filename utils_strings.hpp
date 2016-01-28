@@ -57,22 +57,37 @@ private:
   virtual ErrorCode deallocate(const u16& length, char* str, u16* refCount) = 0;
 };
 
+// TODO: implemente using the new allocators!
 template < cSize Capacity >
-class StringPool : public StringPoolInterface
+class DynStringPool : public StringPoolInterface
 {
 public:
-  virtual ~StringPool() {}
-  StringPool();
+  virtual ~DynStringPool() {}
+  DynStringPool();
 
 private:
   virtual std::tuple< ErrorCode, char*, u16* > allocate(const u16& length) override;
   virtual ErrorCode deallocate(const u16& length, char* str, u16* refCount) override;
-  StringPool(StringPool&) = delete;
-  StringPool& operator=(StringPool&) = delete;
+  DynStringPool(DynStringPool&) = delete;
+  DynStringPool& operator=(DynStringPool&) = delete;
+};
+
+template < cSize Capacity >
+class FixedStringPool : public StringPoolInterface
+{
+public:
+  virtual ~FixedStringPool() {}
+  FixedStringPool();
+
+private:
+  virtual std::tuple< ErrorCode, char*, u16* > allocate(const u16& length) override;
+  virtual ErrorCode deallocate(const u16& length, char* str, u16* refCount) override;
+  FixedStringPool(FixedStringPool&) = delete;
+  FixedStringPool& operator=(FixedStringPool&) = delete;
 
   // data
-  GLOBAL const cSize maxLength_ = Capacity;
-  GLOBAL const cSize maxElements_ = (maxLength_ >> 3); // smallest string is 2^3 chars
+  GLOBAL const cSize maxLength_{Capacity};
+  GLOBAL const cSize maxElements_{maxLength_ >> 3}; // smallest string is 2^3 chars
 
   GLOBAL char array_[maxLength_];
   GLOBAL cSize arrayCursor_;
@@ -82,21 +97,21 @@ private:
 };
 
 template < cSize Capacity >
-char StringPool< Capacity >::array_[maxLength_] = {0};
+char FixedStringPool< Capacity >::array_[maxLength_] = {0};
 template < cSize Capacity >
-cSize StringPool< Capacity >::arrayCursor_ = 0;
+cSize FixedStringPool< Capacity >::arrayCursor_ = 0;
 template < cSize Capacity >
-u16 StringPool< Capacity >::refCount_[maxElements_] = {0};
+u16 FixedStringPool< Capacity >::refCount_[maxElements_] = {0};
 template < cSize Capacity >
-cSize StringPool< Capacity >::refCountCursor_ = 0;
+cSize FixedStringPool< Capacity >::refCountCursor_ = 0;
 
 template < cSize Capacity >
-StringPool< Capacity >::StringPool()
+FixedStringPool< Capacity >::FixedStringPool()
 {
 }
 
 template < cSize Capacity >
-std::tuple< ErrorCode, char*, u16* > StringPool< Capacity >::allocate(const u16& length)
+std::tuple< ErrorCode, char*, u16* > FixedStringPool< Capacity >::allocate(const u16& length)
 {
 
   cSize len = std::max(static_cast< cSize >(8), alignMem(length));
@@ -137,7 +152,7 @@ std::tuple< ErrorCode, char*, u16* > StringPool< Capacity >::allocate(const u16&
 }
 
 template < cSize Capacity >
-ErrorCode StringPool< Capacity >::deallocate(const u16& length, char* str, u16* refCount)
+ErrorCode FixedStringPool< Capacity >::deallocate(const u16& length, char* str, u16* refCount)
 {
   cSize len = std::max(static_cast< cSize >(8), alignMem(length));
   u16 mapLen = len >> 3;
