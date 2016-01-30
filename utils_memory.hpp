@@ -84,58 +84,50 @@ bool FallbackAllocator< Primary, Fallback >::owns(Blk b)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Stack: Use static array and static semantics
+// Segregator: Sizes ≤ threshold goes to SmallAllocator, else goes to LargeAllocator
 ///////////////////////////////////////////////////////////////////////////////
-
-template < cSize s >
-class StackAllocator
+template < cSize threshold, class SmallAllocator, class LargeAllocator >
+class Segregator
 {
 public:
-  StackAllocator()
-      : data_{}
-      , pointer_{data_}
-  {
-  }
   Blk allocate(cSize n);
   void deallocate(Blk b);
   bool owns(Blk b);
-
-private:
-  char data_[s];
-  char* pointer_;
 };
 
-template < cSize s >
-Blk StackAllocator< s >::allocate(cSize n)
+template < cSize threshold, class SmallAllocator, class LargeAllocator >
+Blk Segregator< threshold, SmallAllocator, LargeAllocator >::allocate(cSize n)
 {
-  auto n1 = roundToAligned(n);
-  if(n1 > (data_ + s) - pointer_)
+  Blk r;
+  if(threshold > n)
   {
-    return {nullptr, 0};
+    r = SmallAllocator::allocate(n);
   }
-  Blk result = {pointer_, n};
-  pointer_ += n1;
-  return result;
+  r = LargeAllocator::allocate(n);
+  return r;
 }
 
-template < cSize s >
-void StackAllocator< s >::deallocate(Blk b)
+template < cSize threshold, class SmallAllocator, class LargeAllocator >
+void Segregator< threshold, SmallAllocator, LargeAllocator >::deallocate(Blk b)
 {
-  // FIXME: arithmetic with void pointers have undefined behaviour
-  if(b.ptr + roundToAligned(b.size) == pointer_)
+  if(SmallAllocator::owns(b))
   {
-    pointer_ = b.ptr;
+    SmallAllocator::deallocate(b);
+  }
+  else
+  {
+    LargeAllocator::deallocate(b);
   }
 }
 
-template < cSize s >
-bool StackAllocator< s >::owns(Blk b)
+template < cSize threshold, class SmallAllocator, class LargeAllocator >
+bool Segregator< threshold, SmallAllocator, LargeAllocator >::owns(Blk b)
 {
-  return b.ptr >= data_ && b.ptr < data_ + s;
+  return SmallAllocator::owns(b) || LargeAllocator::owns(b);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Stack: Keeps list of previous allocations of a given size
+// Freelist: Keeps list of previous allocations of a given size
 ///////////////////////////////////////////////////////////////////////////////
 
 template < class Parent, cSize minSize, cSize maxSize, cSize maxNum >
@@ -197,6 +189,171 @@ bool Freelist< Parent, minSize, maxSize, maxNum >::owns(Blk b)
   return (b.size >= minSize && b.size < maxSize) || parent_.owns(b);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// Stack: Use static array and static semantics
+///////////////////////////////////////////////////////////////////////////////
+
+template < cSize size >
+class StackAllocator
+{
+public:
+  StackAllocator()
+      : data_{}
+      , pointer_{data_}
+  {
+  }
+  Blk allocate(cSize n);
+  void deallocate(Blk b);
+  bool owns(Blk b);
+
+private:
+  StackAllocator(StackAllocator& other) = delete;
+  StackAllocator& operator=(const StackAllocator& other) = delete;
+
+  char data_[size];
+  char* pointer_;
+};
+
+template < cSize size >
+Blk StackAllocator< size >::allocate(cSize n)
+{
+  auto nn = roundToAligned(n);
+  if(nn > (data_ + size) - pointer_)
+  {
+    return {nullptr, 0};
+  }
+  Blk result = {pointer_, n};
+  pointer_ += nn;
+  return result;
+}
+
+template < cSize size >
+void StackAllocator< size >::deallocate(Blk b)
+{
+  if(static_cast< char* >(b.ptr) + roundToAligned(b.size) == pointer_)
+  {
+    pointer_ = b.ptr;
+  }
+}
+
+template < cSize size >
+bool StackAllocator< size >::owns(Blk b)
+{
+  return b.ptr >= data_ && b.ptr < data_ + size;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// PoolAllocator: uses malloc to get a big chunck and manages it
+// in a memory pool using a bitmap
+///////////////////////////////////////////////////////////////////////////////
+
+template < cSize size, cSize block >
+class PoolAllocator
+{
+public:
+  PoolAllocator()
+      : data_{nullptr}
+      , pointer_{nullptr}
+      , freeChuncks_{0}
+      , map_{}
+  {
+    this->freeChuncks_ = static_cast< u32 >(size / block);
+    this->data_ = static_cast< char* >(std::calloc(size, sizeof(char)));
+    this->pointer = this->data_;
+    std::fill(this->map, this->map + this->freeChuncks_, 0);
+  }
+  ~PoolAllocator()
+  {
+    assert(this->freeChuncks_ == static_cast< u32 >(size / block));
+    std::free(static_cast< void* >(this->data_));
+  }
+
+  Blk allocate(cSize n);
+  void deallocate(Blk b);
+  bool owns(Blk b);
+
+private:
+  PoolAllocator(PoolAllocator& other) = delete;
+  PoolAllocator& operator=(const PoolAllocator& other) = delete;
+
+  char* data_;
+  char* pointer_;
+  u32 freeChuncks_;
+  u8 map_[static_cast< u32 >(size / block) >> 3];
+
+  const u8 bitMask[8] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
+};
+
+template < cSize size, cSize block >
+Blk PoolAllocator< size, block >::allocate(cSize n)
+{
+  cSize nn = roundToAligned(n);
+  if(nn == block && this->freeChuncks_)
+  {
+    Blk r;
+    // free block at the end of the chunk
+    if(this->pointer_ < (this->data_ + size))
+    {
+      r.ptr = static_cast< void* >(this->pointer_);
+      r.size = n;
+      u32 offset = static_cast< u32 >((this->pointer_ - this->data_) / block);
+      u8 bitset = offset % 8;
+      offset = offset >> 3;
+      this->map_[offset] |= bitMask[bitset];
+      this->pointer_ += nn;
+      --(this->freeChuncks_);
+      return r;
+    }
+    else
+    // needs to find a free block
+    {
+      int offset = 0;
+      for(; offset < (static_cast< u32 >(size / block) >> 3); ++offset)
+      {
+        u8 bmap = this->map_[offset];
+        if(bmap < 0xff)
+        {
+          u8 rev = ~bmap;
+          u8 bitset = 0x07;
+
+          while(bitset <= 0x00)
+          {
+            u8 mask = bitMask[bitset];
+            if(mask & rev)
+            {
+              u32 delta = (offset << 3);
+              delta += bitset;
+              r.ptr = static_cast< void* >(this->data_ + delta);
+              r.size = n;
+              this->pointer_ += nn;
+              this->map_[offset] |= mask;
+              --(this->freeChuncks_);
+              return r;
+            }
+            --bitset;
+          }
+        }
+      }
+    }
+  }
+  return {nullptr, 0};
+}
+
+template < cSize size, cSize block >
+void PoolAllocator< size, block >::deallocate(Blk b)
+{
+  u32 offset = static_cast< u32 >((static_cast< char* >(b.ptr) - this->data_) / block);
+  u8 bitset = offset % 8;
+  offset = offset >> 3;
+  this->map_[offset] &= (~bitMask[bitset]);
+}
+
+template < cSize size, cSize block >
+bool PoolAllocator< size, block >::owns(Blk b)
+{
+  return static_cast< char* >(b.ptr) >= data_ && static_cast< char* >(b.ptr) < this->data_ + size;
+}
+
 // TODO:
 // //------------------------------------------
 // template <class A, size_t blockSize>
@@ -208,11 +365,7 @@ bool Freelist< Parent, minSize, maxSize, maxNum >::owns(Blk b)
 // auto a = cascadingAllocator({
 // return Heap<...>();
 // });
-// //------------------------------------------
-// template <size_t threshold,
-// class SmallAllocator,
-// class LargeAllocator>
-// struct Segregator;
+
 // //------------------------------------------
 // template <class Allocator,
 // size_t min,

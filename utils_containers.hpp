@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "utils_memory.hpp"
+//#include "utils_memory.hpp"
 #include "utils_types.hpp"
 
 namespace W2E
@@ -25,19 +25,54 @@ struct Allocator;
 ///////////////////////////////////////////////////////////////////////////////
 
 // declarations
-template < typename ElementType >
+template < typename ElementType, bool canOverwrite = true >
 struct Array
 {
   using Type = ElementType;
-  cSize maxLength;
-  // Type array_[Capacity];
+  const bool canOverwrite_{canOverwrite};
+
+  cSize firstPos_;
+  cSize lastPos_;
+  cSize length_;
+  Allocator& alloc_;
 
   Array() = delete;
-  explicit Array(Allocator& alloc, const ElementType& init);
+  explicit Array(const ElementType& init, Allocator& alloc);
   explicit Array(const Array& other);
   Array& operator=(const Array& other);
   // TODO: Move constructor???
 };
+
+// implements constructors
+template < typename ElementType, bool canOverwrite >
+Array< ElementType, canOverwrite >::Array(const ElementType& init, Allocator& alloc)
+    : alloc_{alloc}
+    , firstPos_{0}
+    , lastPos_{0}
+    , length_{0}
+{
+}
+
+template < typename ElementType, bool canOverwrite >
+Array< ElementType, canOverwrite >::Array(const Array& other)
+    : alloc_{other.alloc}
+    , firstPos_{other.firstPos_}
+    , lastPos_{other.lastPos_}
+    , length_{other.length_}
+{
+}
+
+template < typename ElementType, bool canOverwrite >
+Array< ElementType, canOverwrite >& Array< ElementType, canOverwrite >::
+operator=(const Array& other)
+{
+  this->alloc_ = other.alloc;
+  this->firstPos_ = other.firstPos_;
+  this->lastPos_ = other.lastPot_;
+  this->length_ = std::min(other.length_, this->length_);
+  return *this;
+}
+
 /*
 at()
 clear()
@@ -49,13 +84,9 @@ len()
 ///////////////////////////////////////////////////////////////////////////////
 
 // declarations
-template < typename ElementType >
-struct Stack : public Array< ElementType >
+template < typename ElementType, bool canOverwrite = true >
+struct Stack : public Array< ElementType, canOverwrite >
 {
-  cSize length_;
-  cSize firstPos_;
-  cSize lastPos_;
-
   Stack() = delete;
   explicit Stack(Allocator& alloc, const ElementType& init);
   explicit Stack(const Stack& other);
@@ -74,11 +105,9 @@ bot()
 ///////////////////////////////////////////////////////////////////////////////
 
 // declarations
-template < typename ElementType, bool canOverwrite >
-struct DEQ : public Stack< ElementType >
+template < typename ElementType, bool canOverwrite = true >
+struct DEQ : public Stack< ElementType, canOverwrite >
 {
-  bool canOverwrite_{canOverwrite};
-
   DEQ() = delete;
   explicit DEQ(Allocator& alloc, const ElementType& init);
   explicit DEQ(const DEQ& other);
@@ -102,7 +131,7 @@ back() -> top()
 template < typename ElementType, bool allowMultiple >
 struct HashTable // : Array ???should this inherite from Array???
 {
-  bool allowMultiple_ = allowMultiple_;
+  const bool allowMultiple_{allowMultiple};
 
   HashTable() = delete;
   explicit HashTable(Allocator& alloc, const ElementType& init);

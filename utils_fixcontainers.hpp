@@ -36,8 +36,8 @@ struct FixedArray
   FixedArray() = delete;
   explicit FixedArray(const ElementType& init);
   FixedArray(const FixedArray& other);
-  // TODO: Move constructor???
   FixedArray& operator=(const FixedArray& other);
+  // TODO: Move constructor???
 };
 
 // GLOBAL
@@ -46,7 +46,7 @@ const cSize FixedArray< ElementType, Capacity, canOverwrite >::maxLength_{Capaci
 template < typename ElementType, cSize Capacity, bool canOverwrite >
 const bool FixedArray< ElementType, Capacity, canOverwrite >::canOverwrite_{canOverwrite};
 
-// implements the constructors
+// implements constructors
 template < typename ElementType, cSize Capacity, bool canOverwrite >
 FixedArray< ElementType, Capacity, canOverwrite >::FixedArray(const ElementType& init)
     : firstPos_{0}
@@ -118,11 +118,11 @@ struct FixedStack : public FixedArray< ElementType, Capacity, canOverwrite >
   FixedStack() = delete;
   explicit FixedStack(const ElementType& init);
   FixedStack(const FixedStack& other);
-  // TODO: Move constructor???
   FixedStack& operator=(const FixedStack& other);
+  // TODO: Move constructor???
 };
 
-// implements the constructors
+// implements constructors
 template < typename ElementType, cSize Capacity, bool canOverwrite >
 FixedStack< ElementType, Capacity, canOverwrite >::FixedStack(const ElementType& init)
     : FixedArray< ElementType, Capacity, canOverwrite >(init)
@@ -227,11 +227,11 @@ struct FixedDEQ : public FixedStack< ElementType, Capacity, canOverwrite >
   FixedDEQ() = delete;
   explicit FixedDEQ(const ElementType& init);
   FixedDEQ(const FixedDEQ& other);
-  // TODO: Move constructor???
   FixedDEQ& operator=(const FixedDEQ& other);
+  // TODO: Move constructor???
 };
 
-// implements the constructors
+// implements constructors
 template < typename ElementType, cSize Capacity, bool canOverwrite >
 FixedDEQ< ElementType, Capacity, canOverwrite >::FixedDEQ(const ElementType& init)
     : FixedStack< ElementType, Capacity, canOverwrite >(init)
