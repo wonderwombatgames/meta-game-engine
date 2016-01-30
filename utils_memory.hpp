@@ -127,10 +127,57 @@ bool Segregator< threshold, SmallAllocator, LargeAllocator >::owns(Blk b)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// Slicer: sits on top of bulk blocks allocator and provide just a slice
+///////////////////////////////////////////////////////////////////////////////
+template < class BulkAllocator, cSize size, cSize maxSlices = 64 >
+class Slicer
+{
+public:
+  explicit Slicer(BulkAllocator& bulkAlloc)
+      : sliceMap_{0}
+      , data_{nullptr}
+      , bulkAlloc_{bulkAlloc}
+  {
+  }
+
+  Blk allocate(cSize n);
+  void deallocate(Blk b);
+  bool owns(Blk b);
+
+private:
+  Slicer() = delete;
+  Slicer(Slicer& other) = delete;
+  Slicer& operator=(Slicer& other) = delete;
+
+  u8 sliceMap_[maxSlices >> 3];
+  char* data_;
+  BulkAllocator& bulkAlloc_;
+};
+
+template < class BulkAllocator, cSize size, cSize maxSlices >
+Blk Slicer< BulkAllocator, size, maxSlices >::allocate(cSize n)
+{
+  // TODO: checks if there is data_ (!= nullptr)
+  // then return one of the free slices
+  return {nullptr, 0};
+}
+
+template < class BulkAllocator, cSize size, cSize maxSlices >
+void Slicer< BulkAllocator, size, maxSlices >::deallocate(Blk b)
+{
+}
+
+template < class BulkAllocator, cSize size, cSize maxSlices >
+bool Slicer< BulkAllocator, size, maxSlices >::owns(Blk b)
+{
+  return this->data_ != nullptr && b.ptr >= this->data_ && b.ptr < this->data_ + (size * maxSlices);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // Freelist: Keeps list of previous allocations of a given size
 ///////////////////////////////////////////////////////////////////////////////
 
-template < class Parent, cSize minSize, cSize maxSize, cSize maxNum >
+template < class Parent, cSize minSize, cSize maxSize, cSize maxBlocks >
 class Freelist
 {
 public:
@@ -146,18 +193,21 @@ public:
 
 private:
   Freelist() = delete;
+  Freelist(Freelist& other) = delete;
+  Freelist& operator=(Freelist& other) = delete;
+
   struct Node
   {
     Node* next;
   } root_;
   Parent parent_;
-  cSize countDown_{maxNum};
+  cSize countDown_{maxBlocks};
 };
 
-template < class Parent, cSize minSize, cSize maxSize, cSize maxNum >
-Blk Freelist< Parent, minSize, maxSize, maxNum >::allocate(cSize n)
+template < class Parent, cSize minSize, cSize maxSize, cSize maxBlocks >
+Blk Freelist< Parent, minSize, maxSize, maxBlocks >::allocate(cSize n)
 {
-  if(n >= minSize && n < maxSize && root_ && countDown_ < maxNum)
+  if(n >= minSize && n < maxSize && root_ && countDown_ < maxBlocks)
   {
     Blk b = {root_, n};
     root_ = root_.next;
@@ -167,8 +217,8 @@ Blk Freelist< Parent, minSize, maxSize, maxNum >::allocate(cSize n)
   return parent_.allocate(n);
 }
 
-template < class Parent, cSize minSize, cSize maxSize, cSize maxNum >
-void Freelist< Parent, minSize, maxSize, maxNum >::deallocate(Blk b)
+template < class Parent, cSize minSize, cSize maxSize, cSize maxBlocks >
+void Freelist< Parent, minSize, maxSize, maxBlocks >::deallocate(Blk b)
 {
   if(b.size < minSize || b.size > maxSize || countDown_ == 0)
   {
@@ -183,14 +233,46 @@ void Freelist< Parent, minSize, maxSize, maxNum >::deallocate(Blk b)
   }
 }
 
-template < class Parent, cSize minSize, cSize maxSize, cSize maxNum >
-bool Freelist< Parent, minSize, maxSize, maxNum >::owns(Blk b)
+template < class Parent, cSize minSize, cSize maxSize, cSize maxBlocks >
+bool Freelist< Parent, minSize, maxSize, maxBlocks >::owns(Blk b)
 {
   return (b.size >= minSize && b.size < maxSize) || parent_.owns(b);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Stack: Use static array and static semantics
+// MAllocator: simple wraper around malloc to keep the interface consistent
+///////////////////////////////////////////////////////////////////////////////
+
+class MAllocator
+{
+public:
+  Blk allocate(cSize n);
+  void deallocate(Blk b);
+  bool owns(Blk b);
+
+private:
+  MAllocator(MAllocator& other) = delete;
+  MAllocator& operator=(const MAllocator& other) = delete;
+};
+
+Blk MAllocator::allocate(cSize n)
+{
+  Blk r;
+  r.ptr = std::malloc(n * sizeof(char));
+  r.size = n;
+
+  return r;
+}
+void MAllocator::deallocate(Blk b) { std::free(b.ptr); }
+bool MAllocator::owns(Blk b)
+{
+  // no way to control this
+  // other allocators should use this as fall back or provider
+  return false;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Stack: Use static array and stack semantics
 ///////////////////////////////////////////////////////////////////////////////
 
 template < cSize size >
@@ -239,7 +321,7 @@ void StackAllocator< size >::deallocate(Blk b)
 template < cSize size >
 bool StackAllocator< size >::owns(Blk b)
 {
-  return b.ptr >= data_ && b.ptr < data_ + size;
+  return b.ptr >= this->data_ && b.ptr < this->data_ + size;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -315,7 +397,6 @@ Blk PoolAllocator< size, block >::allocate(cSize n)
         {
           u8 rev = ~bmap;
           u8 bitset = 0x07;
-
           while(bitset <= 0x00)
           {
             u8 mask = bitMask[bitset];
