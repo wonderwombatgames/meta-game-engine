@@ -174,17 +174,36 @@ template < typename ElementType, cSize Capacity >
 using FixedArray = FixedContainer< ElementType, Capacity, Capacity, 0, 0, false >;
 
 ///////////////////////////////////////////////////////////////////////////////
+// Stack : Fixed size Stack with random accessor
+///////////////////////////////////////////////////////////////////////////////
+
+// template < typename ElementType, cSize Capacity >
+// using FixedStack = FixedDEQ< ElementType, Capacity, false >;
+template < typename ElementType, cSize Capacity, bool canOverwrite = false >
+using FixedStack =
+    FixedContainer< ElementType, Capacity, 0, (Capacity >> 1), (Capacity >> 1), canOverwrite >;
+
+///////////////////////////////////////////////////////////////////////////////
 // DEQueue : Fixed size double ended queue with random accessor
 ///////////////////////////////////////////////////////////////////////////////
 
 template < typename ElementType, cSize Capacity, bool canOverwrite = false >
-using FixedDEQ =
-    FixedContainer< ElementType, Capacity, 0, (Capacity >> 1), (Capacity >> 1), canOverwrite >;
+using FixedDEQ = FixedStack< ElementType, Capacity, canOverwrite >;
 
+///////////////////////////////////////////////////////////////////////////////
+// RingQ : fixed size, acessible back and front with overwriting
+///////////////////////////////////////////////////////////////////////////////
+
+template < typename ElementType, cSize Capacity >
+using FixedRingQ = FixedDEQ< ElementType, Capacity, true >;
+
+///////////////////////////////////////////////////////////////////////////////
+
+// Stack :
 // accessor methods
 template < typename ElementType, cSize Capacity, bool canOverwrite >
-inline ErrorCode push_back(FixedDEQ< ElementType, Capacity, canOverwrite >& container,
-                           const ElementType& el)
+inline ErrorCode push(FixedStack< ElementType, Capacity, canOverwrite >& container,
+                      const ElementType& el)
 {
   if((container.length_ < container.maxLength_) || container.canOverwrite_)
   {
@@ -201,6 +220,49 @@ inline ErrorCode push_back(FixedDEQ< ElementType, Capacity, canOverwrite >& cont
     return NO_ERROR;
   }
   return UNKNOWN_ERROR;
+}
+
+template < typename ElementType, cSize Capacity, bool canOverwrite >
+inline ElementType pop(FixedStack< ElementType, Capacity, canOverwrite >& container,
+                       ElementType fallback)
+{
+  if(container.length_ > 0)
+  {
+    cSize previousPos = container.lastPos_;
+    --container.length_;
+    container.lastPos_ = (container.lastPos_ + container.maxLength_ - 1) % container.maxLength_;
+    return container.array_[previousPos];
+  }
+  return fallback;
+}
+
+template < typename ElementType, cSize Capacity, bool canOverwrite >
+inline ElementType* bot(FixedStack< ElementType, Capacity, canOverwrite >& container)
+{
+  if(container.length_ > 0)
+  {
+    return &(container.array_[container.firstPos_]);
+  }
+  return nullptr;
+}
+
+template < typename ElementType, cSize Capacity, bool canOverwrite >
+inline ElementType* top(FixedStack< ElementType, Capacity, canOverwrite >& container)
+{
+  if(container.length_ > 0)
+  {
+    return &(container.array_[container.lastPos_]);
+  }
+  return nullptr;
+}
+
+// DEQueue :
+// accessor methods
+template < typename ElementType, cSize Capacity, bool canOverwrite >
+inline ErrorCode push_back(FixedDEQ< ElementType, Capacity, canOverwrite >& container,
+                           const ElementType& el)
+{
+  return push(container, el);
 }
 
 template < typename ElementType, cSize Capacity, bool canOverwrite >
@@ -228,14 +290,7 @@ template < typename ElementType, cSize Capacity, bool canOverwrite >
 inline ElementType pop_back(FixedDEQ< ElementType, Capacity, canOverwrite >& container,
                             ElementType fallback)
 {
-  if(container.length_ > 0)
-  {
-    cSize previousPos = container.lastPos_;
-    --container.length_;
-    container.lastPos_ = (container.lastPos_ + container.maxLength_ - 1) % container.maxLength_;
-    return container.array_[previousPos];
-  }
-  return fallback;
+  return pop(container, fallback);
 }
 
 template < typename ElementType, cSize Capacity, bool canOverwrite >
@@ -255,60 +310,13 @@ inline ElementType pop_front(FixedDEQ< ElementType, Capacity, canOverwrite >& co
 template < typename ElementType, cSize Capacity, bool canOverwrite >
 inline ElementType* front(FixedDEQ< ElementType, Capacity, canOverwrite >& container)
 {
-  if(container.length_ > 0)
-  {
-    return &(container.array_[container.firstPos_]);
-  }
-  return nullptr;
+  return bot(container);
 }
 
 template < typename ElementType, cSize Capacity, bool canOverwrite >
 inline ElementType* back(FixedDEQ< ElementType, Capacity, canOverwrite >& container)
 {
-  if(container.length_ > 0)
-  {
-    return &(container.array_[container.lastPos_]);
-  }
-  return nullptr;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// RingBuffer : acessible back and front with overwriting
-///////////////////////////////////////////////////////////////////////////////
-
-template < typename ElementType, cSize Capacity, bool canOverwrite = false >
-using FixedRingQ = FixedDEQ< ElementType, Capacity, true >;
-
-///////////////////////////////////////////////////////////////////////////////
-// Stack : Fixed size Stack with random accessor
-///////////////////////////////////////////////////////////////////////////////
-
-template < typename ElementType, cSize Capacity >
-using FixedStack = FixedDEQ< ElementType, Capacity, false >;
-
-// accessor methods
-template < typename ElementType, cSize Capacity >
-inline ErrorCode push(FixedStack< ElementType, Capacity >& container, const ElementType& el)
-{
-  return push_back(container, el);
-}
-
-template < typename ElementType, cSize Capacity >
-inline ElementType pop(FixedStack< ElementType, Capacity >& container, ElementType fallback)
-{
-  return pop_back(container, fallback);
-}
-
-template < typename ElementType, cSize Capacity >
-inline ElementType* bot(FixedStack< ElementType, Capacity >& container)
-{
-  return front(container);
-}
-
-template < typename ElementType, cSize Capacity >
-inline ElementType* top(FixedStack< ElementType, Capacity >& container)
-{
-  return back(container);
+  return top(container);
 }
 
 } // end namespace Utils
