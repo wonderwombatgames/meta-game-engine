@@ -17,12 +17,17 @@ namespace Utils
 {
 
 ///////////////////////////////////////////////////////////////////////////////
-// Array : Fixed size Array with random accessor
+// FixedContainer : parametric base for array, stack, and deq
 ///////////////////////////////////////////////////////////////////////////////
 
 // declarations
-template < typename ElementType, cSize Capacity, bool canOverwrite = false >
-struct FixedArray
+template < typename ElementType,
+           cSize Capacity,
+           cSize initialLen,
+           cSize initialPos,
+           cSize finalPos,
+           bool canOverwrite >
+struct FixedContainer
 {
   using Type = ElementType;
   GLOBAL const cSize maxLength_;
@@ -33,32 +38,59 @@ struct FixedArray
   cSize length_;
   Type array_[Capacity];
 
-  FixedArray() = delete;
-  explicit FixedArray(const ElementType& init);
-  FixedArray(const FixedArray& other);
-  FixedArray& operator=(const FixedArray& other);
+  FixedContainer() = delete;
+  explicit FixedContainer(const ElementType& init);
+  FixedContainer(const FixedContainer& other);
+  FixedContainer& operator=(const FixedContainer& other);
   // TODO: Move constructor???
 };
 
 // GLOBAL
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-const cSize FixedArray< ElementType, Capacity, canOverwrite >::maxLength_{Capacity};
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-const bool FixedArray< ElementType, Capacity, canOverwrite >::canOverwrite_{canOverwrite};
+template < typename ElementType,
+           cSize Capacity,
+           cSize initialLen,
+           cSize initialPos,
+           cSize finalPos,
+           bool canOverwrite >
+const cSize
+    FixedContainer< ElementType, Capacity, initialLen, initialPos, finalPos, canOverwrite >::
+        maxLength_{Capacity};
+
+template < typename ElementType,
+           cSize Capacity,
+           cSize initialLen,
+           cSize initialPos,
+           cSize finalPos,
+           bool canOverwrite >
+const bool FixedContainer< ElementType, Capacity, initialLen, initialPos, finalPos, canOverwrite >::
+    canOverwrite_{canOverwrite};
 
 // implements constructors
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-FixedArray< ElementType, Capacity, canOverwrite >::FixedArray(const ElementType& init)
-    : firstPos_{0}
-    , lastPos_{Capacity}
-    , length_{Capacity}
+template < typename ElementType,
+           cSize Capacity,
+           cSize initialLen,
+           cSize initialPos,
+           cSize finalPos,
+           bool canOverwrite >
+FixedContainer< ElementType, Capacity, initialLen, initialPos, finalPos, canOverwrite >::
+    FixedContainer(const ElementType& init)
+    : firstPos_{initialPos}
+    , lastPos_{finalPos}
+    , length_{initialLen}
     , array_{}
 {
   std::fill(array_, (array_ + maxLength_), init);
 }
 
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-FixedArray< ElementType, Capacity, canOverwrite >::FixedArray(const FixedArray& other)
+// constructors
+template < typename ElementType,
+           cSize Capacity,
+           cSize initialLen,
+           cSize initialPos,
+           cSize finalPos,
+           bool canOverwrite >
+FixedContainer< ElementType, Capacity, initialLen, initialPos, finalPos, canOverwrite >::
+    FixedContainer(const FixedContainer& other)
     : firstPos_{other.firstPos_}
     , lastPos_{other.lastPos_}
     , length_{other.length_}
@@ -67,9 +99,15 @@ FixedArray< ElementType, Capacity, canOverwrite >::FixedArray(const FixedArray& 
   std::copy(other.array_, (other.array_ + std::min(other.maxLength_, maxLength_)), array_);
 }
 
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-FixedArray< ElementType, Capacity, canOverwrite >&
-FixedArray< ElementType, Capacity, canOverwrite >::operator=(const FixedArray& other)
+template < typename ElementType,
+           cSize Capacity,
+           cSize initialLen,
+           cSize initialPos,
+           cSize finalPos,
+           bool canOverwrite >
+FixedContainer< ElementType, Capacity, initialLen, initialPos, finalPos, canOverwrite >&
+FixedContainer< ElementType, Capacity, initialLen, initialPos, finalPos, canOverwrite >::
+operator=(const FixedContainer& other)
 {
   std::copy(
       other.array_, (other.array_ + std::min(other.maxLength_, this->maxLength_)), this->array_);
@@ -79,9 +117,17 @@ FixedArray< ElementType, Capacity, canOverwrite >::operator=(const FixedArray& o
   return *this;
 }
 
-// accessor methods
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-inline ElementType* at(FixedArray< ElementType, Capacity, canOverwrite >& container, cSize pos)
+// accessor fucntions
+template < typename ElementType,
+           cSize Capacity,
+           cSize initialLen,
+           cSize initialPos,
+           cSize finalPos,
+           bool canOverwrite >
+inline ElementType*
+at(FixedContainer< ElementType, Capacity, initialLen, initialPos, finalPos, canOverwrite >&
+       container,
+   cSize pos)
 {
   if(pos < container.length_)
   {
@@ -90,69 +136,55 @@ inline ElementType* at(FixedArray< ElementType, Capacity, canOverwrite >& contai
   return nullptr;
 }
 
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-inline cSize len(FixedArray< ElementType, Capacity, canOverwrite >& container)
+template < typename ElementType,
+           cSize Capacity,
+           cSize initialLen,
+           cSize initialPos,
+           cSize finalPos,
+           bool canOverwrite >
+inline cSize
+len(FixedContainer< ElementType, Capacity, initialLen, initialPos, finalPos, canOverwrite >&
+        container)
 {
   return container.length_;
 }
 
-// this needs to be reimplemente on the other containers because of the resting the cursors
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-inline void clear(FixedArray< ElementType, Capacity, canOverwrite >& container,
-                  const ElementType& init)
+template < typename ElementType,
+           cSize Capacity,
+           cSize initialLen,
+           cSize initialPos,
+           cSize finalPos,
+           bool canOverwrite >
+inline void
+clear(FixedContainer< ElementType, Capacity, initialLen, initialPos, finalPos, canOverwrite >&
+          container,
+      const ElementType& init)
 {
   std::fill(container.array_, (container.array_ + container.maxLength_), init);
-  container.firstPos_ = 0;
-  container.lastPos_ = container.maxLength_;
-  container.length_ = container.maxLength_;
+  container.firstPos_ = initialPos;
+  container.lastPos_ = finalPos;
+  container.length_ = initialLen;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Stack : Fixed size Stack with random accessor
+// Array : Fixed size Array with random accessor
 ///////////////////////////////////////////////////////////////////////////////
 
-// declarations
+template < typename ElementType, cSize Capacity >
+using FixedArray = FixedContainer< ElementType, Capacity, Capacity, 0, 0, false >;
+
+///////////////////////////////////////////////////////////////////////////////
+// DEQueue : Fixed size double ended queue with random accessor
+///////////////////////////////////////////////////////////////////////////////
+
 template < typename ElementType, cSize Capacity, bool canOverwrite = false >
-struct FixedStack : public FixedArray< ElementType, Capacity, canOverwrite >
-{
-  FixedStack() = delete;
-  explicit FixedStack(const ElementType& init);
-  FixedStack(const FixedStack& other);
-  FixedStack& operator=(const FixedStack& other);
-  // TODO: Move constructor???
-};
-
-// implements constructors
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-FixedStack< ElementType, Capacity, canOverwrite >::FixedStack(const ElementType& init)
-    : FixedArray< ElementType, Capacity, canOverwrite >(init)
-{
-  this->lastPos_ = 0;
-  this->length_ = 0;
-}
-
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-FixedStack< ElementType, Capacity, canOverwrite >::FixedStack(const FixedStack& other)
-    : FixedArray< ElementType, Capacity, canOverwrite >(other)
-{
-}
-
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-FixedStack< ElementType, Capacity, canOverwrite >&
-FixedStack< ElementType, Capacity, canOverwrite >::operator=(const FixedStack& other)
-{
-  std::copy(
-      other.array_, (other.array_ + std::min(other.maxLength_, this->maxLength_)), this->array_);
-  this->length_ = other.length_;
-  this->firstPos_ = other.firstPos_;
-  this->lastPos_ = other.lastPot_;
-  return *this;
-}
+using FixedDEQ =
+    FixedContainer< ElementType, Capacity, 0, (Capacity >> 1), (Capacity >> 1), canOverwrite >;
 
 // accessor methods
 template < typename ElementType, cSize Capacity, bool canOverwrite >
-inline ErrorCode push(FixedStack< ElementType, Capacity, canOverwrite >& container,
-                      const ElementType& el)
+inline ErrorCode push_back(FixedDEQ< ElementType, Capacity, canOverwrite >& container,
+                           const ElementType& el)
 {
   if((container.length_ < container.maxLength_) || container.canOverwrite_)
   {
@@ -169,102 +201,6 @@ inline ErrorCode push(FixedStack< ElementType, Capacity, canOverwrite >& contain
     return NO_ERROR;
   }
   return UNKNOWN_ERROR;
-}
-
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-inline ElementType pop(FixedStack< ElementType, Capacity, canOverwrite >& container,
-                       ElementType fallback)
-{
-  if(container.length_ > 0)
-  {
-    cSize previousPos = container.lastPos_;
-    --container.length_;
-    container.lastPos_ = (container.lastPos_ + container.maxLength_ - 1) % container.maxLength_;
-    return container.array_[previousPos];
-  }
-  return fallback;
-}
-
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-inline ElementType* bot(FixedStack< ElementType, Capacity, canOverwrite >& container)
-{
-  if(container.length_ > 0)
-  {
-    return &(container.array_[container.firstPos_]);
-  }
-  return nullptr;
-}
-
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-inline ElementType* top(FixedStack< ElementType, Capacity, canOverwrite >& container)
-{
-  if(container.length_ > 0)
-  {
-    return &(container.array_[container.lastPos_]);
-  }
-  return nullptr;
-}
-
-// reimplemented due to different cursor resting values
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-inline void clear(FixedStack< ElementType, Capacity, canOverwrite >& container,
-                  const ElementType& init)
-{
-  std::fill(container.array_, (container.array_ + container.maxLength_), init);
-  container.length_ = 0;
-  container.firstPos_ = 0;
-  container.lastPos_ = 0;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// DEQueue : fixex size double ended queue with random accessor
-///////////////////////////////////////////////////////////////////////////////
-
-// declarations
-template < typename ElementType, cSize Capacity, bool canOverwrite = false >
-struct FixedDEQ : public FixedStack< ElementType, Capacity, canOverwrite >
-{
-  FixedDEQ() = delete;
-  explicit FixedDEQ(const ElementType& init);
-  FixedDEQ(const FixedDEQ& other);
-  FixedDEQ& operator=(const FixedDEQ& other);
-  // TODO: Move constructor???
-};
-
-// implements constructors
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-FixedDEQ< ElementType, Capacity, canOverwrite >::FixedDEQ(const ElementType& init)
-    : FixedStack< ElementType, Capacity, canOverwrite >(init)
-{
-  this->length_ = 0;
-  this->firstPos_ = Capacity >> 1;
-  this->lastPos_ = Capacity >> 1;
-}
-
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-FixedDEQ< ElementType, Capacity, canOverwrite >::FixedDEQ(const FixedDEQ& other)
-    : FixedStack< ElementType, Capacity, canOverwrite >(other)
-{
-}
-
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-FixedDEQ< ElementType, Capacity, canOverwrite >& FixedDEQ< ElementType, Capacity, canOverwrite >::
-operator=(const FixedDEQ& other)
-{
-  std::copy(
-      other.array_, (other.array_ + std::min(other.maxLength_, this->maxLength_)), this->array_);
-  this->length_ = other.length;
-  this->firstPos_ = other.firstPos;
-  this->lastPos_ = other.lastPos;
-  return *this;
-}
-
-// accessor methods
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-inline ErrorCode push_back(FixedDEQ< ElementType, Capacity, canOverwrite >& container,
-                           const ElementType& el)
-{
-  return push(container, el);
 }
 
 template < typename ElementType, cSize Capacity, bool canOverwrite >
@@ -292,7 +228,14 @@ template < typename ElementType, cSize Capacity, bool canOverwrite >
 inline ElementType pop_back(FixedDEQ< ElementType, Capacity, canOverwrite >& container,
                             ElementType fallback)
 {
-  return pop(container, fallback);
+  if(container.length_ > 0)
+  {
+    cSize previousPos = container.lastPos_;
+    --container.length_;
+    container.lastPos_ = (container.lastPos_ + container.maxLength_ - 1) % container.maxLength_;
+    return container.array_[previousPos];
+  }
+  return fallback;
 }
 
 template < typename ElementType, cSize Capacity, bool canOverwrite >
@@ -312,23 +255,60 @@ inline ElementType pop_front(FixedDEQ< ElementType, Capacity, canOverwrite >& co
 template < typename ElementType, cSize Capacity, bool canOverwrite >
 inline ElementType* front(FixedDEQ< ElementType, Capacity, canOverwrite >& container)
 {
-  return bot(container);
+  if(container.length_ > 0)
+  {
+    return &(container.array_[container.firstPos_]);
+  }
+  return nullptr;
 }
 
 template < typename ElementType, cSize Capacity, bool canOverwrite >
 inline ElementType* back(FixedDEQ< ElementType, Capacity, canOverwrite >& container)
 {
-  return top(container);
+  if(container.length_ > 0)
+  {
+    return &(container.array_[container.lastPos_]);
+  }
+  return nullptr;
 }
 
-template < typename ElementType, cSize Capacity, bool canOverwrite >
-inline void clear(FixedDEQ< ElementType, Capacity, canOverwrite >& container,
-                  const ElementType& init)
+///////////////////////////////////////////////////////////////////////////////
+// RingBuffer : acessible back and front with overwriting
+///////////////////////////////////////////////////////////////////////////////
+
+template < typename ElementType, cSize Capacity, bool canOverwrite = false >
+using FixedRingQ = FixedDEQ< ElementType, Capacity, true >;
+
+///////////////////////////////////////////////////////////////////////////////
+// Stack : Fixed size Stack with random accessor
+///////////////////////////////////////////////////////////////////////////////
+
+template < typename ElementType, cSize Capacity >
+using FixedStack = FixedDEQ< ElementType, Capacity, false >;
+
+// accessor methods
+template < typename ElementType, cSize Capacity >
+inline ErrorCode push(FixedStack< ElementType, Capacity >& container, const ElementType& el)
 {
-  std::fill(container.array_, (container.array_ + container.maxLength_), init);
-  container.length_ = 0;
-  container.firstPos_ = Capacity >> 1;
-  container.lastPos_ = container.firstPos_;
+  return push_back(container, el);
+}
+
+template < typename ElementType, cSize Capacity >
+inline ElementType pop(FixedStack< ElementType, Capacity >& container, ElementType fallback)
+{
+  return pop_back(container, fallback);
+}
+
+template < typename ElementType, cSize Capacity >
+inline ElementType* bot(FixedStack< ElementType, Capacity >& container)
+{
+  return front(container);
+}
+
+template < typename ElementType, cSize Capacity >
+inline ElementType* top(FixedStack< ElementType, Capacity >& container)
+{
+  return back(container);
 }
 
 } // end namespace Utils

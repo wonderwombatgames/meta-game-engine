@@ -129,49 +129,50 @@ bool Segregator< threshold, SmallAllocator, LargeAllocator >::owns(Blk b)
 ///////////////////////////////////////////////////////////////////////////////
 // Slicer: sits on top of bulk blocks allocator and provide just a slice
 ///////////////////////////////////////////////////////////////////////////////
-template < class BulkAllocator, cSize size, cSize maxSlices = 64 >
-class Slicer
-{
-public:
-  explicit Slicer(BulkAllocator& bulkAlloc)
-      : sliceMap_{0}
-      , data_{nullptr}
-      , bulkAlloc_{bulkAlloc}
-  {
-  }
-
-  Blk allocate(cSize n);
-  void deallocate(Blk b);
-  bool owns(Blk b);
-
-private:
-  Slicer() = delete;
-  Slicer(Slicer& other) = delete;
-  Slicer& operator=(Slicer& other) = delete;
-
-  u8 sliceMap_[maxSlices >> 3];
-  char* data_;
-  BulkAllocator& bulkAlloc_;
-};
-
-template < class BulkAllocator, cSize size, cSize maxSlices >
-Blk Slicer< BulkAllocator, size, maxSlices >::allocate(cSize n)
-{
-  // TODO: checks if there is data_ (!= nullptr)
-  // then return one of the free slices
-  return {nullptr, 0};
-}
-
-template < class BulkAllocator, cSize size, cSize maxSlices >
-void Slicer< BulkAllocator, size, maxSlices >::deallocate(Blk b)
-{
-}
-
-template < class BulkAllocator, cSize size, cSize maxSlices >
-bool Slicer< BulkAllocator, size, maxSlices >::owns(Blk b)
-{
-  return this->data_ != nullptr && b.ptr >= this->data_ && b.ptr < this->data_ + (size * maxSlices);
-}
+// NOTE: does this make sense??? or can this be implemented as a pool???
+// template < class BulkAllocator, cSize size, cSize minBlock = 1024 >
+// class Slicer
+// {
+// public:
+//   explicit Slicer(BulkAllocator& bulkAlloc)
+//       : data_{nullptr}
+//       , bulkAlloc_{bulkAlloc}
+//   {
+//   }
+//
+//   Blk allocate(cSize n);
+//   void deallocate(Blk b);
+//   bool owns(Blk b);
+//
+// private:
+//   Slicer() = delete;
+//   Slicer(Slicer& other) = delete;
+//   Slicer& operator=(Slicer& other) = delete;
+//
+//   // u8 sliceMap_[maxSlices >> 3];
+//   char* data_;
+//   BulkAllocator& bulkAlloc_;
+// };
+//
+// template < class BulkAllocator, cSize size, cSize maxSlices >
+// Blk Slicer< BulkAllocator, size, maxSlices >::allocate(cSize n)
+// {
+//   // TODO: checks if there is data_ (!= nullptr)
+//   // then return one of the free slices
+//   return {nullptr, 0};
+// }
+//
+// template < class BulkAllocator, cSize size, cSize maxSlices >
+// void Slicer< BulkAllocator, size, maxSlices >::deallocate(Blk b)
+// {
+// }
+//
+// template < class BulkAllocator, cSize size, cSize maxSlices >
+// bool Slicer< BulkAllocator, size, maxSlices >::owns(Blk b)
+// {
+//   return this->data_ != nullptr && b.ptr >= this->data_ && b.ptr < this->data_ + (size *
+//   maxSlices);
+// }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Freelist: Keeps list of previous allocations of a given size
@@ -329,6 +330,8 @@ bool StackAllocator< size >::owns(Blk b)
 // in a memory pool using a bitmap
 ///////////////////////////////////////////////////////////////////////////////
 
+// FIXME: change to allow allocating a range of sizes!
+
 template < cSize size, cSize block >
 class PoolAllocator
 {
@@ -434,39 +437,6 @@ bool PoolAllocator< size, block >::owns(Blk b)
 {
   return static_cast< char* >(b.ptr) >= data_ && static_cast< char* >(b.ptr) < this->data_ + size;
 }
-
-// TODO:
-// //------------------------------------------
-// template <class A, size_t blockSize>
-// class BitmappedBlock;
-// //------------------------------------------
-// template <class Creator>
-// class CascadingAllocator;
-// ...
-// auto a = cascadingAllocator({
-// return Heap<...>();
-// });
-
-// //------------------------------------------
-// template <class Allocator,
-// size_t min,
-// size_t max,
-// size_t step>
-// struct Bucketizer;
-// • [min, min + step),
-// [min + step, min + 2 * step). . .
-// • Within a bucket allocates the maximum size
-// //------------------------------------------
-// Complete API
-// static constexpr unsigned alignment;
-// static constexpr goodSize(size_t);
-// Blk allocate(size_t);
-// Blk allocateAll();
-// bool expand(Blk&, size_t delta);
-// void reallocate(Blk&, size_t);
-// bool owns(Blk);
-// void deallocate(Blk);
-// void deallocateAll();
 
 } // end namespace Utils
 
