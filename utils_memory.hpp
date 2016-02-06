@@ -87,7 +87,7 @@ bool FallbackAllocator< Primary, Fallback >::owns(Blk b)
 // Segregator: Sizes ≤ threshold goes to SmallAllocator, else goes to LargeAllocator
 ///////////////////////////////////////////////////////////////////////////////
 template < cSize threshold, class SmallAllocator, class LargeAllocator >
-class Segregator
+class Segregator : private SmallAllocator, private LargeAllocator
 {
 public:
   Blk allocate(cSize n);
@@ -127,64 +127,16 @@ bool Segregator< threshold, SmallAllocator, LargeAllocator >::owns(Blk b)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Slicer: sits on top of bulk blocks allocator and provide just a slice
-///////////////////////////////////////////////////////////////////////////////
-// NOTE: does this make sense??? or can this be implemented as a pool???
-// template < class BulkAllocator, cSize size, cSize minBlock = 1024 >
-// class Slicer
-// {
-// public:
-//   explicit Slicer(BulkAllocator& bulkAlloc)
-//       : data_{nullptr}
-//       , bulkAlloc_{bulkAlloc}
-//   {
-//   }
-//
-//   Blk allocate(cSize n);
-//   void deallocate(Blk b);
-//   bool owns(Blk b);
-//
-// private:
-//   Slicer() = delete;
-//   Slicer(Slicer& other) = delete;
-//   Slicer& operator=(Slicer& other) = delete;
-//
-//   // u8 sliceMap_[maxSlices >> 3];
-//   char* data_;
-//   BulkAllocator& bulkAlloc_;
-// };
-//
-// template < class BulkAllocator, cSize size, cSize maxSlices >
-// Blk Slicer< BulkAllocator, size, maxSlices >::allocate(cSize n)
-// {
-//   // TODO: checks if there is data_ (!= nullptr)
-//   // then return one of the free slices
-//   return {nullptr, 0};
-// }
-//
-// template < class BulkAllocator, cSize size, cSize maxSlices >
-// void Slicer< BulkAllocator, size, maxSlices >::deallocate(Blk b)
-// {
-// }
-//
-// template < class BulkAllocator, cSize size, cSize maxSlices >
-// bool Slicer< BulkAllocator, size, maxSlices >::owns(Blk b)
-// {
-//   return this->data_ != nullptr && b.ptr >= this->data_ && b.ptr < this->data_ + (size *
-//   maxSlices);
-// }
-
-///////////////////////////////////////////////////////////////////////////////
 // Freelist: Keeps list of previous allocations of a given size
 ///////////////////////////////////////////////////////////////////////////////
 
 template < class Parent, cSize minSize, cSize maxSize, cSize maxBlocks >
-class Freelist
+class Freelist : private Parent
 {
 public:
-  explicit Freelist(Parent p)
-      : root_{nullptr}
-      , parent_{p}
+  Freelist()
+      : Parent()
+      , root_{nullptr}
   {
   }
 
@@ -193,29 +145,29 @@ public:
   bool owns(Blk b);
 
 private:
-  Freelist() = delete;
   Freelist(Freelist& other) = delete;
   Freelist& operator=(Freelist& other) = delete;
-
   struct Node
   {
     Node* next;
-  } root_;
-  Parent parent_;
+  };
+
+  Node* root_;
   cSize countDown_{maxBlocks};
+  // Parent parent_;
 };
 
 template < class Parent, cSize minSize, cSize maxSize, cSize maxBlocks >
 Blk Freelist< Parent, minSize, maxSize, maxBlocks >::allocate(cSize n)
 {
-  if(n >= minSize && n < maxSize && root_ && countDown_ < maxBlocks)
+  if(n >= minSize && n <= maxSize && (countDown_ < maxBlocks) && root_)
   {
-    Blk b = {root_, n};
-    root_ = root_.next;
+    Blk b = {static_cast< void* >(this->root_), n};
+    root_ = static_cast< Node* >(root_->next);
     ++countDown_;
     return b;
   }
-  return parent_.allocate(n);
+  return Parent::allocate(n);
 }
 
 template < class Parent, cSize minSize, cSize maxSize, cSize maxBlocks >
@@ -223,12 +175,12 @@ void Freelist< Parent, minSize, maxSize, maxBlocks >::deallocate(Blk b)
 {
   if(b.size < minSize || b.size > maxSize || countDown_ == 0)
   {
-    parent_.deallocate(b);
+    Parent::deallocate(b);
   }
   else
   {
     auto p = static_cast< Node* >(b.ptr);
-    p.next = root_;
+    p->next = root_;
     root_ = p;
     --countDown_;
   }
@@ -237,16 +189,19 @@ void Freelist< Parent, minSize, maxSize, maxBlocks >::deallocate(Blk b)
 template < class Parent, cSize minSize, cSize maxSize, cSize maxBlocks >
 bool Freelist< Parent, minSize, maxSize, maxBlocks >::owns(Blk b)
 {
-  return (b.size >= minSize && b.size < maxSize) || parent_.owns(b);
+  return (b.size >= minSize && b.size < maxSize) || Parent::owns(b);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // MAllocator: simple wraper around malloc to keep the interface consistent
 ///////////////////////////////////////////////////////////////////////////////
-
+// if Mallocator is used mor than once in an allocator composite, the id of each
+// component MAllocator has to be different to avoid ambiguity @ template resolution
+template < u8 id >
 class MAllocator
 {
 public:
+  MAllocator() {}
   Blk allocate(cSize n);
   void deallocate(Blk b);
   bool owns(Blk b);
@@ -256,7 +211,8 @@ private:
   MAllocator& operator=(const MAllocator& other) = delete;
 };
 
-Blk MAllocator::allocate(cSize n)
+template < u8 id >
+Blk MAllocator< id >::allocate(cSize n)
 {
   Blk r;
   r.ptr = std::malloc(n * sizeof(char));
@@ -264,8 +220,14 @@ Blk MAllocator::allocate(cSize n)
 
   return r;
 }
-void MAllocator::deallocate(Blk b) { std::free(b.ptr); }
-bool MAllocator::owns(Blk b)
+template < u8 id >
+void MAllocator< id >::deallocate(Blk b)
+{
+  std::free(b.ptr);
+}
+
+template < u8 id >
+bool MAllocator< id >::owns(Blk b)
 {
   // no way to control this
   // other allocators should use this as fall back or provider
@@ -276,7 +238,7 @@ bool MAllocator::owns(Blk b)
 // Stack: Use static array and stack semantics
 ///////////////////////////////////////////////////////////////////////////////
 
-template < cSize size >
+template < cSize size, cSize minBlock >
 class StackAllocator
 {
 public:
@@ -297,10 +259,10 @@ private:
   char* pointer_;
 };
 
-template < cSize size >
-Blk StackAllocator< size >::allocate(cSize n)
+template < cSize size, cSize minBlock >
+Blk StackAllocator< size, minBlock >::allocate(cSize n)
 {
-  auto nn = roundToAligned(n);
+  auto nn = std::max(roundToAligned(n), minBlock);
   if(nn > (data_ + size) - pointer_)
   {
     return {nullptr, 0};
@@ -310,17 +272,17 @@ Blk StackAllocator< size >::allocate(cSize n)
   return result;
 }
 
-template < cSize size >
-void StackAllocator< size >::deallocate(Blk b)
+template < cSize size, cSize minBlock >
+void StackAllocator< size, minBlock >::deallocate(Blk b)
 {
   if(static_cast< char* >(b.ptr) + roundToAligned(b.size) == pointer_)
   {
-    pointer_ = b.ptr;
+    pointer_ = static_cast< char* >(b.ptr);
   }
 }
 
-template < cSize size >
-bool StackAllocator< size >::owns(Blk b)
+template < cSize size, cSize minBlock >
+bool StackAllocator< size, minBlock >::owns(Blk b)
 {
   return b.ptr >= this->data_ && b.ptr < this->data_ + size;
 }
@@ -443,3 +405,51 @@ bool PoolAllocator< size, block >::owns(Blk b)
 } // end namespace W2E
 
 #endif // UTILS_MEMORY_HPP
+
+///////////////////////////////////////////////////////////////////////////////
+// Slicer: sits on top of bulk blocks allocator and provide just a slice
+///////////////////////////////////////////////////////////////////////////////
+// NOTE: does this make sense??? or can this be implemented as a pool???
+// template < class BulkAllocator, cSize size, cSize minBlock = 1024 >
+// class Slicer
+// {
+// public:
+//   explicit Slicer(BulkAllocator& bulkAlloc)
+//       : data_{nullptr}
+//       , bulkAlloc_{bulkAlloc}
+//   {
+//   }
+//
+//   Blk allocate(cSize n);
+//   void deallocate(Blk b);
+//   bool owns(Blk b);
+//
+// private:
+//   Slicer() = delete;
+//   Slicer(Slicer& other) = delete;
+//   Slicer& operator=(Slicer& other) = delete;
+//
+//   // u8 sliceMap_[maxSlices >> 3];
+//   char* data_;
+//   BulkAllocator& bulkAlloc_;
+// };
+//
+// template < class BulkAllocator, cSize size, cSize maxSlices >
+// Blk Slicer< BulkAllocator, size, maxSlices >::allocate(cSize n)
+// {
+//   // TODO: checks if there is data_ (!= nullptr)
+//   // then return one of the free slices
+//   return {nullptr, 0};
+// }
+//
+// template < class BulkAllocator, cSize size, cSize maxSlices >
+// void Slicer< BulkAllocator, size, maxSlices >::deallocate(Blk b)
+// {
+// }
+//
+// template < class BulkAllocator, cSize size, cSize maxSlices >
+// bool Slicer< BulkAllocator, size, maxSlices >::owns(Blk b)
+// {
+//   return this->data_ != nullptr && b.ptr >= this->data_ && b.ptr < this->data_ + (size *
+//   maxSlices);
+// }
