@@ -8,3 +8,6 @@ unity.cpp
 .project
 *.x
 *.gch
+*.plist
+G*
+

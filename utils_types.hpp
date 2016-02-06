@@ -30,7 +30,7 @@ inline T& Deref(T* ptr)
   return *ptr;
 }
 
-// based on Ginger Bill DUNJUN: github.com/gingerBill/Dunjun/
+// based idea from Ginger Bill DUNJUN: github.com/gingerBill/Dunjun/
 #define GLOBAL static           // global variables
 #define CLASS_METHOD static     // class methods work without instantiation
 #define INTERNAL static         // internal linkage
@@ -48,7 +48,190 @@ using i64 = int64_t;
 using f32 = float;
 using f64 = double;
 
-// containers
+// game specific size type
+using cSize = i64;
+
+// this adds modulus semantics to integers
+template < typename IntegerType, cSize modulusVal >
+class Modulus
+{
+  void mod()
+  {
+    if(this->value_ <= -(this->modulusVal_))
+    {
+      this->value_ %= this->modulusVal_;
+    }
+    this->value_ += this->modulusVal_;
+    this->value_ %= this->modulusVal_;
+  }
+  Modulus() = delete;
+  const GLOBAL cSize modulusVal_;
+  IntegerType value_;
+
+public:
+  Modulus(IntegerType val)
+      : value_{val}
+  {
+    this->mod();
+  }
+  explicit Modulus(Modulus& other)
+      : value_{other.value_}
+  {
+    this->mod();
+  }
+
+  Modulus& operator=(IntegerType val)
+  {
+    this->value_ = val;
+    this->mod();
+    return *this;
+  }
+  Modulus& operator=(Modulus& other)
+  {
+    this->value_ = other.value_;
+    this->mod();
+    return *this;
+  }
+
+  Modulus operator+(IntegerType val)
+  {
+    this->value_ += val;
+    this->mod();
+    return *this;
+  }
+  Modulus operator+(Modulus& other)
+  {
+    this->value_ += other.value_;
+    this->mod();
+    return *this;
+  }
+
+  Modulus operator-(IntegerType val)
+  {
+    this->value_ -= val;
+    this->mod();
+    return *this;
+  }
+  Modulus operator-(Modulus& other)
+  {
+    this->value_ -= other.value_;
+    this->mod();
+    return *this;
+  }
+
+  Modulus operator*(IntegerType val)
+  {
+    this->value_ *= val;
+    this->mod();
+    return *this;
+  }
+  Modulus operator*(Modulus& other)
+  {
+    this->value_ *= other.value_;
+    this->mod();
+    return *this;
+  }
+
+  Modulus operator/(IntegerType val)
+  {
+    assert(val > 0);
+    this->value_ = static_cast< IntegerType >(this->value_ / val);
+    this->mod();
+    return *this;
+  }
+  Modulus operator/(Modulus& other)
+  {
+    assert(other.value_ > 0);
+    this->value_ = other.value_;
+    this->mod();
+    return *this;
+  }
+
+  Modulus& operator+=(IntegerType val)
+  {
+    this->value_ += val;
+    this->mod();
+    return *this;
+  }
+
+  Modulus& operator+=(Modulus& other)
+  {
+    this->value_ += other.value_;
+    this->mod();
+    return *this;
+  }
+
+  Modulus& operator-=(IntegerType val)
+  {
+    this->value_ -= val;
+    this->mod();
+    return *this;
+  }
+  Modulus& operator-=(Modulus& other)
+  {
+    this->value_ -= other.value_;
+    this->mod();
+    return *this;
+  }
+
+  Modulus& operator++()
+  {
+    this->value_ += 1;
+    this->mod();
+    return *this;
+  }
+
+  Modulus& operator--()
+  {
+    this->value_ -= 1;
+    this->mod();
+    return *this;
+  }
+
+  bool operator==(IntegerType val) { return this->value_ == val; }
+
+  bool operator==(Modulus& other) { return this->value_ == other.value_; }
+
+  bool operator!=(IntegerType val) { return this->value_ != val; }
+
+  bool operator!=(Modulus& other) { return this->value_ != other.value_; }
+
+  bool operator>=(IntegerType val) { return this->value_ >= val; }
+
+  bool operator>=(Modulus& other) { return this->value_ >= other.value_; }
+
+  bool operator<=(IntegerType val) { return this->value_ <= val; }
+
+  bool operator<=(Modulus& other) { return this->value_ <= other.value_; }
+
+  bool operator>(IntegerType val) { return this->value_ > val; }
+
+  bool operator>(Modulus& other) { return this->value_ > other.value_; }
+
+  bool operator<(IntegerType val) { return this->value_ < val; }
+
+  bool operator<(Modulus& other) { return this->value_ < other.value_; }
+
+  const IntegerType& toInt() const { return this->value_; }
+};
+
+template < typename IntegerType, cSize modulusVal >
+const cSize Modulus< IntegerType, modulusVal >::modulusVal_ = modulusVal;
+
+template < cSize modulusVal >
+using Modulus8 = Modulus< i8, modulusVal >;
+
+template < cSize modulusVal >
+using Modulus16 = Modulus< i16, modulusVal >;
+
+template < cSize modulusVal >
+using Modulus32 = Modulus< i32, modulusVal >;
+
+template < cSize modulusVal >
+using Modulus64 = Modulus< i64, modulusVal >;
+
+// wrappers around STD and STL.
+// TODO: STL containers and string will be replaced.
 template < typename T >
 using SharedPtr = std::shared_ptr< T >;
 
@@ -68,9 +251,6 @@ template < typename K, typename T >
 using HashMultiMap = std::unordered_multimap< K, T >;
 
 using String = std::string;
-
-// game specific types
-using cSize = W2E::Utils::u32;
 
 using Flags = u32;
 using BlendingMode = u16;

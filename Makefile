@@ -17,6 +17,7 @@ clean:
 clean_all:
 	rm -f ./*.x 2> /dev/null
 	rm -f *.gch 2> /dev/null
+	rm -f *.plist 2> /dev/null
 	rm -f unity.cpp 2> /dev/null
 
 format:
