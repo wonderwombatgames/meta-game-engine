@@ -52,7 +52,8 @@ using f64 = double;
 using cSize = i64;
 
 // this adds modulus semantics to integers
-template < typename IntegerType, cSize modulusVal >
+// TODO: define a saturation type [min-max]
+template < typename IntegerType >
 class Modulus
 {
   void mod()
@@ -65,17 +66,19 @@ class Modulus
     this->value_ %= this->modulusVal_;
   }
   Modulus() = delete;
-  const GLOBAL cSize modulusVal_;
+  cSize modulusVal_;
   IntegerType value_;
 
 public:
-  Modulus(IntegerType val)
-      : value_{val}
+  Modulus(cSize modulus, IntegerType val)
+      : modulusVal_{modulus}
+      , value_{val}
   {
     this->mod();
   }
   explicit Modulus(Modulus& other)
-      : value_{other.value_}
+      : modulusVal_{other.modulus_}
+      , value_{other.value_}
   {
     this->mod();
   }
@@ -215,20 +218,10 @@ public:
   const IntegerType& toInt() const { return this->value_; }
 };
 
-template < typename IntegerType, cSize modulusVal >
-const cSize Modulus< IntegerType, modulusVal >::modulusVal_ = modulusVal;
-
-template < cSize modulusVal >
-using Modulus8 = Modulus< i8, modulusVal >;
-
-template < cSize modulusVal >
-using Modulus16 = Modulus< i16, modulusVal >;
-
-template < cSize modulusVal >
-using Modulus32 = Modulus< i32, modulusVal >;
-
-template < cSize modulusVal >
-using Modulus64 = Modulus< i64, modulusVal >;
+using m8 = Modulus< i8 >;
+using m16 = Modulus< i16 >;
+using m32 = Modulus< i32 >;
+using m64 = Modulus< i64 >;
 
 // wrappers around STD and STL.
 // TODO: STL containers and string will be replaced.

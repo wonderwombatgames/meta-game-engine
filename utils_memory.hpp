@@ -3,6 +3,20 @@
   *
   */
 
+/* EXAMPLE composite allocator:
+  using StkAllocator = StackAllocator< 262144, 64 >; // 256kB
+  using FLAllocator0 = Freelist< StkAllocator, 0, 64, 4096 >;
+  using FLAllocator1 = Freelist< FLAllocator0, 65, 128, 2048 >;
+  using FLAllocator2 = Freelist< FLAllocator1, 129, 256, 1024 >;
+  using FLAllocator3 = Freelist< FLAllocator2, 257, 512, 512 >;
+  using FLAllocator4 = Freelist< FLAllocator3, 513, 1024, 256 >;
+  using FLAllocator5 = Freelist< FLAllocator4, 1025, 2048, 128 >;
+  using FLAllocator6 = Freelist< FLAllocator5, 2049, 4096, 64 >;
+  using FLAllocator7 = Freelist< FLAllocator6, 4097, 8192, 32 >;
+  using PrimaryAlloc = Segregator< 8192, FLAllocator7, MAllocator< 1 > >;
+  using CompAllocator = FallbackAllocator< PrimaryAlloc, MAllocator< 2 > >;
+*/
+
 #ifndef UTILS_MEMORY_HPP
 #define UTILS_MEMORY_HPP
 
@@ -39,6 +53,17 @@ struct Blk
   void* ptr;
   cSize size;
 };
+
+///////////////////////////////////////////////////////////////////////////////
+// helper function to allocate a ptr to a specific type
+///////////////////////////////////////////////////////////////////////////////
+
+template < typename Type, typename Allocator >
+Type* allocateType(Allocator& alloc, Blk& b, const cSize amount)
+{
+  b = alloc.allocate(amount * sizeof(Type));
+  return static_cast< Type* >(b.ptr);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Fallback: try primary, if fails call secondary
@@ -154,7 +179,6 @@ private:
 
   Node* root_;
   cSize countDown_{maxBlocks};
-  // Parent parent_;
 };
 
 template < class Parent, cSize minSize, cSize maxSize, cSize maxBlocks >
@@ -195,7 +219,7 @@ bool Freelist< Parent, minSize, maxSize, maxBlocks >::owns(Blk b)
 ///////////////////////////////////////////////////////////////////////////////
 // MAllocator: simple wraper around malloc to keep the interface consistent
 ///////////////////////////////////////////////////////////////////////////////
-// if Mallocator is used mor than once in an allocator composite, the id of each
+// if Mallocator is used more than once in an allocator composite, the id of each
 // component MAllocator has to be different to avoid ambiguity @ template resolution
 template < u8 id >
 class MAllocator
