@@ -88,12 +88,43 @@ operator=(const FixedContainer& other)
   return *this;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// BitMap : Fixed size Array of bits with random accessor
+///////////////////////////////////////////////////////////////////////////////
+
+template < cSize capacity >
+using FixedBitMap = FixedContainer< u8, (capacity >> 3), (capacity >> 3), false >;
+
+///////////////////////////////////////////////////////////////////////////////
+// Array : Fixed size Array with random accessor
+///////////////////////////////////////////////////////////////////////////////
+
+template < typename ElementType, cSize capacity >
+using FixedArray = FixedContainer< ElementType, capacity, capacity, false >;
+
+///////////////////////////////////////////////////////////////////////////////
+// DEQueue : Fixed size double ended queue with random accessor
+///////////////////////////////////////////////////////////////////////////////
+
+template < typename ElementType, cSize capacity, bool canOverwrite = false >
+using FixedDEQ = FixedContainer< ElementType, capacity, 0, canOverwrite >;
+
+///////////////////////////////////////////////////////////////////////////////
+// RingQ : fixed size, acessible back and front with overwriting
+///////////////////////////////////////////////////////////////////////////////
+
+template < typename ElementType, cSize capacity >
+using FixedRingQ = FixedDEQ< ElementType, capacity, true >;
+
+///////////////////////////////////////////////////////////////////////////////
+
 // accessor fucntions
+// FixedContainer:
 template < typename ElementType, cSize capacity, cSize initialLen, bool canOverwrite >
 inline ElementType* at(FixedContainer< ElementType, capacity, initialLen, canOverwrite >& container,
                        cSize pos)
 {
-  m64 logicPos(capacity, pos);
+  m64 logicPos(container.capacity_, pos);
   if(logicPos < container.length_)
   {
     logicPos += container.firstPos_;
@@ -118,28 +149,33 @@ inline void clear(FixedContainer< ElementType, capacity, initialLen, canOverwrit
   container.length_ = initialLen;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// Array : Fixed size Array with random accessor
-///////////////////////////////////////////////////////////////////////////////
+// accessor fucntions
+// FixedBitMap:
+template < cSize capacity >
+inline u8 byte(FixedBitMap< capacity >& container, cSize pos)
+{
+  return at(container, pos);
+}
 
-template < typename ElementType, cSize capacity >
-using FixedArray = FixedContainer< ElementType, capacity, capacity, false >;
+template < cSize capacity >
+inline u8 bit(FixedBitMap< capacity >& container, cSize pos)
+{
+  const u8 bitMask[8] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
+  cSize byte_ = pos >> 3;
 
-///////////////////////////////////////////////////////////////////////////////
-// DEQueue : Fixed size double ended queue with random accessor
-///////////////////////////////////////////////////////////////////////////////
+  if(byte_ < container.length_)
+  {
+    cSize bit_ = pos % 8;
+    return (bitMask[bit_] & byte(container, byte_));
+  }
+  return false;
+}
 
-template < typename ElementType, cSize capacity, bool canOverwrite = false >
-using FixedDEQ = FixedContainer< ElementType, capacity, 0, canOverwrite >;
-
-///////////////////////////////////////////////////////////////////////////////
-// RingQ : fixed size, acessible back and front with overwriting
-///////////////////////////////////////////////////////////////////////////////
-
-template < typename ElementType, cSize capacity >
-using FixedRingQ = FixedDEQ< ElementType, capacity, true >;
-
-///////////////////////////////////////////////////////////////////////////////
+template < cSize capacity >
+inline u8 bits(FixedBitMap< capacity >& container, cSize pos)
+{
+  return (8 * container.length_);
+}
 
 // accessor methods
 // DEQ :

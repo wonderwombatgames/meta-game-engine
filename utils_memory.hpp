@@ -127,6 +127,7 @@ Blk Segregator< threshold, SmallAllocator, LargeAllocator >::allocate(cSize n)
   if(threshold > n)
   {
     r = SmallAllocator::allocate(n);
+    return r;
   }
   r = LargeAllocator::allocate(n);
   return r;

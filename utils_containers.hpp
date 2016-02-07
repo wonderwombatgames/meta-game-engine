@@ -31,7 +31,7 @@ struct Array
   using Type = ElementType;
 
   // TODO: Move constructor???
-  explicit Array(const ElementType& init, Allocator& alloc, const cSize capacity);
+  Array(const ElementType& init, Allocator& alloc, const cSize capacity);
   explicit Array(const Array& other);
   ~Array();
   Array& operator=(const Array& other);
@@ -140,10 +140,11 @@ bool Array< ElementType, Allocator >::resize(const cSize capacity)
 }
 
 // accessor functions
+// Array:
 template < typename ElementType, typename Allocator >
 inline ElementType* at(Array< ElementType, Allocator >& container, cSize pos)
 {
-  m32 logicPos(container.capacity_, pos);
+  m64 logicPos(container.capacity_, pos);
   if(logicPos < container.length_)
   {
     logicPos += container.firstPos_;
@@ -161,93 +162,99 @@ inline cSize len(Array< ElementType, Allocator >& container)
 template < typename ElementType, typename Allocator >
 inline void clear(Array< ElementType, Allocator >& container, const ElementType& init)
 {
+  std::fill(container.array_, (container.array_ + container.capacity_), init);
   container.firstPos_ = 0;
   container.lastPos_ = container.reserve_;
-  container.length_ = 0;
-  std::fill(container.array_, (container.array_ + container.capacity_), init);
+  container.length_ = container.reserve_;
 }
 
-// ///////////////////////////////////////////////////////////////////////////////
-// // Stack : dynamic stack with random accessor
-// ///////////////////////////////////////////////////////////////////////////////
-//
-// // declarations
-// template < typename ElementType, bool canOverwrite = true >
-// struct Stack : public Array< ElementType, canOverwrite >
-// {
-//   Stack() = delete;
-//   explicit Stack(Allocator& alloc, const ElementType& init);
-//   explicit Stack(const Stack& other);
-//   Stack& operator=(const Stack& other);
-//   // TODO: Move constructor???
-// };
-// /*
-// push()
-// pop()
-// top()
-// bot()
-// */
-//
-// ///////////////////////////////////////////////////////////////////////////////
-// // DEQ : dynamic double ended queue with random accessor
-// ///////////////////////////////////////////////////////////////////////////////
-//
-// // declarations
-// template < typename ElementType, bool canOverwrite = true >
-// struct DEQ : public Stack< ElementType, canOverwrite >
-// {
-//   DEQ() = delete;
-//   explicit DEQ(Allocator& alloc, const ElementType& init);
-//   explicit DEQ(const DEQ& other);
-//   DEQ& operator=(const DEQ& other);
-//   // TODO: Move constructor???
-// };
-// /*
-// push_front()
-// pop_front()
-// push_back() -> push()
-// pop_back() -> pop()
-// front() -> bot()
-// back() -> top()
-// */
-//
-// ///////////////////////////////////////////////////////////////////////////////
-// // HashTable : dynamic hash map containter
-// ///////////////////////////////////////////////////////////////////////////////
-//
-// // declarations
-// template < typename ElementType, bool allowMultiple >
-// struct HashTable // : Array ???should this inherite from Array???
-// {
-//   const bool allowMultiple_{allowMultiple};
-//
-//   HashTable() = delete;
-//   explicit HashTable(Allocator& alloc, const ElementType& init);
-//   explicit HashTable(const HashTable& other);
-//   HashTable& operator=(const HashTable& other);
-//   // TODO: Move constructor???
-// };
-// /*
-// ??? what kind of accessor is needed ???
-// */
-//
-// ///////////////////////////////////////////////////////////////////////////////
-// // Heap : dynamic heap containter
-// ///////////////////////////////////////////////////////////////////////////////
-//
-// // declarations
-// template < typename ElementType >
-// struct Heap // : Array ???should this inherite from Array???
-// {
-//   Heap() = delete;
-//   explicit Heap(Allocator& alloc, const ElementType& init);
-//   explicit Heap(const Heap& other);
-//   Heap& operator=(const Heap& other);
-//   // TODO: Move constructor???
-// };
-// /*
-// ??? what kind of accessor is needed ???
-// */
+///////////////////////////////////////////////////////////////////////////////
+// DEQ : dynamic double ended queue with random accessor
+///////////////////////////////////////////////////////////////////////////////
+
+// declarations
+template < typename ElementType, typename Allocator >
+struct DEQ : public Array< ElementType, Allocator >
+{
+  DEQ(const ElementType& init, Allocator& alloc, const cSize capacity);
+  explicit DEQ(const DEQ& other);
+  ~DEQ();
+
+  DEQ() = delete;
+  // DEQ& operator=(const DEQ& other);
+  // bool resize(const cSize capacity);
+  // TODO: Move constructor???
+};
+
+template < typename ElementType, typename Allocator >
+DEQ< ElementType, Allocator >::DEQ(const ElementType& init, Allocator& alloc, const cSize capacity)
+    : Array< ElementType, Allocator >(init, alloc, capacity)
+{
+}
+
+template < typename ElementType, typename Allocator >
+DEQ< ElementType, Allocator >::DEQ(const DEQ& other)
+    : Array< ElementType, Allocator >(other)
+{
+}
+
+template < typename ElementType, typename Allocator >
+DEQ< ElementType, Allocator >::~DEQ()
+{
+}
+
+/*
+push_front()
+pop_front()
+push_back() -> push()
+pop_back() -> pop()
+front() -> bot()
+back() -> top()
+*/
+
+///////////////////////////////////////////////////////////////////////////////
+// HashTable : dynamic hash map containter
+///////////////////////////////////////////////////////////////////////////////
+
+// declarations
+template < typename ElementType, bool allowMultiple >
+struct HashTable // : Array ???should this inherite from Array???
+{
+  const bool allowMultiple_{allowMultiple};
+
+  HashTable() = delete;
+  explicit HashTable(Allocator& alloc, const ElementType& init);
+  explicit HashTable(const HashTable& other);
+  HashTable& operator=(const HashTable& other);
+  bool resize(const cSize capacity);
+  // TODO: Move constructor???
+};
+/*
+??? what kind of accessor is needed ???
+at()
+len()
+clear()
+keys()
+*/
+
+///////////////////////////////////////////////////////////////////////////////
+// Heap : dynamic heap containter
+///////////////////////////////////////////////////////////////////////////////
+
+// declarations
+template < typename ElementType >
+struct Heap // : Array ???should this inherite from Array???
+{
+  Heap() = delete;
+  explicit Heap(Allocator& alloc, const ElementType& init);
+  explicit Heap(const Heap& other);
+  Heap& operator=(const Heap& other);
+  bool resize(const cSize capacity);
+  // TODO: Move constructor???
+};
+/*
+??? what kind of accessor is needed ???
+*/
 
 } // end namespace Utils
 
