@@ -1,6 +1,7 @@
 img/
 klib/
 stb/
+catch/
 nbproject/
 .codelite/
 unity.cpp
@@ -10,4 +11,3 @@ unity.cpp
 *.gch
 *.plist
 G*
-

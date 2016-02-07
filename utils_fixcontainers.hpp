@@ -16,17 +16,14 @@ namespace W2E
 namespace Utils
 {
 
+// TODO: Do we need a BitMap container??? Probably we do...
+
 ///////////////////////////////////////////////////////////////////////////////
 // FixedContainer : parametric base for array, stack, and deq
 ///////////////////////////////////////////////////////////////////////////////
 
 // declarations
-template < typename ElementType,
-           cSize capacity,
-           cSize initialLen,
-           cSize initialPos,
-           cSize finalPos,
-           bool canOverwrite >
+template < typename ElementType, cSize capacity, cSize initialLen, bool canOverwrite >
 struct FixedContainer
 {
   using Type = ElementType;
@@ -46,36 +43,19 @@ struct FixedContainer
 };
 
 // GLOBAL
-template < typename ElementType,
-           cSize capacity,
-           cSize initialLen,
-           cSize initialPos,
-           cSize finalPos,
-           bool canOverwrite >
-const cSize
-    FixedContainer< ElementType, capacity, initialLen, initialPos, finalPos, canOverwrite >::
-        capacity_{capacity};
+template < typename ElementType, cSize capacity, cSize initialLen, bool canOverwrite >
+const cSize FixedContainer< ElementType, capacity, initialLen, canOverwrite >::capacity_{capacity};
 
-template < typename ElementType,
-           cSize capacity,
-           cSize initialLen,
-           cSize initialPos,
-           cSize finalPos,
-           bool canOverwrite >
-const bool FixedContainer< ElementType, capacity, initialLen, initialPos, finalPos, canOverwrite >::
-    canOverwrite_{canOverwrite};
+template < typename ElementType, cSize capacity, cSize initialLen, bool canOverwrite >
+const bool FixedContainer< ElementType, capacity, initialLen, canOverwrite >::canOverwrite_{
+    canOverwrite};
 
 // implements constructors
-template < typename ElementType,
-           cSize capacity,
-           cSize initialLen,
-           cSize initialPos,
-           cSize finalPos,
-           bool canOverwrite >
-FixedContainer< ElementType, capacity, initialLen, initialPos, finalPos, canOverwrite >::
-    FixedContainer(const ElementType& init)
-    : firstPos_{initialPos}
-    , lastPos_{finalPos}
+template < typename ElementType, cSize capacity, cSize initialLen, bool canOverwrite >
+FixedContainer< ElementType, capacity, initialLen, canOverwrite >::FixedContainer(
+    const ElementType& init)
+    : firstPos_{0}
+    , lastPos_{initialLen}
     , length_{initialLen}
     , array_{}
 {
@@ -83,14 +63,9 @@ FixedContainer< ElementType, capacity, initialLen, initialPos, finalPos, canOver
 }
 
 // constructors
-template < typename ElementType,
-           cSize capacity,
-           cSize initialLen,
-           cSize initialPos,
-           cSize finalPos,
-           bool canOverwrite >
-FixedContainer< ElementType, capacity, initialLen, initialPos, finalPos, canOverwrite >::
-    FixedContainer(const FixedContainer& other)
+template < typename ElementType, cSize capacity, cSize initialLen, bool canOverwrite >
+FixedContainer< ElementType, capacity, initialLen, canOverwrite >::FixedContainer(
+    const FixedContainer& other)
     : firstPos_{other.firstPos_}
     , lastPos_{other.lastPos_}
     , length_{other.length_}
@@ -100,14 +75,9 @@ FixedContainer< ElementType, capacity, initialLen, initialPos, finalPos, canOver
       other.array_, (other.array_ + std::min(other.capacity_, this->capacity_)), this->array_);
 }
 
-template < typename ElementType,
-           cSize capacity,
-           cSize initialLen,
-           cSize initialPos,
-           cSize finalPos,
-           bool canOverwrite >
-FixedContainer< ElementType, capacity, initialLen, initialPos, finalPos, canOverwrite >&
-FixedContainer< ElementType, capacity, initialLen, initialPos, finalPos, canOverwrite >::
+template < typename ElementType, cSize capacity, cSize initialLen, bool canOverwrite >
+FixedContainer< ElementType, capacity, initialLen, canOverwrite >&
+FixedContainer< ElementType, capacity, initialLen, canOverwrite >::
 operator=(const FixedContainer& other)
 {
   std::copy(
@@ -119,16 +89,9 @@ operator=(const FixedContainer& other)
 }
 
 // accessor fucntions
-template < typename ElementType,
-           cSize capacity,
-           cSize initialLen,
-           cSize initialPos,
-           cSize finalPos,
-           bool canOverwrite >
-inline ElementType*
-at(FixedContainer< ElementType, capacity, initialLen, initialPos, finalPos, canOverwrite >&
-       container,
-   cSize pos)
+template < typename ElementType, cSize capacity, cSize initialLen, bool canOverwrite >
+inline ElementType* at(FixedContainer< ElementType, capacity, initialLen, canOverwrite >& container,
+                       cSize pos)
 {
   m64 logicPos(capacity, pos);
   if(logicPos < container.length_)
@@ -139,64 +102,35 @@ at(FixedContainer< ElementType, capacity, initialLen, initialPos, finalPos, canO
   return nullptr;
 }
 
-template < typename ElementType,
-           cSize capacity,
-           cSize initialLen,
-           cSize initialPos,
-           cSize finalPos,
-           bool canOverwrite >
-inline cSize
-len(FixedContainer< ElementType, capacity, initialLen, initialPos, finalPos, canOverwrite >&
-        container)
+template < typename ElementType, cSize capacity, cSize initialLen, bool canOverwrite >
+inline cSize len(FixedContainer< ElementType, capacity, initialLen, canOverwrite >& container)
 {
   return container.length_;
 }
 
-template < typename ElementType,
-           cSize capacity,
-           cSize initialLen,
-           cSize initialPos,
-           cSize finalPos,
-           bool canOverwrite >
-inline void
-clear(FixedContainer< ElementType, capacity, initialLen, initialPos, finalPos, canOverwrite >&
-          container,
-      const ElementType& init)
+template < typename ElementType, cSize capacity, cSize initialLen, bool canOverwrite >
+inline void clear(FixedContainer< ElementType, capacity, initialLen, canOverwrite >& container,
+                  const ElementType& init)
 {
   std::fill(container.array_, (container.array_ + container.capacity_), init);
-  container.firstPos_ = initialPos;
-  container.lastPos_ = finalPos;
+  container.firstPos_ = 0;
+  container.lastPos_ = initialLen;
   container.length_ = initialLen;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Array : Fixed size Array with random accessor
 ///////////////////////////////////////////////////////////////////////////////
-// template < typename ElementType,
-//            cSize capacity,
-//            cSize initialLen,
-//            cSize initialPos,
-//            cSize finalPos,
-//            bool canOverwrite >
 
-// FIXME: to many template parameters... initial pos and final pos are not needed!
 template < typename ElementType, cSize capacity >
-using FixedArray = FixedContainer< ElementType, capacity, capacity, 0, 0, false >;
-
-///////////////////////////////////////////////////////////////////////////////
-// Stack : Fixed size Stack with random accessor
-///////////////////////////////////////////////////////////////////////////////
-
-template < typename ElementType, cSize capacity, bool canOverwrite = false >
-using FixedStack =
-    FixedContainer< ElementType, capacity, 0, (capacity >> 1), (capacity >> 1), canOverwrite >;
+using FixedArray = FixedContainer< ElementType, capacity, capacity, false >;
 
 ///////////////////////////////////////////////////////////////////////////////
 // DEQueue : Fixed size double ended queue with random accessor
 ///////////////////////////////////////////////////////////////////////////////
 
 template < typename ElementType, cSize capacity, bool canOverwrite = false >
-using FixedDEQ = FixedStack< ElementType, capacity, canOverwrite >;
+using FixedDEQ = FixedContainer< ElementType, capacity, 0, canOverwrite >;
 
 ///////////////////////////////////////////////////////////////////////////////
 // RingQ : fixed size, acessible back and front with overwriting
@@ -207,13 +141,10 @@ using FixedRingQ = FixedDEQ< ElementType, capacity, true >;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// FIXME: all these functions should be specialized at the stack.
-// DEQ is not needed! and RingQ is just DEQ with overwrite
-
-// Stack :
 // accessor methods
+// DEQ :
 template < typename ElementType, cSize capacity, bool canOverwrite >
-inline ErrorCode push(FixedStack< ElementType, capacity, canOverwrite >& container,
+inline ErrorCode push(FixedDEQ< ElementType, capacity, canOverwrite >& container,
                       const ElementType& el)
 {
   if((container.length_ < container.capacity_) || container.canOverwrite_)
@@ -238,7 +169,7 @@ inline ErrorCode push(FixedStack< ElementType, capacity, canOverwrite >& contain
 }
 
 template < typename ElementType, cSize capacity, bool canOverwrite >
-inline ElementType pop(FixedStack< ElementType, capacity, canOverwrite >& container,
+inline ElementType pop(FixedDEQ< ElementType, capacity, canOverwrite >& container,
                        ElementType fallback)
 {
   m64 mm(container.capacity_, 0);
@@ -255,7 +186,7 @@ inline ElementType pop(FixedStack< ElementType, capacity, canOverwrite >& contai
 }
 
 template < typename ElementType, cSize capacity, bool canOverwrite >
-inline ElementType* bot(FixedStack< ElementType, capacity, canOverwrite >& container)
+inline ElementType* bot(FixedDEQ< ElementType, capacity, canOverwrite >& container)
 {
   if(container.length_ > 0)
   {
@@ -265,7 +196,7 @@ inline ElementType* bot(FixedStack< ElementType, capacity, canOverwrite >& conta
 }
 
 template < typename ElementType, cSize capacity, bool canOverwrite >
-inline ElementType* top(FixedStack< ElementType, capacity, canOverwrite >& container)
+inline ElementType* top(FixedDEQ< ElementType, capacity, canOverwrite >& container)
 {
   if(container.length_ > 0)
   {
@@ -274,8 +205,6 @@ inline ElementType* top(FixedStack< ElementType, capacity, canOverwrite >& conta
   return nullptr;
 }
 
-// DEQ :
-// accessor methods
 template < typename ElementType, cSize capacity, bool canOverwrite >
 inline ErrorCode push_back(FixedDEQ< ElementType, capacity, canOverwrite >& container,
                            const ElementType& el)
