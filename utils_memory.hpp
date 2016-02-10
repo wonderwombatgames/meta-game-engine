@@ -13,7 +13,7 @@
   using FLAllocator5 = Freelist< FLAllocator4, 1025, 2048, 128 >;
   using FLAllocator6 = Freelist< FLAllocator5, 2049, 4096, 64 >;
   using FLAllocator7 = Freelist< FLAllocator6, 4097, 8192, 32 >;
-  using PrimaryAlloc = Segregator< 8192, FLAllocator7, MAllocator< 1 > >;
+  using PrimaryAlloc = Selector< 8192, FLAllocator7, MAllocator< 1 > >;
   using CompAllocator = FallbackAllocator< PrimaryAlloc, MAllocator< 2 > >;
 */
 
@@ -61,8 +61,12 @@ struct Blk
 template < typename Type, typename Allocator >
 Type* allocateType(Allocator& alloc, Blk& b, const cSize amount)
 {
-  b = alloc.allocate(amount * sizeof(Type));
-  return static_cast< Type* >(b.ptr);
+  if(b.ptr == nullptr)
+  {
+    b = alloc.allocate(amount * sizeof(Type));
+    return static_cast< Type* >(b.ptr);
+  }
+  return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -109,10 +113,10 @@ bool FallbackAllocator< Primary, Fallback >::owns(Blk b)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Segregator: Sizes ≤ threshold goes to SmallAllocator, else goes to LargeAllocator
+// Selector: Sizes ≤ threshold goes to SmallAllocator, else goes to LargeAllocator
 ///////////////////////////////////////////////////////////////////////////////
 template < cSize threshold, class SmallAllocator, class LargeAllocator >
-class Segregator : private SmallAllocator, private LargeAllocator
+class Selector : private SmallAllocator, private LargeAllocator
 {
 public:
   Blk allocate(cSize n);
@@ -121,7 +125,7 @@ public:
 };
 
 template < cSize threshold, class SmallAllocator, class LargeAllocator >
-Blk Segregator< threshold, SmallAllocator, LargeAllocator >::allocate(cSize n)
+Blk Selector< threshold, SmallAllocator, LargeAllocator >::allocate(cSize n)
 {
   Blk r;
   if(threshold > n)
@@ -134,7 +138,7 @@ Blk Segregator< threshold, SmallAllocator, LargeAllocator >::allocate(cSize n)
 }
 
 template < cSize threshold, class SmallAllocator, class LargeAllocator >
-void Segregator< threshold, SmallAllocator, LargeAllocator >::deallocate(Blk b)
+void Selector< threshold, SmallAllocator, LargeAllocator >::deallocate(Blk b)
 {
   if(SmallAllocator::owns(b))
   {
@@ -147,7 +151,7 @@ void Segregator< threshold, SmallAllocator, LargeAllocator >::deallocate(Blk b)
 }
 
 template < cSize threshold, class SmallAllocator, class LargeAllocator >
-bool Segregator< threshold, SmallAllocator, LargeAllocator >::owns(Blk b)
+bool Selector< threshold, SmallAllocator, LargeAllocator >::owns(Blk b)
 {
   return SmallAllocator::owns(b) || LargeAllocator::owns(b);
 }

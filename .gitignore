@@ -3,6 +3,7 @@ klib/
 stb/
 catch/
 nbproject/
+physfs/
 .codelite/
 unity.cpp
 .cproject

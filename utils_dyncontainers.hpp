@@ -3,8 +3,8 @@
   *
   */
 
-#ifndef UTILS_CONTAINERS_HPP
-#define UTILS_CONTAINERS_HPP
+#ifndef UTILS_DYNCONTAINERS_HPP
+#define UTILS_DYNCONTAINERS_HPP
 
 #include <algorithm>
 
@@ -260,4 +260,4 @@ struct Heap // : Array ???should this inherite from Array???
 
 } // end namespace W2E
 
-#endif // UTILS_CONTAINERS_HPP
+#endif // UTILS_DYNCONTAINERS_HPP
