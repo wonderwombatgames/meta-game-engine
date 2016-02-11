@@ -8,8 +8,8 @@
 
 #include <algorithm>
 
+#include "utils_containers.hpp"
 #include "utils_memory.hpp"
-#include "utils_types.hpp"
 
 namespace W2E
 {
@@ -25,32 +25,32 @@ struct Allocator;
 ///////////////////////////////////////////////////////////////////////////////
 
 // declarations
-template < typename ElementType, typename Allocator >
-struct Array
+template < typename Type, typename Allocator >
+struct Array : public ArrayInterface< Type >
 {
-  using Type = ElementType;
+  using ElementType = Type;
+  using AllocatorType = Allocator;
 
-  // TODO: Move constructor???
-  Array(const ElementType& init, Allocator& alloc, const cSize capacity);
-  explicit Array(const Array& other);
-  ~Array();
-  Array& operator=(const Array& other);
-  bool resize(const cSize capacity);
-
-  Array() = delete;
   Allocator& alloc_;
-  cSize firstPos_;
-  cSize lastPos_;
-  cSize length_;
   cSize capacity_;
-  ElementType* array_;
-  ElementType init_;
+  cSize initialLen_;
+  Type init_;
   Blk memBlock_;
+  Array() = delete;
+
+  virtual cSize capacity() override { return capacity_; };
+  virtual cSize initialLen() override { return initialLen_; };
+
+  Array(Allocator& alloc, const Type& init, const cSize Capacity);
+  explicit Array(const Array& other);
+  Array& operator=(const Array& other);
+  // TODO: Move constructor???
+  ~Array();
 };
 
 // implements constructors
-template < typename ElementType, typename Allocator >
-Array< ElementType, Allocator >::~Array()
+template < typename Type, typename Allocator >
+Array< Type, Allocator >::~Array()
 {
   if(this->memBlock_.ptr)
   {
@@ -58,41 +58,41 @@ Array< ElementType, Allocator >::~Array()
   }
 }
 
-template < typename ElementType, typename Allocator >
-Array< ElementType, Allocator >::Array(const ElementType& init,
-                                       Allocator& alloc,
-                                       const cSize capacity)
-    : alloc_{alloc}
-    , firstPos_{0}
-    , lastPos_{capacity}
-    , length_{capacity}
-    , capacity_{capacity}
-    , array_{nullptr}
+template < typename Type, typename Allocator >
+Array< Type, Allocator >::Array(Allocator& alloc, const Type& init, const cSize Capacity)
+    : ArrayInterface< Type >()
+    , alloc_{alloc}
+    , capacity_{Capacity}
+    , initialLen_{Capacity}
     , init_{init}
     , memBlock_{nullptr, 0}
 {
-  this->array_ =
-      allocateType< ElementType, Allocator >(this->alloc_, this->memBlock_, this->capacity_);
+  this->array_ = allocateType< Type, Allocator >(this->alloc_, this->memBlock_, this->capacity_);
+  this->firstPos_ = 0;
+  this->lastPos_ = Capacity;
+  this->length_ = Capacity;
+
   std::fill(this->array_, (this->array_ + this->capacity_), this->init_);
 }
 
-template < typename ElementType, typename Allocator >
-Array< ElementType, Allocator >::Array(const Array& other)
-    : alloc_{other.alloc}
-    , firstPos_{other.firstPos_}
-    , lastPos_{other.lastPos_}
-    , length_{other.length_}
+template < typename Type, typename Allocator >
+Array< Type, Allocator >::Array(const Array& other)
+    : ArrayInterface< Type >(other)
+    , alloc_{other.alloc}
     , capacity_{other.capacity_}
-    , array_{nullptr}
+    , initialLen_{other.capacity_}
     , init_{other.init_}
     , memBlock_{nullptr, 0}
 {
+  this->firstPos_ = other.firstPos_;
+  this->lastPos_ = other.capacity_;
+  this->length_ = other.capacity_;
   this->array_ = allocateType(this->alloc_, this->memBlock_, this->capacity_);
   std::copy(other.array_, (other.array_ + this->capacity_), this->array_);
 }
 
-template < typename ElementType, typename Allocator >
-Array< ElementType, Allocator >& Array< ElementType, Allocator >::operator=(const Array& other)
+template < typename Type, typename Allocator >
+Array< Type, Allocator >& Array< Type, Allocator >::operator=(const Array& other)
 {
   if(this->memBlock_.ptr)
   {
@@ -104,7 +104,7 @@ Array< ElementType, Allocator >& Array< ElementType, Allocator >::operator=(cons
   this->lastPos_ = other.lastPos_;
   this->length_ = other.length_;
   this->capacity_ = other.capacity_;
-  this->array_ = nullptr;
+  this->initialLen_ = other.capacity_;
   this->init_ = other.init_;
   this->memBlock_ = {nullptr, 0};
 
@@ -114,93 +114,98 @@ Array< ElementType, Allocator >& Array< ElementType, Allocator >::operator=(cons
   return *this;
 }
 
-template < typename ElementType, typename Allocator >
-bool Array< ElementType, Allocator >::resize(const cSize capacity)
-{
-  if(capacity > this->capacity_)
-  {
-    Blk newMemBlk;
-    ElementType* oldArray_ = this->array_;
-
-    this->array_ = allocateType< ElementType, Allocator >(this->alloc_, newMemBlk, capacity);
-    std::fill((this->array_ + this->capacity_ - 1), (this->array_ + capacity), this->init_);
-    std::copy(oldArray_, (oldArray_ + this->capacity_), this->array_);
-    this->length_ = capacity;
-    this->capacity_ = capacity;
-
-    if(this->memBlock_.ptr)
-    {
-      this->alloc_.deallocate(this->memBlock_);
-    }
-    this->memBlock_ = newMemBlk;
-
-    return true;
-  }
-  return false;
-}
-
-// accessor functions
-// Array:
-template < typename ElementType, typename Allocator >
-inline ElementType* at(Array< ElementType, Allocator >& container, cSize pos)
-{
-  m64 logicPos(container.capacity_, pos);
-  if(logicPos < container.length_)
-  {
-    logicPos += container.firstPos_;
-    return &(container.array_[logicPos.toInt()]);
-  }
-  return nullptr;
-}
-
-template < typename ElementType, typename Allocator >
-inline cSize len(Array< ElementType, Allocator >& container)
-{
-  return container.length_;
-}
-
-template < typename ElementType, typename Allocator >
-inline void clear(Array< ElementType, Allocator >& container, const ElementType& init)
-{
-  std::fill(container.array_, (container.array_ + container.capacity_), init);
-  container.firstPos_ = 0;
-  container.lastPos_ = container.reserve_;
-  container.length_ = container.reserve_;
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // DEQ : dynamic double ended queue with random accessor
 ///////////////////////////////////////////////////////////////////////////////
 
 // declarations
-template < typename ElementType, typename Allocator >
-struct DEQ : public Array< ElementType, Allocator >
+template < typename Type, typename Allocator, bool canOverwrite = false >
+struct DEQ : public DEQInterface< Type >
 {
-  DEQ(const ElementType& init, Allocator& alloc, const cSize capacity);
-  explicit DEQ(const DEQ& other);
-  ~DEQ();
+  using ElementType = Type;
+  using AllocatorType = Allocator;
 
+  Allocator& alloc_;
+  cSize capacity_;
+  cSize initialLen_;
+  Type init_;
+  Blk memBlock_;
   DEQ() = delete;
-  // DEQ& operator=(const DEQ& other);
-  // bool resize(const cSize capacity);
+
+  virtual cSize capacity() override { return capacity_; };
+  virtual cSize initialLen() override { return initialLen_; };
+
+  DEQ(Allocator& alloc, const Type& init, const cSize Capacity);
+  explicit DEQ(const DEQ& other);
+  DEQ& operator=(const DEQ& other);
   // TODO: Move constructor???
+  ~DEQ();
 };
 
-template < typename ElementType, typename Allocator >
-DEQ< ElementType, Allocator >::DEQ(const ElementType& init, Allocator& alloc, const cSize capacity)
-    : Array< ElementType, Allocator >(init, alloc, capacity)
+template < typename Type, typename Allocator, bool canOverwrite >
+DEQ< Type, Allocator, canOverwrite >::~DEQ()
 {
+  if(this->memBlock_.ptr)
+  {
+    this->alloc_.deallocate(this->memBlock_);
+  }
 }
 
-template < typename ElementType, typename Allocator >
-DEQ< ElementType, Allocator >::DEQ(const DEQ& other)
-    : Array< ElementType, Allocator >(other)
+template < typename Type, typename Allocator, bool canOverwrite >
+DEQ< Type, Allocator, canOverwrite >::DEQ(Allocator& alloc, const Type& init, const cSize Capacity)
+    : DEQInterface< Type >()
+    , alloc_{alloc}
+    , capacity_{Capacity}
+    , initialLen_{0}
+    , init_{init}
+    , memBlock_{nullptr, 0}
 {
+  // DEQInterface inits firstPos_=0, lastPos_=0, length_=0, array_=nullptr, canOverwrite_=false
+  this->canOverwrite_ = canOverwrite;
+  this->array_ = allocateType< Type, Allocator >(this->alloc_, this->memBlock_, this->capacity_);
+
+  std::fill(this->array_, (this->array_ + this->capacity_), this->init_);
 }
 
-template < typename ElementType, typename Allocator >
-DEQ< ElementType, Allocator >::~DEQ()
+template < typename Type, typename Allocator, bool canOverwrite >
+DEQ< Type, Allocator, canOverwrite >::DEQ(const DEQ& other)
+    : DEQInterface< Type >(other)
+    , alloc_{other.alloc}
+    , capacity_{other.capacity_}
+    , initialLen_{0}
+    , init_{other.init_}
+    , memBlock_{nullptr, 0}
 {
+  // DEQInterface copies firstPos_=other, lastPos_=other, length_=other, array_=nullptr,
+  // canOverwrite_=false
+  this->canOverwrite_ = other.canOverwrite_;
+  this->array_ = allocateType(this->alloc_, this->memBlock_, this->capacity_);
+  std::copy(other.array_, (other.array_ + this->capacity_), this->array_);
+}
+
+template < typename Type, typename Allocator, bool canOverwrite >
+DEQ< Type, Allocator, canOverwrite >& DEQ< Type, Allocator, canOverwrite >::
+operator=(const DEQ& other)
+{
+  if(this->memBlock_.ptr)
+  {
+    this->alloc_.deallocate(this->memBlock);
+  }
+
+  this->alloc_ = other.alloc;
+  this->firstPos_ = other.firstPos_;
+  this->lastPos_ = other.lastPos_;
+  this->length_ = other.length_;
+  this->capacity_ = other.capacity_;
+  this->initialLen_ = other.initialLen_;
+  this->canOverwrite_ = other.canOverwrite_;
+  this->init_ = other.init_;
+  this->memBlock_ = {nullptr, 0};
+
+  this->array_ = allocateType(this->alloc_, this->memBlock_, this->capacity_);
+  std::copy(other.array_, (other.array_ + this->capacity_), this->array_);
+
+  return *this;
 }
 
 /*
@@ -217,16 +222,16 @@ back() -> top()
 ///////////////////////////////////////////////////////////////////////////////
 
 // declarations
-template < typename ElementType, bool allowMultiple >
+template < typename Type, bool allowMultiple >
 struct HashTable // : Array ???should this inherite from Array???
 {
   const bool allowMultiple_{allowMultiple};
 
   HashTable() = delete;
-  explicit HashTable(Allocator& alloc, const ElementType& init);
+  explicit HashTable(Allocator& alloc, const Type& init);
   explicit HashTable(const HashTable& other);
   HashTable& operator=(const HashTable& other);
-  bool resize(const cSize capacity);
+  // bool resize(const cSize Capacity);
   // TODO: Move constructor???
 };
 /*
@@ -242,19 +247,52 @@ keys()
 ///////////////////////////////////////////////////////////////////////////////
 
 // declarations
-template < typename ElementType >
+template < typename Type >
 struct Heap // : Array ???should this inherite from Array???
 {
   Heap() = delete;
-  explicit Heap(Allocator& alloc, const ElementType& init);
+  explicit Heap(Allocator& alloc, const Type& init);
   explicit Heap(const Heap& other);
   Heap& operator=(const Heap& other);
-  bool resize(const cSize capacity);
+  // bool resize(const cSize Capacity);
   // TODO: Move constructor???
 };
 /*
 ??? what kind of accessor is needed ???
 */
+
+///////////////////////////////////////////////////////////////////////////////
+// Resize: for linear containers
+///////////////////////////////////////////////////////////////////////////////
+template < typename Container >
+bool resize(Container& container, const cSize Capacity)
+{
+  using Type = typename Container::ElementType;
+  using Allocator = typename Container::AllocatorType;
+
+  if(Capacity > container.capacity_)
+  {
+    Blk newMemBlk;
+    typename Container::ElementType* oldArray_ = container.array_;
+
+    container.array_ = allocateType< Type, Allocator >(container.alloc_, newMemBlk, Capacity);
+    std::fill((container.array_ + container.capacity_ - 1),
+              (container.array_ + Capacity),
+              container.init_);
+    std::copy(oldArray_, (oldArray_ + container.capacity_), container.array_);
+    container.length_ = Capacity;
+    container.capacity_ = Capacity;
+
+    if(container.memBlock_.ptr)
+    {
+      container.alloc_.deallocate(container.memBlock_);
+    }
+    container.memBlock_ = newMemBlk;
+
+    return true;
+  }
+  return false;
+}
 
 } // end namespace Utils
 
