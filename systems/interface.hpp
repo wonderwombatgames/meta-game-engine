@@ -8,8 +8,8 @@
 #ifndef SYSTEM_INTERFACE_HPP
 #define SYSTEM_INTERFACE_HPP
 
-#include "component_binder.hpp"
-#include "entities_manager.hpp"
+#include "base/entities_manager.hpp"
+#include "components/binder.hpp"
 
 namespace W2E
 {
@@ -22,7 +22,7 @@ class SystemsInterface
 public:
   SystemsInterface() = delete;
   SystemsInterface(SystemsInterface& other) = delete;
-  SystemsInterface(const char* name)
+  explicit SystemsInterface(const char* name)
       : name_(name)
   {
     bool succeded = false;

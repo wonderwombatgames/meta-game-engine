@@ -2,10 +2,10 @@
   * base entities data component
   */
 
-#ifndef GRAPHIC_COMPONENT_HPP
-#define GRAPHIC_COMPONENT_HPP
+#ifndef COMPONENT_GRAPHIC_HPP
+#define COMPONENT_GRAPHIC_HPP
 
-#include "utils_colour.hpp"
+#include "utils/colour.hpp"
 
 namespace W2E
 {
@@ -53,7 +53,7 @@ class Image : public GraphicInterface
 public:
   Image(Image& other) = delete;
   Image();
-  Image(const String& filepath);
+  explicit Image(const String& filepath);
   // TODO:
   // Image(const ImageAtlas & atlas, vector<AtlasKey> keys);
   // Image(const NetworkResource & netRes);
@@ -82,4 +82,4 @@ protected:
 
 } // end namespace W2E
 
-#endif // GRAPHIC_COMPONENT_HPP
+#endif // COMPONENT_GRAPHIC_HPP

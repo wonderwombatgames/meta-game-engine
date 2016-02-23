@@ -8,8 +8,8 @@
 #ifndef ENTITY_BASE_HPP
 #define ENTITY_BASE_HPP
 
-#include "utils_types.hpp"
-#include "component_binder.hpp"
+#include "components/binder.hpp"
+#include "utils/types.hpp"
 namespace W2E
 {
 
@@ -47,7 +47,7 @@ public:
   // friend class SystemsInterface;
 
   // ctors and dtor
-  EntityBase(EntityID id);
+  explicit EntityBase(EntityID id);
   EntityBase() = delete;
   EntityBase(EntityBase& other) = delete;
   virtual ~EntityBase();

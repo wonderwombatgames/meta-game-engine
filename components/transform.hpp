@@ -2,10 +2,10 @@
   * transform data component
   */
 
-#ifndef TRANSFORM_COMPONENT_HPP
-#define TRANSFORM_COMPONENT_HPP
+#ifndef COMPONENT_TRANSFORM_HPP
+#define COMPONENT_TRANSFORM_HPP
 
-#include "utils_types.hpp"
+#include "utils/types.hpp"
 
 namespace W2E
 {
@@ -42,4 +42,4 @@ struct TransformPod
 
 } // end namespace W2E
 
-#endif // TRANSFORM_COMPONENT_HPP
+#endif // COMPONENT_TRANSFORM_HPP

@@ -5,8 +5,8 @@
 #ifndef SYSTEM_INPUT_HPP
 #define SYSTEM_INPUT_HPP
 
-#include "system_interface.hpp"
-#include "component_input.hpp"
+#include "components/input.hpp"
+#include "systems/interface.hpp"
 
 namespace W2E
 {
@@ -24,7 +24,7 @@ class Input : public SystemsInterface
 {
 public:
   Input();
-  Input(const char* name);
+  explicit Input(const char* name);
   Input(Input& other) = delete;
   virtual ~Input();
 

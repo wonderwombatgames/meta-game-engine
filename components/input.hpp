@@ -3,10 +3,10 @@
   *
   */
 
-#ifndef PHYSICS_COMPONENT_HPP
-#define PHYSICS_COMPONENT_HPP
+#ifndef COMPONENT_INPUT_HPP
+#define COMPONENT_INPUT_HPP
 
-#include "utils_types.hpp"
+#include "utils/types.hpp"
 
 namespace W2E
 {
@@ -83,4 +83,4 @@ public:
 
 } // end namespace W2E
 
-#endif // PHYSICS_COMPONENT_HPP
+#endif // COMPONENT_INPUT_HPP

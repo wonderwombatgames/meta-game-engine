@@ -5,8 +5,8 @@
 #ifndef SYSTEM_TRANSFORM_HPP
 #define SYSTEM_TRANSFORM_HPP
 
-#include "system_interface.hpp"
-#include "component_transform.hpp"
+#include "components/transform.hpp"
+#include "systems/interface.hpp"
 
 namespace W2E
 {
@@ -20,7 +20,7 @@ class Transform : public SystemsInterface
 {
 public:
   Transform();
-  Transform(const char* name);
+  explicit Transform(const char* name);
   Transform(Transform& other) = delete;
   virtual ~Transform();
 

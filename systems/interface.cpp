@@ -3,7 +3,7 @@
   *
   */
 
-#include "system_interface.hpp"
+#include "systems/interface.hpp"
 
 namespace W2E
 {

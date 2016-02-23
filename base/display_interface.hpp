@@ -3,10 +3,10 @@
   *
   */
 
-#ifndef DISPLAY_INTERFACE_HPP
-#define DISPLAY_INTERFACE_HPP
+#ifndef BASE_DISPLAY_INTERFACE_HPP
+#define BASE_DISPLAY_INTERFACE_HPP
 
-#include "utils_colour.hpp"
+#include "utils/colour.hpp"
 
 namespace W2E
 {
@@ -37,4 +37,4 @@ public:
 
 } // end namespace W2E
 
-#endif // DISPLAY_INTERFACE_HPP
+#endif // BASE_DISPLAY_INTERFACE_HPP

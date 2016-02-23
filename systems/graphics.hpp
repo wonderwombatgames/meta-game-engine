@@ -7,10 +7,10 @@
 #define GRAPHIC_SYSTEMS_HPP
 
 // #include "utils_colour.hpp"
-#include "component_graphic.hpp"
-#include "component_transform.hpp"
-#include "display_interface.hpp"
-#include "system_interface.hpp"
+#include "base/display_interface.hpp"
+#include "components/graphic.hpp"
+#include "components/transform.hpp"
+#include "systems/interface.hpp"
 
 namespace W2E
 {
@@ -29,7 +29,7 @@ public:
   DisplayHandler display;
 
   Graphics();
-  Graphics(const char* name);
+  explicit Graphics(const char* name);
   Graphics(Graphics& other) = delete;
   virtual ~Graphics();
 

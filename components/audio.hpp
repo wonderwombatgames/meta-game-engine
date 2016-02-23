@@ -3,10 +3,10 @@
   *
   */
 
-#ifndef AUDIO_COMPONENT_HPP
-#define AUDIO_COMPONENT_HPP
+#ifndef COMPONENT_AUDIO_HPP
+#define COMPONENT_AUDIO_HPP
 
-#include "utils_types.hpp"
+#include "utils/types.hpp"
 
 namespace W2E
 {
@@ -33,4 +33,4 @@ struct Audio
 
 } // end namespace W2E
 
-#endif // AUDIO_COMPONENT_HPP
+#endif // COMPONENT_AUDIO_HPP

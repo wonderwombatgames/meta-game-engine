@@ -2,7 +2,7 @@
   *
   */
 
-#include "system_input.hpp"
+#include "systems/input.hpp"
 
 namespace W2E
 {
@@ -36,7 +36,6 @@ ComponentBinderPtr Input::getComponentBinder(ResourceID resourceId)
   }
   return retVal;
 }
-
 
 } // end namespace System;
 

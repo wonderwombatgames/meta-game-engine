@@ -8,7 +8,7 @@
 #ifndef COMPONENT_BINDER_HPP
 #define COMPONENT_BINDER_HPP
 
-#include "utils_types.hpp"
+#include "utils/types.hpp"
 
 namespace W2E
 {

@@ -1,5 +1,5 @@
-#include "system_graphics.hpp"
-#include "component_transform.hpp"
+#include "systems/graphics.hpp"
+#include "components/transform.hpp"
 
 #include <iostream>
 
