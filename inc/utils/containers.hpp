@@ -15,8 +15,6 @@ namespace W2E
 namespace Utils
 {
 
-// declarations
-
 ///////////////////////////////////////////////////////////////////////////////
 // Array
 ///////////////////////////////////////////////////////////////////////////////
@@ -47,6 +45,7 @@ ArrayInterface< Type >::ArrayInterface()
     , lastPos_{0}
     , length_{0}
     , array_{nullptr}
+    , init_{}
 {
 }
 
@@ -56,6 +55,7 @@ ArrayInterface< Type >::ArrayInterface(ArrayInterface& other)
     , lastPos_{other.lastPos_}
     , length_{other.length_}
     , array_{nullptr}
+    , init_{}
 {
 }
 
@@ -66,6 +66,7 @@ ArrayInterface< Type >& ArrayInterface< Type >::operator=(const ArrayInterface< 
   this->lastPos_ = other.lastPos_;
   this->length_ = other.length_;
   this->array_ = nullptr;
+  this->init_ = other.init_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -109,9 +110,6 @@ DEQInterface< Type >& DEQInterface< Type >::operator=(DEQInterface< Type >& othe
 template < typename Type >
 struct ListInterface
 {
-  virtual cSize capacity() = 0;
-  virtual cSize initialLen() = 0;
-
   struct ElementType
   {
     Type data;
@@ -127,6 +125,7 @@ struct ListInterface
   virtual ~ListInterface(){};
   ListInterface();
   explicit ListInterface(ListInterface& other);
+  ListInterface& operator=(const ListInterface& other);
 };
 
 template < typename Type >
@@ -148,11 +147,10 @@ ListInterface< Type >::ListInterface(ListInterface& other)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Acessors
+// Accessors
 ///////////////////////////////////////////////////////////////////////////////
-// FIXME: change at, front, back, pop and push to match STL interface.
-// at, front and bacck return a reference
-// pop and push just remove the items and return nothing
+// NOTE: change at, front, back to match STL interface?
+// at, front and back return a reference
 
 // Array
 template < typename Type >
@@ -184,7 +182,7 @@ inline void clear(ArrayInterface< Type >& container)
 
 // DEQ
 template < typename Type >
-inline ErrorCode push(DEQInterface< Type >& container, const Type& el)
+inline ErrorCode push_back(DEQInterface< Type >& container, const Type& el)
 {
   if((container.length_ < container.capacity()) || container.canOverwrite_)
   {
@@ -205,48 +203,6 @@ inline ErrorCode push(DEQInterface< Type >& container, const Type& el)
     return NO_ERROR;
   }
   return UNKNOWN_ERROR;
-}
-
-template < typename Type >
-inline Type pop(DEQInterface< Type >& container, Type fallback)
-{
-  m64 mm(container.capacity(), 0);
-  if(container.length_ > 0)
-  {
-    cSize previousPos = container.lastPos_;
-    mm = container.length_;
-    container.length_ = (--mm).toInt();
-    mm = container.lastPos_;
-    container.lastPos_ = (--mm).toInt();
-    return container.array_[previousPos];
-  }
-  return fallback;
-}
-
-template < typename Type >
-inline Type* bot(DEQInterface< Type >& container)
-{
-  if(container.length_ > 0)
-  {
-    return &(container.array_[container.firstPos_]);
-  }
-  return nullptr;
-}
-
-template < typename Type >
-inline Type* top(DEQInterface< Type >& container)
-{
-  if(container.length_ > 0)
-  {
-    return &(container.array_[container.lastPos_]);
-  }
-  return nullptr;
-}
-
-template < typename Type >
-inline ErrorCode push_back(DEQInterface< Type >& container, const Type& el)
-{
-  return push(container, el);
 }
 
 template < typename Type >
@@ -274,13 +230,24 @@ inline ErrorCode push_front(DEQInterface< Type >& container, const Type& el)
 }
 
 template < typename Type >
-inline Type pop_back(DEQInterface< Type >& container, Type fallback)
+inline ErrorCode pop_back(DEQInterface< Type >& container)
 {
-  return pop(container, fallback);
+  m64 mm(container.capacity(), 0);
+  if(container.length_ > 0)
+  {
+    cSize previousPos = container.lastPos_;
+    mm = container.length_;
+    container.length_ = (--mm).toInt();
+    mm = container.lastPos_;
+    container.lastPos_ = (--mm).toInt();
+
+    return NO_ERROR;
+  }
+  return UNKNOWN_ERROR;
 }
 
 template < typename Type >
-inline Type pop_front(DEQInterface< Type >& container, Type fallback)
+inline ErrorCode pop_front(DEQInterface< Type >& container)
 {
   m64 mm(container.capacity(), 0);
   if(container.length_ > 0)
@@ -293,21 +260,29 @@ inline Type pop_front(DEQInterface< Type >& container, Type fallback)
     mm = container.firstPos_;
     container.firstPos_ = (++mm).toInt();
 
-    return container.array_[previousPos];
+    return NO_ERROR;
   }
-  return fallback;
+  return UNKNOWN_ERROR;
 }
 
 template < typename Type >
 inline Type* front(DEQInterface< Type >& container)
 {
-  return bot(container);
+  if(container.length_ > 0)
+  {
+    return &(container.array_[container.firstPos_]);
+  }
+  return nullptr;
 }
 
 template < typename Type >
 inline Type* back(DEQInterface< Type >& container)
 {
-  return top(container);
+  if(container.length_ > 0)
+  {
+    return &(container.array_[container.lastPos_]);
+  }
+  return nullptr;
 }
 
 // List
@@ -339,127 +314,137 @@ inline void clear(ListInterface< Type >& container)
 }
 
 template < typename Type >
-inline void push_front(ListInterface< Type >& container, const Type& element)
+inline ErrorCode push_front(ListInterface< Type >& container, const Type& element)
 {
-  typename ListInterface< Type >::ElementType* newElement = container.free_;
-  container.free_ = container.free_->next;
-  newElement->data = element;
-  newElement->next = container.head_;
-  newElement->prev = nullptr;
-  container.head_->pre = newElement;
-  container.head_ = newElement;
-
-  ++container.length_;
-}
-
-template < typename Type >
-inline void push_back(ListInterface< Type >& container, const Type& element)
-{
-  typename ListInterface< Type >::ElementType* newElement = container.free_;
-  container.free_ = container.free_->next;
-  newElement->data = element;
-  newElement->next = nullptr;
-  newElement->prev = container.tail_;
-  container.tail_->next = newElement;
-  container.tail_ = newElement;
-
-  ++container.length_;
-}
-
-template < typename Type >
-inline Type pop_front(ListInterface< Type >& container)
-{
-  typename ListInterface< Type >::ElementType* iterator = container.head_;
-
-  container.head_ = iterator->next;
-  container.free_->prev = iterator;
-  iterator->next = container.free_;
-  iterator->prev = nullptr;
-  container.free = iterator;
-
-  --container.length_;
-  return iterator->data;
-}
-
-template < typename Type >
-inline Type pop_back(ListInterface< Type >& container)
-{
-  typename ListInterface< Type >::ElementType* iterator = container.tail_;
-
-  container.tail_ = iterator->prev;
-  container.free_->prev = iterator;
-  iterator->next = container.free_;
-  iterator->prev = nullptr;
-  container.free = iterator;
-
-  --container.length_;
-  return iterator->data;
-}
-
-template < typename Type >
-inline bool insert(ListInterface< Type >& container,
-                   const typename ListInterface< Type >::ElementType* cursor,
-                   const Type& element)
-{
-  typename ListInterface< Type >::ElementType* iterator = container.head_;
-  do
+  if(container.free_)
   {
-    if(iterator == element)
-    {
-      typename ListInterface< Type >::ElementType* newElement = container.free_;
-      container.free_ = container.free_->next;
-      newElement->data = element;
-      newElement->next = iterator->next;
-      newElement->prev = iterator;
-      iterator->next = newElement;
-      ++container.length_;
+    typename ListInterface< Type >::ElementType* newElement = container.free_;
+    container.free_ = container.free_->next;
+    newElement->data = element;
+    newElement->next = container.head_;
+    newElement->prev = nullptr;
+    container.head_->pre = newElement;
+    container.head_ = newElement;
 
-      return true;
-    }
-    iterator = iterator->next;
-  } while(iterator != nullptr);
+    ++container.length_;
 
-  return false;
+    return NO_ERROR;
+  }
+  return UNKNOWN_ERROR;
 }
 
 template < typename Type >
-inline bool remove(ListInterface< Type >& container,
-                   const typename ListInterface< Type >::ElementType* element)
+inline ErrorCode push_back(ListInterface< Type >& container, const Type& element)
 {
-  typename ListInterface< Type >::ElementType* iterator = container.head_;
-  if(iterator == element)
+  if(container.free_)
   {
+    typename ListInterface< Type >::ElementType* newElement = container.free_;
+    container.free_ = container.free_->next;
+    newElement->data = element;
+    newElement->next = nullptr;
+    newElement->prev = container.tail_;
+    container.tail_->next = newElement;
+    container.tail_ = newElement;
+
+    ++container.length_;
+
+    return NO_ERROR;
+  }
+  return UNKNOWN_ERROR;
+}
+
+template < typename Type >
+inline ErrorCode pop_front(ListInterface< Type >& container)
+{
+  if(container.head_)
+  {
+    typename ListInterface< Type >::ElementType* iterator = container.head_;
+
     container.head_ = iterator->next;
     container.free_->prev = iterator;
     iterator->next = container.free_;
     iterator->prev = nullptr;
     container.free = iterator;
+
     --container.length_;
 
-    return true;
+    return NO_ERROR;
   }
-  else
-  {
-    do
-    {
-      iterator = iterator->next;
-      if(iterator == element)
-      {
-        iterator->prev->next = iterator->next;
-        iterator->next->prev = iterator->prev;
-        container.free_->prev = iterator;
-        iterator->next = container.free_;
-        iterator->prev = nullptr;
-        container.free = iterator;
-        --container.length_;
-
-        return true;
-      }
-    } while(iterator != container.tail);
-  }
-  return false;
+  return UNKNOWN_ERROR;
 }
-// TODO: missing front and back
+
+template < typename Type >
+inline ErrorCode pop_back(ListInterface< Type >& container)
+{
+  if(container.tail_)
+  {
+    typename ListInterface< Type >::ElementType* iterator = container.tail_;
+
+    container.tail_ = iterator->prev;
+    container.free_->prev = iterator;
+    iterator->next = container.free_;
+    iterator->prev = nullptr;
+    container.free = iterator;
+
+    --container.length_;
+
+    return NO_ERROR;
+  }
+  return UNKNOWN_ERROR;
+}
+
+template < typename Type >
+inline typename ListInterface< Type >::ElementType* back(ListInterface< Type >& container)
+{
+  return container.tail_;
+}
+
+template < typename Type >
+inline typename ListInterface< Type >::ElementType* front(ListInterface< Type >& container)
+{
+  return container.head_;
+}
+
+template < typename Type >
+inline ErrorCode remove(ListInterface< Type >& container,
+                        const typename ListInterface< Type >::ElementType* element)
+{
+  if(container.head_)
+  {
+    typename ListInterface< Type >::ElementType* iterator = container.head_;
+    if(iterator == element)
+    {
+      container.head_ = iterator->next;
+      container.free_->prev = iterator;
+      iterator->next = container.free_;
+      iterator->prev = nullptr;
+      container.free = iterator;
+      --container.length_;
+
+      return NO_ERROR;
+    }
+    else
+    {
+      do
+      {
+        iterator = iterator->next;
+        if(iterator == element)
+        {
+          iterator->prev->next = iterator->next;
+          iterator->next->prev = iterator->prev;
+          container.free_->prev = iterator;
+          iterator->next = container.free_;
+          iterator->prev = nullptr;
+          container.free = iterator;
+          --container.length_;
+
+          return NO_ERROR;
+        }
+      } while(iterator != container.tail);
+    }
+  }
+  return UNKNOWN_ERROR;
+}
 
 } // end namespace Utils
 

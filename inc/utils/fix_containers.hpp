@@ -164,6 +164,22 @@ template < cSize Capacity >
 using FixedBitMap = FixedArray< u8, (Capacity >> 3) >;
 
 ///////////////////////////////////////////////////////////////////////////////
+// List : Fixed size double linked list
+///////////////////////////////////////////////////////////////////////////////
+
+template < typename Type, cSize Capacity >
+struct FixedList : public ListInterface< Type >
+{
+
+  FixedList() = delete;
+  explicit FixedList(const Type& init);
+  FixedList(const FixedList& other);
+  FixedList& operator=(const FixedList& other);
+  // TODO: Move constructor???
+  virtual ~FixedList() {}
+};
+
+///////////////////////////////////////////////////////////////////////////////
 // Accessor fucntions
 ///////////////////////////////////////////////////////////////////////////////
 

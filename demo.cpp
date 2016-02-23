@@ -2,16 +2,16 @@
   *
   */
 
-#include <iostream>
 #include <cmath>
+#include <iostream>
 
 #include <SDL2/SDL.h>
 
-#include "entities_manager.hpp"
-#include "backend_handler_sdl.hpp"
-#include "system_graphics.hpp"
-#include "system_transform.hpp"
-#include "system_input.hpp"
+#include "backends/handler_sdl.hpp"
+#include "base/entities_manager.hpp"
+#include "systems/graphics.hpp"
+#include "systems/input.hpp"
+#include "systems/transform.hpp"
 
 using namespace W2E;
 using namespace std;
@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
   System::Input controls;
   cout << "!!!OK - " << ++testcount_ << " => Started Iput System. " << endl;
 
-  ResourceID wasd = controls.loadComponent<Component::WasdInput>();
+  ResourceID wasd = controls.loadComponent< Component::WasdInput >();
   cout << "!!!OK - " << ++testcount_ << " => Loaded WASD input control " << endl;
 
   DisplayHandler view = graphics.createDisplay({{{0.0, 0.0}}, {{320.0, 240.0}}});
@@ -52,9 +52,7 @@ int main(int argc, char* argv[])
        << endl;
 
   controls.bindComponent(wasd)->toEntity(em->registrar(playerId));
-  cout << "!!!OK - " << ++testcount_ << " => assigned wasd input to base entity "
-       << endl;
-
+  cout << "!!!OK - " << ++testcount_ << " => assigned wasd input to base entity " << endl;
 
 #if 0 // just basic features test
 
