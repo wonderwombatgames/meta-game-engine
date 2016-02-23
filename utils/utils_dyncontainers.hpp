@@ -34,7 +34,6 @@ struct Array : public ArrayInterface< Type >
   Allocator& alloc_;
   cSize capacity_;
   cSize initialLen_;
-  Type init_;
   Blk memBlock_;
   Array() = delete;
 
@@ -64,9 +63,9 @@ Array< Type, Allocator >::Array(Allocator& alloc, const Type& init, const cSize 
     , alloc_{alloc}
     , capacity_{Capacity}
     , initialLen_{Capacity}
-    , init_{init}
     , memBlock_{nullptr, 0}
 {
+  this->init_ = init;
   this->array_ = allocateType< Type, Allocator >(this->alloc_, this->memBlock_, this->capacity_);
   this->firstPos_ = 0;
   this->lastPos_ = Capacity;
@@ -81,12 +80,12 @@ Array< Type, Allocator >::Array(const Array& other)
     , alloc_{other.alloc}
     , capacity_{other.capacity_}
     , initialLen_{other.capacity_}
-    , init_{other.init_}
     , memBlock_{nullptr, 0}
 {
   this->firstPos_ = other.firstPos_;
   this->lastPos_ = other.capacity_;
   this->length_ = other.capacity_;
+  this->init_ = other.init_;
   this->array_ = allocateType(this->alloc_, this->memBlock_, this->capacity_);
   std::copy(other.array_, (other.array_ + this->capacity_), this->array_);
 }

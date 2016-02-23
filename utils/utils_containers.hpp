@@ -33,6 +33,7 @@ struct ArrayInterface
   cSize lastPos_;
   cSize length_;
   Type* array_;
+  Type init_;
 
   virtual ~ArrayInterface() {}
   ArrayInterface();
@@ -102,11 +103,56 @@ DEQInterface< Type >& DEQInterface< Type >::operator=(DEQInterface< Type >& othe
   this->canOverwrite_ = other.canOverwrite_;
 }
 
-// TODO: Need List???
+///////////////////////////////////////////////////////////////////////////////
+// List
+///////////////////////////////////////////////////////////////////////////////
+template < typename Type >
+struct ListInterface
+{
+  virtual cSize capacity() = 0;
+  virtual cSize initialLen() = 0;
+
+  struct ElementType
+  {
+    Type data;
+    ElementType* next;
+    ElementType* prev;
+  };
+
+  cSize length_;
+  ElementType* head_;
+  ElementType* tail_;
+  ElementType* free_;
+
+  virtual ~ListInterface(){};
+  ListInterface();
+  explicit ListInterface(ListInterface& other);
+};
+
+template < typename Type >
+ListInterface< Type >::ListInterface()
+    : length_{0}
+    , head_{nullptr}
+    , tail_{nullptr}
+    , free_{nullptr}
+{
+}
+
+template < typename Type >
+ListInterface< Type >::ListInterface(ListInterface& other)
+    : length_{0}
+    , head_{nullptr}
+    , tail_{nullptr}
+    , free_{nullptr}
+{
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Acessors
 ///////////////////////////////////////////////////////////////////////////////
+// FIXME: change at, front, back, pop and push to match STL interface.
+// at, front and bacck return a reference
+// pop and push just remove the items and return nothing
 
 // Array
 template < typename Type >
@@ -128,9 +174,9 @@ inline cSize len(ArrayInterface< Type >& container)
 }
 
 template < typename Type >
-inline void clear(ArrayInterface< Type >& container, const Type& init)
+inline void clear(ArrayInterface< Type >& container)
 {
-  std::fill(container.array_, (container.array_ + container.capacity()), init);
+  std::fill(container.array_, (container.array_ + container.capacity()), container.init);
   container.firstPos_ = 0;
   container.lastPos_ = container.initialLen();
   container.length_ = container.initialLen();
@@ -263,6 +309,157 @@ inline Type* back(DEQInterface< Type >& container)
 {
   return top(container);
 }
+
+// List
+template < typename Type >
+inline cSize len(ListInterface< Type >& container)
+{
+  return container.length_;
+}
+
+template < typename Type >
+inline void clear(ListInterface< Type >& container)
+{
+  container.length_ = 0;
+  if(container.head_)
+  {
+    if(!container.free_)
+    {
+      container.free_ = container.head_;
+      container.head_ = nullptr;
+    }
+    else
+    {
+      container.free_->next = container.head_;
+      container.head_->prev = container.free_;
+      container.head_ = nullptr;
+    }
+  }
+  container.tail_ = nullptr;
+}
+
+template < typename Type >
+inline void push_front(ListInterface< Type >& container, const Type& element)
+{
+  typename ListInterface< Type >::ElementType* newElement = container.free_;
+  container.free_ = container.free_->next;
+  newElement->data = element;
+  newElement->next = container.head_;
+  newElement->prev = nullptr;
+  container.head_->pre = newElement;
+  container.head_ = newElement;
+
+  ++container.length_;
+}
+
+template < typename Type >
+inline void push_back(ListInterface< Type >& container, const Type& element)
+{
+  typename ListInterface< Type >::ElementType* newElement = container.free_;
+  container.free_ = container.free_->next;
+  newElement->data = element;
+  newElement->next = nullptr;
+  newElement->prev = container.tail_;
+  container.tail_->next = newElement;
+  container.tail_ = newElement;
+
+  ++container.length_;
+}
+
+template < typename Type >
+inline Type pop_front(ListInterface< Type >& container)
+{
+  typename ListInterface< Type >::ElementType* iterator = container.head_;
+
+  container.head_ = iterator->next;
+  container.free_->prev = iterator;
+  iterator->next = container.free_;
+  iterator->prev = nullptr;
+  container.free = iterator;
+
+  --container.length_;
+  return iterator->data;
+}
+
+template < typename Type >
+inline Type pop_back(ListInterface< Type >& container)
+{
+  typename ListInterface< Type >::ElementType* iterator = container.tail_;
+
+  container.tail_ = iterator->prev;
+  container.free_->prev = iterator;
+  iterator->next = container.free_;
+  iterator->prev = nullptr;
+  container.free = iterator;
+
+  --container.length_;
+  return iterator->data;
+}
+
+template < typename Type >
+inline bool insert(ListInterface< Type >& container,
+                   const typename ListInterface< Type >::ElementType* cursor,
+                   const Type& element)
+{
+  typename ListInterface< Type >::ElementType* iterator = container.head_;
+  do
+  {
+    if(iterator == element)
+    {
+      typename ListInterface< Type >::ElementType* newElement = container.free_;
+      container.free_ = container.free_->next;
+      newElement->data = element;
+      newElement->next = iterator->next;
+      newElement->prev = iterator;
+      iterator->next = newElement;
+      ++container.length_;
+
+      return true;
+    }
+    iterator = iterator->next;
+  } while(iterator != nullptr);
+
+  return false;
+}
+
+template < typename Type >
+inline bool remove(ListInterface< Type >& container,
+                   const typename ListInterface< Type >::ElementType* element)
+{
+  typename ListInterface< Type >::ElementType* iterator = container.head_;
+  if(iterator == element)
+  {
+    container.head_ = iterator->next;
+    container.free_->prev = iterator;
+    iterator->next = container.free_;
+    iterator->prev = nullptr;
+    container.free = iterator;
+    --container.length_;
+
+    return true;
+  }
+  else
+  {
+    do
+    {
+      iterator = iterator->next;
+      if(iterator == element)
+      {
+        iterator->prev->next = iterator->next;
+        iterator->next->prev = iterator->prev;
+        container.free_->prev = iterator;
+        iterator->next = container.free_;
+        iterator->prev = nullptr;
+        container.free = iterator;
+        --container.length_;
+
+        return true;
+      }
+    } while(iterator != container.tail);
+  }
+  return false;
+}
+// TODO: missing front and back
 
 } // end namespace Utils
 
