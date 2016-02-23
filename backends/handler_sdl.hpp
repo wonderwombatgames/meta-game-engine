@@ -6,11 +6,11 @@
 #ifndef BACKEND_HANDLER_SDL_HPP
 #define BACKEND_HANDLER_SDL_HPP
 
+#include "components/graphic.hpp"
+#include "systems/graphics.hpp"
+#include "utils/colour.hpp"
+#include "utils/types.hpp"
 #include <SDL2/SDL.h>
-#include "utils_types.hpp"
-#include "utils_colour.hpp"
-#include "system_graphics.hpp"
-#include "component_graphic.hpp"
 
 namespace W2E
 {

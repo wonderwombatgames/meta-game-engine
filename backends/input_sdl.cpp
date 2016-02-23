@@ -3,8 +3,8 @@
   *
   */
 
-#include "backend_handler_sdl.hpp"
-#include "system_input.hpp"
+#include "systems/input.hpp"
+#include "backends/handler_sdl.hpp"
 
 namespace W2E
 {

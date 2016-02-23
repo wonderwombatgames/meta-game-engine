@@ -6,8 +6,8 @@
 #include <algorithm>
 #include <cmath>
 
-#include "backend_handler_sdl.hpp"
-#include "system_graphics.hpp"
+#include "backends/handler_sdl.hpp"
+#include "systems/graphics.hpp"
 
 namespace
 {
