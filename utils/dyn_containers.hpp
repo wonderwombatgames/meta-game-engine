@@ -3,13 +3,13 @@
   *
   */
 
-#ifndef UTILS_DYNCONTAINERS_HPP
-#define UTILS_DYNCONTAINERS_HPP
+#ifndef UTILS_DYN_CONTAINERS_HPP
+#define UTILS_DYN_CONTAINERS_HPP
 
 #include <algorithm>
 
-#include "utils_containers.hpp"
-#include "utils_memory.hpp"
+#include "utils/containers.hpp"
+#include "utils/memory.hpp"
 
 namespace W2E
 {
@@ -297,4 +297,4 @@ bool resize(Container& container, const cSize Capacity)
 
 } // end namespace W2E
 
-#endif // UTILS_DYNCONTAINERS_HPP
+#endif // UTILS_DYN_CONTAINERS_HPP

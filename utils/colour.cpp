@@ -1,5 +1,6 @@
+#include "utils/colour.hpp"
+
 #include <algorithm>
-#include "utils_colour.hpp"
 
 namespace W2E
 {

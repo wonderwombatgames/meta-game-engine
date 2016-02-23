@@ -3,10 +3,10 @@
   *
   */
 
-#ifndef UTILS_FIXCONTAINERS_HPP
-#define UTILS_FIXCONTAINERS_HPP
+#ifndef UTILS_FIX_CONTAINERS_HPP
+#define UTILS_FIX_CONTAINERS_HPP
 
-#include "utils_containers.hpp"
+#include "utils/containers.hpp"
 
 namespace W2E
 {
@@ -69,8 +69,7 @@ FixedArray< Type, Capacity >::FixedArray(const FixedArray& other)
 }
 
 template < typename Type, cSize Capacity >
-FixedArray< Type, Capacity >& FixedArray< Type, Capacity >::
-operator=(const FixedArray& other)
+FixedArray< Type, Capacity >& FixedArray< Type, Capacity >::operator=(const FixedArray& other)
 {
   std::copy(
       other.array_, (other.array_ + std::min(other.capacity_, this->capacity_)), this->array_);
@@ -199,4 +198,4 @@ inline u8 bits(FixedBitMap< Capacity >& container, cSize pos)
 
 } // end namespace W2E
 
-#endif // UTILS_FIXCONTAINERS_HPP
+#endif // UTILS_FIX_CONTAINERS_HPP

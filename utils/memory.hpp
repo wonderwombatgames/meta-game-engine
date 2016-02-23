@@ -22,7 +22,7 @@
 
 #include <algorithm>
 
-#include "utils_types.hpp"
+#include "utils/types.hpp"
 
 namespace W2E
 {

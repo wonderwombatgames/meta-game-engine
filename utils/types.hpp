@@ -5,8 +5,8 @@
   *
   */
 
-#ifndef UTILSTYPES_HPP_
-#define UTILSTYPES_HPP_
+#ifndef UTILS_TYPES_HPP
+#define UTILS_TYPES_HPP
 
 #include <cassert>
 #include <cstdint>
@@ -400,4 +400,4 @@ enum eAudioState
 
 } // end namespace W2E
 
-#endif // UTILSTYPES_HPP_
+#endif // UTILS_TYPES_HPP

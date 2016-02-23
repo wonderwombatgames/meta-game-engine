@@ -6,7 +6,7 @@
 #ifndef UTILS_COLOUR_HPP
 #define UTILS_COLOUR_HPP
 
-#include "utils_types.hpp"
+#include "utils/types.hpp"
 
 namespace W2E
 {
@@ -96,8 +96,7 @@ struct ColourHex
 struct Colour
 {
   eColour kind;
-  union
-  {
+  union {
     ColourRGBA rgba;
     ColourHSLA hsla;
     ColourHSVA hsva;
