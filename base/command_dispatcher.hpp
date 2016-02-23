@@ -6,7 +6,7 @@
 #ifndef COMMAND_DISPATCHER_HPP
 #define COMMAND_DISPATCHER_HPP
 
-#include "command_interface.hpp"
+#include "base/command_interface.hpp"
 
 namespace W2E
 {

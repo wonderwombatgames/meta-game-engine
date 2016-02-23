@@ -2,7 +2,7 @@
   *
   */
 
-#include "command_dispatcher.hpp"
+#include "base/command_dispatcher.hpp"
 
 namespace W2E
 {

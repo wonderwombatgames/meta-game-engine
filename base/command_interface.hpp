@@ -6,7 +6,7 @@
 #ifndef COMMAND_INTERFACE_HPP
 #define COMMAND_INTERFACE_HPP
 
-#include "utils_types.hpp"
+#include "utils/types.hpp"
 
 namespace W2E
 {
@@ -25,8 +25,7 @@ enum eArgTag
 struct Args
 {
   eArgTag tag;
-  union
-  {
+  union {
     char c[8];
     i64 i;
     u64 u;

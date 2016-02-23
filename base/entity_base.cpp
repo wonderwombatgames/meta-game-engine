@@ -2,8 +2,8 @@
   *
   */
 
-#include "system_interface.hpp"
-#include "entity_base.hpp"
+#include "base/entity_base.hpp"
+#include "systems/interface.hpp"
 
 namespace W2E
 {

@@ -10,7 +10,7 @@
 
 #include <memory>
 
-#include "entity_base.hpp"
+#include "base/entity_base.hpp"
 
 namespace W2E
 {
