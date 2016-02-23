@@ -207,13 +207,22 @@ operator=(const DEQ& other)
   return *this;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// Tree : dynamic balanced tree containter (red-black)
+///////////////////////////////////////////////////////////////////////////////
+
+// declarations
+template < typename Type >
+struct Tree // : Array ???should this inherite from Array???
+{
+  Tree() = delete;
+  explicit Tree(Allocator& alloc, const Type& init);
+  explicit Tree(const Tree& other);
+  Tree& operator=(const Tree& other);
+  // TODO: Move constructor???
+};
 /*
-push_front()
-pop_front()
-push_back() -> push()
-pop_back() -> pop()
-front() -> bot()
-back() -> top()
+??? what kind of accessor is needed ???
 */
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -230,7 +239,6 @@ struct HashTable // : Array ???should this inherite from Array???
   explicit HashTable(Allocator& alloc, const Type& init);
   explicit HashTable(const HashTable& other);
   HashTable& operator=(const HashTable& other);
-  // bool resize(const cSize Capacity);
   // TODO: Move constructor???
 };
 /*
@@ -253,7 +261,6 @@ struct Heap // : Array ???should this inherite from Array???
   explicit Heap(Allocator& alloc, const Type& init);
   explicit Heap(const Heap& other);
   Heap& operator=(const Heap& other);
-  // bool resize(const cSize Capacity);
   // TODO: Move constructor???
 };
 /*
