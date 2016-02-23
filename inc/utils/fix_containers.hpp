@@ -180,6 +180,38 @@ struct FixedList : public ListInterface< Type >
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+// Tree : Fixed size tree containter (red-black)
+///////////////////////////////////////////////////////////////////////////////
+
+// declarations
+template < typename Type >
+struct FixedTree : public TreeInterface
+{
+  FixedTree() = delete;
+  explicit FixedTree(const Type& init);
+  FixedTree(const FixedTree& other);
+  FixedTree& operator=(const FixedTree& other);
+  // TODO: Move constructor???
+  virtual ~FixedTree() {}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// FixedTrie : Fixed size trie containter
+///////////////////////////////////////////////////////////////////////////////
+
+// declarations
+template < typename Type >
+struct FixedTrie : public TrieInterface
+{
+  FixedTrie() = delete;
+  explicit FixedTrie(const Type& init);
+  FixedTrie(const FixedTrie& other);
+  FixedTrie& operator=(const FixedTrie& other);
+  // TODO: Move constructor???
+  virtual ~FixedTrie() {}
+};
+
+///////////////////////////////////////////////////////////////////////////////
 // Accessor fucntions
 ///////////////////////////////////////////////////////////////////////////////
 

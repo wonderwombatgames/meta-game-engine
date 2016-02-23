@@ -146,11 +146,72 @@ ListInterface< Type >::ListInterface(ListInterface& other)
 {
 }
 
+template < typename Type >
+ListInterface< Type >& ListInterface< Type >::operator=(ListInterface< Type >& other)
+{
+  // FIXME: deep copy
+  // this->length_ = other.length_;
+  // this->head_   = other.head_;
+  // this->tail_   = other.tail_;
+  // this->free_   = other.free_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Tree
+///////////////////////////////////////////////////////////////////////////////
+
+template < typename Type >
+struct TreeInterface // : Array ???should this inherite from Array???
+{
+  enum Colour
+  {
+    Red,
+    Black,
+  };
+
+  struct ElementType
+  {
+    Type data;
+    Colour colour;
+    ElementType* parent;
+    ElementType* left;
+    ElementType* right;
+  };
+
+  cSize length_;
+  ElementType* root_;
+  ElementType* free_;
+
+  virtual ~TreeInterface(){};
+  TreeInterface();
+  explicit TreeInterface(const TreeInterface& other);
+  TreeInterface& operator=(const TreeInterface& other);
+  // TODO: Move constructor???
+};
+/*
+??? what kind of accessors are needed ???
+*/
+
+///////////////////////////////////////////////////////////////////////////////
+// Trie
+///////////////////////////////////////////////////////////////////////////////
+
+// declarations
+template < typename Type >
+struct TrieInterface
+{
+  virtual ~TrieInterface() {}
+  TrieInterface();
+  explicit TrieInterface(const TrieInterface& other);
+  TrieInterface& operator=(const TrieInterface& other);
+  // TODO: Move constructor???
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 // Accessors
 ///////////////////////////////////////////////////////////////////////////////
-// NOTE: change at, front, back to match STL interface?
-// at, front and back return a reference
+// NOTE: change at, front, back to match STL interface???
+// at, front and back return a reference not pointer...
 
 // Array
 template < typename Type >
@@ -286,6 +347,29 @@ inline Type* back(DEQInterface< Type >& container)
 }
 
 // List
+template < typename Type >
+inline typename ListInterface< Type >::ElementType* at(ListInterface< Type >& container, cSize pos)
+{
+  if(container.head_ && container.Length_ >= pos)
+  {
+    typename ListInterface< Type >::ElementType* iterator = container.head_;
+    cSize cursor = 0;
+    do
+    {
+      if(cursor == pos)
+      {
+        return iterator;
+      }
+      else
+      {
+        iterator = iterator->next;
+        ++cursor;
+      }
+    } while(iterator != nullptr && cursor < pos);
+  }
+  return nullptr;
+}
+
 template < typename Type >
 inline cSize len(ListInterface< Type >& container)
 {

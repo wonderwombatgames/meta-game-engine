@@ -44,7 +44,7 @@ struct Array : public ArrayInterface< Type >
   explicit Array(const Array& other);
   Array& operator=(const Array& other);
   // TODO: Move constructor???
-  ~Array();
+  virtual ~Array();
 };
 
 // implements constructors
@@ -138,7 +138,7 @@ struct DEQ : public DEQInterface< Type >
   explicit DEQ(const DEQ& other);
   DEQ& operator=(const DEQ& other);
   // TODO: Move constructor???
-  ~DEQ();
+  virtual ~DEQ();
 };
 
 template < typename Type, typename Allocator, bool canOverwrite >
@@ -208,41 +208,71 @@ operator=(const DEQ& other)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// List : dynamic double linked list
+///////////////////////////////////////////////////////////////////////////////
+
+template < typename Type, cSize Capacity >
+struct List : public ListInterface< Type >
+{
+
+  List() = delete;
+  explicit List(const Type& init);
+  List(const List& other);
+  List& operator=(const List& other);
+  // TODO: Move constructor???
+  virtual ~List() {}
+};
+
+///////////////////////////////////////////////////////////////////////////////
 // Tree : dynamic balanced tree containter (red-black)
 ///////////////////////////////////////////////////////////////////////////////
 
 // declarations
 template < typename Type >
-struct Tree // : Array ???should this inherite from Array???
+struct Tree : public TreeInterface
 {
   Tree() = delete;
-  explicit Tree(Allocator& alloc, const Type& init);
+  Tree(Allocator& alloc, const Type& init);
   explicit Tree(const Tree& other);
   Tree& operator=(const Tree& other);
   // TODO: Move constructor???
+  virtual ~Tree() {}
 };
-/*
-??? what kind of accessor is needed ???
-*/
 
 ///////////////////////////////////////////////////////////////////////////////
-// HashTable : dynamic hash map containter
+// Trie : dynamic trie containter
+///////////////////////////////////////////////////////////////////////////////
+
+// declarations
+template < typename Type >
+struct Trie : public TrieInterface
+{
+  Trie() = delete;
+  Trie(Allocator& alloc, const Type& init);
+  explicit Trie(const Trie& other);
+  Trie& operator=(const Trie& other);
+  // TODO: Move constructor???
+  virtual ~Trie() {}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// HashMap : dynamic hash map containter
 ///////////////////////////////////////////////////////////////////////////////
 
 // declarations
 template < typename Type, bool allowMultiple >
-struct HashTable // : Array ???should this inherite from Array???
+struct HashMap // : Array ???should this inherite from Array???
 {
   const bool allowMultiple_{allowMultiple};
 
-  HashTable() = delete;
-  explicit HashTable(Allocator& alloc, const Type& init);
-  explicit HashTable(const HashTable& other);
-  HashTable& operator=(const HashTable& other);
+  HashMap() = delete;
+  explicit HashMap(Allocator& alloc, const Type& init);
+  explicit HashMap(const HashMap& other);
+  HashMap& operator=(const HashMap& other);
   // TODO: Move constructor???
 };
 /*
-??? what kind of accessor is needed ???
+??? what kind of accessors are needed ???
 at()
 len()
 clear()

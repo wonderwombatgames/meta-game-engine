@@ -15,6 +15,14 @@
   using FLAllocator7 = Freelist< FLAllocator6, 4097, 8192, 32 >;
   using PrimaryAlloc = Selector< 8192, FLAllocator7, MAllocator< 1 > >;
   using CompAllocator = FallbackAllocator< PrimaryAlloc, MAllocator< 2 > >;
+
+
+  FIXME: The use of free lists may lead to fragmentation.
+  Needs a way to have short freelists and recover part of the memory.
+  Perhaps make the free list check if the chunk being deallocated is
+  contiguous to some other and if so merge them and buble them up.
+  Ideally all free space should be kept allocated in the largest possible
+  chunk size!
 */
 
 #ifndef UTILS_MEMORY_HPP
