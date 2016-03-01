@@ -1,5 +1,5 @@
 /**
-  * helper functions to abstrct the backend
+  * util functions to handle colour data and transofmrations
   *
   */
 
@@ -14,6 +14,7 @@ namespace W2E
 namespace Utils
 {
 
+// blender mode enumaration
 enum eBlendMode
 {
   BLENDMODENONE_,  // no blending: dstRGBA = srcRGBA
@@ -23,6 +24,7 @@ enum eBlendMode
   BLENDMODEMULT_,  // color modulate: dstRGB = srcRGB * dstRGB & dstA = dstA
 };
 
+// colour type enumatration
 enum eColour
 {
   RGB,
@@ -35,6 +37,7 @@ enum eColour
   HEX,
 };
 
+// holda RGB data value
 struct ColourRGB
 {
   ColourComp r;
@@ -42,6 +45,7 @@ struct ColourRGB
   ColourComp b;
 };
 
+// holda RGBA data value (RGB +alpha)
 struct ColourRGBA
 {
   ColourComp r;
@@ -50,6 +54,7 @@ struct ColourRGBA
   ColourComp a;
 };
 
+// holda HSL data value
 struct ColourHSL
 {
   ColourComp h;
@@ -57,6 +62,7 @@ struct ColourHSL
   ColourComp l;
 };
 
+// holda HSLA data value (HSL + alpha)
 struct ColourHSLA
 {
   ColourComp h;
@@ -65,6 +71,7 @@ struct ColourHSLA
   ColourComp a;
 };
 
+// holda HSV data value
 struct ColourHSV
 {
   ColourComp h;
@@ -72,6 +79,7 @@ struct ColourHSV
   ColourComp v;
 };
 
+// holda HSVA data value (HSV + alpha)
 struct ColourHSVA
 {
   ColourComp h;
@@ -80,6 +88,7 @@ struct ColourHSVA
   ColourComp a;
 };
 
+// holda CMYK data value
 struct ColourCMYK
 {
   ColourComp c;
@@ -88,11 +97,13 @@ struct ColourCMYK
   ColourComp k;
 };
 
+// holda hex data value (html equivalent)
 struct ColourHex
 {
   char hexVal[8];
 };
 
+// general colour data
 struct Colour
 {
   eColour kind;
@@ -108,6 +119,7 @@ struct Colour
   };
 };
 
+// colour default values
 namespace Colours
 {
 GLOBAL const Colour WHITE{RGBA, {{1.0f, 1.0f, 1.0f, 1.0f}}};
@@ -121,6 +133,7 @@ GLOBAL const Colour MAGENTA{RGBA, {{1.0f, 0.0f, 1.0f, 1.0f}}};
 GLOBAL const Colour YELLOW{RGBA, {{1.0f, 1.0f, 0.0f, 1.0f}}};
 } // end namespace Colours
 
+// conversion from and to different colour formats
 void Hex2Rgb(const ColourHex& in, ColourRGB& out);
 void Rgb2Hex(const ColourRGB& in, ColourHex& out);
 

@@ -1,5 +1,7 @@
 /**
-  * helper functions to abstrct the backend
+  * implementation of containers using dynamic allocation
+  * NOTE: an allocator has to be passe to the containers that
+  * provides the allocation interface as in utils/memory.hpp
   *
   */
 
@@ -24,7 +26,6 @@ struct Allocator;
 // Array : dynamic array with random accessor
 ///////////////////////////////////////////////////////////////////////////////
 
-// declarations
 template < typename Type, typename Allocator >
 struct Array : public ArrayInterface< Type >
 {
@@ -37,9 +38,11 @@ struct Array : public ArrayInterface< Type >
   Blk memBlock_;
   Array() = delete;
 
+  // these are used by the base class
   virtual cSize capacity() override { return capacity_; };
   virtual cSize initialLen() override { return initialLen_; };
 
+  // destructors and constructors
   Array(Allocator& alloc, const Type& init, const cSize Capacity);
   explicit Array(const Array& other);
   Array& operator=(const Array& other);
@@ -47,7 +50,7 @@ struct Array : public ArrayInterface< Type >
   virtual ~Array();
 };
 
-// implements constructors
+// default virtual destructor
 template < typename Type, typename Allocator >
 Array< Type, Allocator >::~Array()
 {
@@ -57,6 +60,7 @@ Array< Type, Allocator >::~Array()
   }
 }
 
+// constructor
 template < typename Type, typename Allocator >
 Array< Type, Allocator >::Array(Allocator& alloc, const Type& init, const cSize Capacity)
     : ArrayInterface< Type >()
@@ -74,6 +78,7 @@ Array< Type, Allocator >::Array(Allocator& alloc, const Type& init, const cSize 
   std::fill(this->array_, (this->array_ + this->capacity_), this->init_);
 }
 
+// copy constructor
 template < typename Type, typename Allocator >
 Array< Type, Allocator >::Array(const Array& other)
     : ArrayInterface< Type >(other)
@@ -90,6 +95,7 @@ Array< Type, Allocator >::Array(const Array& other)
   std::copy(other.array_, (other.array_ + this->capacity_), this->array_);
 }
 
+// assignement operator
 template < typename Type, typename Allocator >
 Array< Type, Allocator >& Array< Type, Allocator >::operator=(const Array& other)
 {
@@ -117,7 +123,6 @@ Array< Type, Allocator >& Array< Type, Allocator >::operator=(const Array& other
 // DEQ : dynamic double ended queue with random accessor
 ///////////////////////////////////////////////////////////////////////////////
 
-// declarations
 template < typename Type, typename Allocator, bool canOverwrite = false >
 struct DEQ : public DEQInterface< Type >
 {
@@ -131,9 +136,11 @@ struct DEQ : public DEQInterface< Type >
   Blk memBlock_;
   DEQ() = delete;
 
+  // these are used by the base class
   virtual cSize capacity() override { return capacity_; };
   virtual cSize initialLen() override { return initialLen_; };
 
+  // destructors and constructors
   DEQ(Allocator& alloc, const Type& init, const cSize Capacity);
   explicit DEQ(const DEQ& other);
   DEQ& operator=(const DEQ& other);
@@ -141,6 +148,7 @@ struct DEQ : public DEQInterface< Type >
   virtual ~DEQ();
 };
 
+// virtual destructor
 template < typename Type, typename Allocator, bool canOverwrite >
 DEQ< Type, Allocator, canOverwrite >::~DEQ()
 {
@@ -150,6 +158,7 @@ DEQ< Type, Allocator, canOverwrite >::~DEQ()
   }
 }
 
+// constructor
 template < typename Type, typename Allocator, bool canOverwrite >
 DEQ< Type, Allocator, canOverwrite >::DEQ(Allocator& alloc, const Type& init, const cSize Capacity)
     : DEQInterface< Type >()
@@ -166,6 +175,7 @@ DEQ< Type, Allocator, canOverwrite >::DEQ(Allocator& alloc, const Type& init, co
   std::fill(this->array_, (this->array_ + this->capacity_), this->init_);
 }
 
+// copy constructor
 template < typename Type, typename Allocator, bool canOverwrite >
 DEQ< Type, Allocator, canOverwrite >::DEQ(const DEQ& other)
     : DEQInterface< Type >(other)
@@ -182,6 +192,7 @@ DEQ< Type, Allocator, canOverwrite >::DEQ(const DEQ& other)
   std::copy(other.array_, (other.array_ + this->capacity_), this->array_);
 }
 
+// assignement operator
 template < typename Type, typename Allocator, bool canOverwrite >
 DEQ< Type, Allocator, canOverwrite >& DEQ< Type, Allocator, canOverwrite >::
 operator=(const DEQ& other)
@@ -211,10 +222,10 @@ operator=(const DEQ& other)
 // List : dynamic double linked list
 ///////////////////////////////////////////////////////////////////////////////
 
+// TODO: implement
 template < typename Type, cSize Capacity >
 struct List : public ListInterface< Type >
 {
-
   List() = delete;
   explicit List(const Type& init);
   List(const List& other);
@@ -227,7 +238,7 @@ struct List : public ListInterface< Type >
 // Tree : dynamic balanced tree containter (red-black)
 ///////////////////////////////////////////////////////////////////////////////
 
-// declarations
+// TODO: implement
 template < typename Type >
 struct Tree : public TreeInterface
 {
@@ -243,7 +254,7 @@ struct Tree : public TreeInterface
 // Trie : dynamic trie containter
 ///////////////////////////////////////////////////////////////////////////////
 
-// declarations
+// TODO: implement
 template < typename Type >
 struct Trie : public TrieInterface
 {
@@ -259,7 +270,7 @@ struct Trie : public TrieInterface
 // HashMap : dynamic hash map containter
 ///////////////////////////////////////////////////////////////////////////////
 
-// declarations
+// TODO: implement
 template < typename Type, bool allowMultiple >
 struct HashMap // : Array ???should this inherite from Array???
 {
@@ -271,19 +282,12 @@ struct HashMap // : Array ???should this inherite from Array???
   HashMap& operator=(const HashMap& other);
   // TODO: Move constructor???
 };
-/*
-??? what kind of accessors are needed ???
-at()
-len()
-clear()
-keys()
-*/
 
 ///////////////////////////////////////////////////////////////////////////////
 // Heap : dynamic heap containter
 ///////////////////////////////////////////////////////////////////////////////
 
-// declarations
+// TODO: implement
 template < typename Type >
 struct Heap // : Array ???should this inherite from Array???
 {
@@ -293,13 +297,9 @@ struct Heap // : Array ???should this inherite from Array???
   Heap& operator=(const Heap& other);
   // TODO: Move constructor???
 };
-/*
-??? what kind of accessor is needed ???
-*/
 
-///////////////////////////////////////////////////////////////////////////////
 // Resize: for linear containers
-///////////////////////////////////////////////////////////////////////////////
+//-----------------------------------------------------------------
 template < typename Container >
 bool resize(Container& container, const cSize Capacity)
 {

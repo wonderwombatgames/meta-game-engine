@@ -1,5 +1,5 @@
 /**
-  * helper functions to abstrct the backend
+  * fixed size containers : allocated at compile time
   *
   */
 
@@ -42,7 +42,7 @@ struct FixedArray : public ArrayInterface< Type >
 template < typename Type, cSize Capacity >
 const cSize FixedArray< Type, Capacity >::capacity_{Capacity};
 
-// implements constructors
+// constructor - initilized
 template < typename Type, cSize Capacity >
 FixedArray< Type, Capacity >::FixedArray(const Type& init)
     : ArrayInterface< Type >()
@@ -56,7 +56,7 @@ FixedArray< Type, Capacity >::FixedArray(const Type& init)
   std::fill(this->array_, (this->array_ + this->capacity_), init);
 }
 
-// constructors
+// copy constructor
 template < typename Type, cSize Capacity >
 FixedArray< Type, Capacity >::FixedArray(const FixedArray& other)
     : ArrayInterface< Type >(other)
@@ -68,6 +68,7 @@ FixedArray< Type, Capacity >::FixedArray(const FixedArray& other)
   std::copy(other.array_, (other.array_ + this->capacity_), this->array_);
 }
 
+// assignement operator
 template < typename Type, cSize Capacity >
 FixedArray< Type, Capacity >& FixedArray< Type, Capacity >::operator=(const FixedArray& other)
 {
@@ -108,7 +109,7 @@ struct FixedDEQ : public DEQInterface< Type >
 template < typename Type, cSize Capacity, bool canOverwrite >
 const cSize FixedDEQ< Type, Capacity, canOverwrite >::capacity_{Capacity};
 
-// implements constructors
+// constructor - initialized
 template < typename Type, cSize Capacity, bool canOverwrite >
 FixedDEQ< Type, Capacity, canOverwrite >::FixedDEQ(const Type& init)
     : DEQInterface< Type >()
@@ -121,7 +122,7 @@ FixedDEQ< Type, Capacity, canOverwrite >::FixedDEQ(const Type& init)
   std::fill(this->array_, (this->array_ + this->capacity_), init);
 }
 
-// constructors
+// copy constructor
 template < typename Type, cSize Capacity, bool canOverwrite >
 FixedDEQ< Type, Capacity, canOverwrite >::FixedDEQ(const FixedDEQ& other)
     : DEQInterface< Type >(other)
@@ -135,6 +136,7 @@ FixedDEQ< Type, Capacity, canOverwrite >::FixedDEQ(const FixedDEQ& other)
   std::copy(other.array_, (other.array_ + this->capacity_), this->array_);
 }
 
+// assignement operator
 template < typename Type, cSize Capacity, bool canOverwrite >
 FixedDEQ< Type, Capacity, canOverwrite >& FixedDEQ< Type, Capacity, canOverwrite >::
 operator=(const FixedDEQ& other)
@@ -167,6 +169,7 @@ using FixedBitMap = FixedArray< u8, (Capacity >> 3) >;
 // List : Fixed size double linked list
 ///////////////////////////////////////////////////////////////////////////////
 
+// TODO: implement
 template < typename Type, cSize Capacity >
 struct FixedList : public ListInterface< Type >
 {
@@ -183,7 +186,7 @@ struct FixedList : public ListInterface< Type >
 // Tree : Fixed size tree containter (red-black)
 ///////////////////////////////////////////////////////////////////////////////
 
-// declarations
+// TODO: implement
 template < typename Type >
 struct FixedTree : public TreeInterface
 {
@@ -199,7 +202,7 @@ struct FixedTree : public TreeInterface
 // FixedTrie : Fixed size trie containter
 ///////////////////////////////////////////////////////////////////////////////
 
-// declarations
+// TODO: implement
 template < typename Type >
 struct FixedTrie : public TrieInterface
 {
@@ -212,16 +215,58 @@ struct FixedTrie : public TrieInterface
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-// Accessor fucntions
+// FixedHashMap : fixed size hash map containter
 ///////////////////////////////////////////////////////////////////////////////
 
-// FixedBitMap:
+// TODO: implement
+// template < typename Type, bool allowMultiple >
+// struct FixedHashMap
+// {
+//   const bool allowMultiple_{allowMultiple};
+//
+//   FixedHashMap() = delete;
+//   explicit FixedHashMap(Allocator& alloc, const Type& init);
+//   explicit FixedHashMap(const FixedHashMap& other);
+//   FixedHashMap& operator=(const FixedHashMap& other);
+//   // TODO: Move constructor???
+// };
+
+///////////////////////////////////////////////////////////////////////////////
+// FixedHeap : fixed size heap containter
+///////////////////////////////////////////////////////////////////////////////
+
+// TODO: implement
+// template < typename Type >
+// struct FixedHeap
+// {
+//   FixedHeap() = delete;
+//   explicit FixedHeap(Allocator& alloc, const Type& init);
+//   explicit FixedHeap(const FixedHeap& other);
+//   FixedHeap& operator=(const FixedHeap& other);
+//   // TODO: Move constructor???
+// };
+
+///////////////////////////////////////////////////////////////////////////////
+// Accessor functions
+///////////////////////////////////////////////////////////////////////////////
+
+// FixedBitMap: special accessor
+// ----------------------------------------------------------------------------
+
+// byte accessor
+// @param container container to access
+// @param pos       byte position to access
+// return pointer to the element at the container required position
 template < cSize Capacity >
 inline u8 byte(FixedBitMap< Capacity >& container, cSize pos)
 {
   return at(container, pos);
 }
 
+// bit accessor
+// @param container container to access
+// @param pos       bit position to access
+// return pointer to the element at the container required position
 template < cSize Capacity >
 inline u8 bit(FixedBitMap< Capacity >& container, cSize pos)
 {
@@ -236,8 +281,11 @@ inline u8 bit(FixedBitMap< Capacity >& container, cSize pos)
   return false;
 }
 
+// bits length of the container
+// @param   container
+// @return  size
 template < cSize Capacity >
-inline u8 bits(FixedBitMap< Capacity >& container, cSize pos)
+inline cSize bits(FixedBitMap< Capacity >& container)
 {
   return (8 * container.length_);
 }

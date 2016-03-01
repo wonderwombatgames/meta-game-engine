@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <cstring>
+
 // FIXME: have to try to remove this... replace for struct
 #include <tuple>
 
@@ -17,6 +18,7 @@ namespace // anonymous
 {
 using namespace W2E::Utils;
 
+// FIXME: this same function is used in utils/.memory.hpp -> remove duplicate!
 // http://graphics.stanford.edu/~seander/bithacks.html#IntegerLogObvious
 cSize alignMem(const cSize& desired)
 {
@@ -57,6 +59,9 @@ private:
   virtual ErrorCode deallocate(const u16& length, char* str, u16* refCount) = 0;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+// Dynamic allocated string pool
+///////////////////////////////////////////////////////////////////////////////
 // TODO: implemente using the new allocators!
 template < cSize Capacity >
 class DynStringPool : public StringPoolInterface
@@ -72,6 +77,9 @@ private:
   DynStringPool& operator=(DynStringPool&) = delete;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+// Fixed size tring pool - compile time allocation
+///////////////////////////////////////////////////////////////////////////////
 template < cSize Capacity >
 class FixedStringPool : public StringPoolInterface
 {
@@ -96,6 +104,7 @@ private:
   GLOBAL cSize refCountCursor_;
 };
 
+// GLOBAL vars initialization
 template < cSize Capacity >
 char FixedStringPool< Capacity >::array_[maxLength_] = {0};
 template < cSize Capacity >
@@ -105,6 +114,7 @@ u16 FixedStringPool< Capacity >::refCount_[maxElements_] = {0};
 template < cSize Capacity >
 cSize FixedStringPool< Capacity >::refCountCursor_ = 0;
 
+// default constructor
 template < cSize Capacity >
 FixedStringPool< Capacity >::FixedStringPool()
 {
@@ -113,7 +123,6 @@ FixedStringPool< Capacity >::FixedStringPool()
 template < cSize Capacity >
 std::tuple< ErrorCode, char*, u16* > FixedStringPool< Capacity >::allocate(const u16& length)
 {
-
   cSize len = std::max(static_cast< cSize >(8), alignMem(length));
   if((this->maxLength_ - this->arrayCursor_) > len && (this->maxElements_ > this->refCountCursor_))
   {
@@ -175,9 +184,9 @@ public:
   StringWrapper(StringWrapper& otherStr);
   // TODO: move constructor???
   StringWrapper& operator=(StringWrapper& otherStr);
-  StringWrapper& operator=(const char* initStr); // write on change
+  StringWrapper& operator=(const char* initStr); // copy on write
   const char operator[](u16 pos) const;
-  char operator[](u16 pos); // write on change
+  char operator[](u16 pos); // copy on write
   const char* cStr();
 
 private:

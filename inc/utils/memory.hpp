@@ -18,7 +18,7 @@
 
 
   FIXME: The use of free lists may lead to fragmentation.
-  Needs a way to have short freelists and recover part of the memory.
+  Needs a way to have shorter freelists and to recover part of the memory.
   Perhaps make the free list check if the chunk being deallocated is
   contiguous to some other and if so merge them and buble them up.
   Ideally all free space should be kept allocated in the largest possible

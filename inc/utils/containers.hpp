@@ -1,4 +1,5 @@
 /**
+  * basic data container interfaces
   *
   */
 
@@ -39,6 +40,7 @@ struct ArrayInterface
   ArrayInterface& operator=(const ArrayInterface& other);
 };
 
+// default constructor
 template < typename Type >
 ArrayInterface< Type >::ArrayInterface()
     : firstPos_{0}
@@ -49,6 +51,7 @@ ArrayInterface< Type >::ArrayInterface()
 {
 }
 
+// copy constructor
 template < typename Type >
 ArrayInterface< Type >::ArrayInterface(ArrayInterface& other)
     : firstPos_{other.firstPos}
@@ -59,6 +62,7 @@ ArrayInterface< Type >::ArrayInterface(ArrayInterface& other)
 {
 }
 
+// assignement operator
 template < typename Type >
 ArrayInterface< Type >& ArrayInterface< Type >::operator=(const ArrayInterface< Type >& other)
 {
@@ -84,6 +88,7 @@ struct DEQInterface : ArrayInterface< Type >
   DEQInterface& operator=(DEQInterface& other);
 };
 
+// default constructor
 template < typename Type >
 DEQInterface< Type >::DEQInterface()
     : ArrayInterface< Type >()
@@ -91,6 +96,7 @@ DEQInterface< Type >::DEQInterface()
 {
 }
 
+// copy constructor
 template < typename Type >
 DEQInterface< Type >::DEQInterface(DEQInterface< Type >& other)
     : ArrayInterface< Type >(other)
@@ -98,6 +104,7 @@ DEQInterface< Type >::DEQInterface(DEQInterface< Type >& other)
 {
 }
 
+// assgignement operator
 template < typename Type >
 DEQInterface< Type >& DEQInterface< Type >::operator=(DEQInterface< Type >& other)
 {
@@ -107,6 +114,7 @@ DEQInterface< Type >& DEQInterface< Type >::operator=(DEQInterface< Type >& othe
 ///////////////////////////////////////////////////////////////////////////////
 // List
 ///////////////////////////////////////////////////////////////////////////////
+
 template < typename Type >
 struct ListInterface
 {
@@ -128,6 +136,7 @@ struct ListInterface
   ListInterface& operator=(const ListInterface& other);
 };
 
+// default constructor
 template < typename Type >
 ListInterface< Type >::ListInterface()
     : length_{0}
@@ -137,6 +146,7 @@ ListInterface< Type >::ListInterface()
 {
 }
 
+// copy constructor
 template < typename Type >
 ListInterface< Type >::ListInterface(ListInterface& other)
     : length_{0}
@@ -146,6 +156,7 @@ ListInterface< Type >::ListInterface(ListInterface& other)
 {
 }
 
+// assignement operator
 template < typename Type >
 ListInterface< Type >& ListInterface< Type >::operator=(ListInterface< Type >& other)
 {
@@ -163,7 +174,7 @@ ListInterface< Type >& ListInterface< Type >::operator=(ListInterface< Type >& o
 template < typename Type >
 struct TreeInterface // : Array ???should this inherite from Array???
 {
-  enum Colour
+  enum NodeColour
   {
     Red,
     Black,
@@ -172,7 +183,7 @@ struct TreeInterface // : Array ???should this inherite from Array???
   struct ElementType
   {
     Type data;
-    Colour colour;
+    NodeColour colour;
     ElementType* parent;
     ElementType* left;
     ElementType* right;
@@ -188,15 +199,11 @@ struct TreeInterface // : Array ???should this inherite from Array???
   TreeInterface& operator=(const TreeInterface& other);
   // TODO: Move constructor???
 };
-/*
-??? what kind of accessors are needed ???
-*/
 
 ///////////////////////////////////////////////////////////////////////////////
 // Trie
 ///////////////////////////////////////////////////////////////////////////////
 
-// declarations
 template < typename Type >
 struct TrieInterface
 {
@@ -210,10 +217,14 @@ struct TrieInterface
 ///////////////////////////////////////////////////////////////////////////////
 // Accessors
 ///////////////////////////////////////////////////////////////////////////////
-// NOTE: change at, front, back to match STL interface???
-// at, front and back return a reference not pointer...
 
-// Array
+// Array acessor functions
+// ----------------------------------------------------------------------------
+
+// random accessor
+// @param container container to access
+// @param pos       position to access
+// return pointer to the element at the container required position
 template < typename Type >
 inline Type* at(ArrayInterface< Type >& container, cSize pos)
 {
@@ -226,12 +237,17 @@ inline Type* at(ArrayInterface< Type >& container, cSize pos)
   return nullptr;
 }
 
+// length of the container
+// @param   container
+// @return  size
 template < typename Type >
 inline cSize len(ArrayInterface< Type >& container)
 {
   return container.length_;
 }
 
+// clear the container
+// @param container
 template < typename Type >
 inline void clear(ArrayInterface< Type >& container)
 {
@@ -241,7 +257,14 @@ inline void clear(ArrayInterface< Type >& container)
   container.length_ = container.initialLen();
 }
 
-// DEQ
+// DEQ accessor functions
+// ----------------------------------------------------------------------------
+
+// push the element to the back of the container (copy the content)
+// NOTE: the element has to be copyable!!!
+// @param container
+// @param el  element to be copied at the container
+// return ErrorCode (FIXME: so far there are only 2 possible error code values)
 template < typename Type >
 inline ErrorCode push_back(DEQInterface< Type >& container, const Type& el)
 {
@@ -266,6 +289,11 @@ inline ErrorCode push_back(DEQInterface< Type >& container, const Type& el)
   return UNKNOWN_ERROR;
 }
 
+// push the element to the front of the container (copy the content)
+// NOTE: the element has to be copyable!!!
+// @param container
+// @param el  element to be copied at the container
+// return ErrorCode (FIXME: so far there are only 2 possible error code values)
 template < typename Type >
 inline ErrorCode push_front(DEQInterface< Type >& container, const Type& el)
 {
@@ -290,6 +318,10 @@ inline ErrorCode push_front(DEQInterface< Type >& container, const Type& el)
   return UNKNOWN_ERROR;
 }
 
+// pop the element from the back of the container.
+// NOTE: the element will be destroyed - pointers to this element will be lost
+// @param container
+// return ErrorCode (FIXME: so far there are only 2 possible error code values)
 template < typename Type >
 inline ErrorCode pop_back(DEQInterface< Type >& container)
 {
@@ -307,6 +339,10 @@ inline ErrorCode pop_back(DEQInterface< Type >& container)
   return UNKNOWN_ERROR;
 }
 
+// pop the element from the front of the container.
+// NOTE: the element will be destroyed - pointers to this element will be lost
+// @param container
+// return ErrorCode (FIXME: so far there are only 2 possible error code values)
 template < typename Type >
 inline ErrorCode pop_front(DEQInterface< Type >& container)
 {
@@ -326,6 +362,9 @@ inline ErrorCode pop_front(DEQInterface< Type >& container)
   return UNKNOWN_ERROR;
 }
 
+// get the element from the front of the container.
+// @param container
+// return pointer to the element at the front of the container
 template < typename Type >
 inline Type* front(DEQInterface< Type >& container)
 {
@@ -336,6 +375,9 @@ inline Type* front(DEQInterface< Type >& container)
   return nullptr;
 }
 
+// get the element from the back of the container.
+// @param container
+// return pointer to the element at the front of the container
 template < typename Type >
 inline Type* back(DEQInterface< Type >& container)
 {
@@ -346,12 +388,20 @@ inline Type* back(DEQInterface< Type >& container)
   return nullptr;
 }
 
-// List
+// List accessor functions
+// ----------------------------------------------------------------------------
+
+// random accessor
+// @param container container to access
+// @param pos       position to access
+// return pointer to the element at the container required position
 template < typename Type >
 inline typename ListInterface< Type >::ElementType* at(ListInterface< Type >& container, cSize pos)
 {
   if(container.head_ && container.Length_ >= pos)
   {
+    // search for element in the position
+    // FIXME: if pos > (container.Length_/2) then better to search backwards
     typename ListInterface< Type >::ElementType* iterator = container.head_;
     cSize cursor = 0;
     do
@@ -370,12 +420,17 @@ inline typename ListInterface< Type >::ElementType* at(ListInterface< Type >& co
   return nullptr;
 }
 
+// length of the container
+// @param   container
+// @return  size
 template < typename Type >
 inline cSize len(ListInterface< Type >& container)
 {
   return container.length_;
 }
 
+// clear the container
+// @param container
 template < typename Type >
 inline void clear(ListInterface< Type >& container)
 {
@@ -397,6 +452,11 @@ inline void clear(ListInterface< Type >& container)
   container.tail_ = nullptr;
 }
 
+// push the element to the front of the container (copy the content)
+// NOTE: the element has to be copyable!!!
+// @param container
+// @param el  element to be copied at the container
+// return ErrorCode (FIXME: so far there are only 2 possible error code values)
 template < typename Type >
 inline ErrorCode push_front(ListInterface< Type >& container, const Type& element)
 {
@@ -407,7 +467,7 @@ inline ErrorCode push_front(ListInterface< Type >& container, const Type& elemen
     newElement->data = element;
     newElement->next = container.head_;
     newElement->prev = nullptr;
-    container.head_->pre = newElement;
+    container.head_->prev = newElement;
     container.head_ = newElement;
 
     ++container.length_;
@@ -417,6 +477,11 @@ inline ErrorCode push_front(ListInterface< Type >& container, const Type& elemen
   return UNKNOWN_ERROR;
 }
 
+// push the element to the back of the container (copy the content)
+// NOTE: the element has to be copyable!!!
+// @param container
+// @param el  element to be copied at the container
+// return ErrorCode (FIXME: so far there are only 2 possible error code values)
 template < typename Type >
 inline ErrorCode push_back(ListInterface< Type >& container, const Type& element)
 {
@@ -437,6 +502,10 @@ inline ErrorCode push_back(ListInterface< Type >& container, const Type& element
   return UNKNOWN_ERROR;
 }
 
+// pop the element from the front of the container.
+// NOTE: the element will be destroyed - pointers to this element will be lost
+// @param container
+// return ErrorCode (FIXME: so far there are only 2 possible error code values)
 template < typename Type >
 inline ErrorCode pop_front(ListInterface< Type >& container)
 {
@@ -457,6 +526,10 @@ inline ErrorCode pop_front(ListInterface< Type >& container)
   return UNKNOWN_ERROR;
 }
 
+// pop the element from the back of the container.
+// NOTE: the element will be destroyed - pointers to this element will be lost
+// @param container
+// return ErrorCode (FIXME: so far there are only 2 possible error code values)
 template < typename Type >
 inline ErrorCode pop_back(ListInterface< Type >& container)
 {
@@ -477,18 +550,70 @@ inline ErrorCode pop_back(ListInterface< Type >& container)
   return UNKNOWN_ERROR;
 }
 
-template < typename Type >
-inline typename ListInterface< Type >::ElementType* back(ListInterface< Type >& container)
-{
-  return container.tail_;
-}
-
+// get the element from the front of the container.
+// @param container
+// return pointer to the element at the front of the container
 template < typename Type >
 inline typename ListInterface< Type >::ElementType* front(ListInterface< Type >& container)
 {
   return container.head_;
 }
 
+// get the element from the back of the container.
+// @param container
+// return pointer to the element at the front of the container
+template < typename Type >
+inline typename ListInterface< Type >::ElementType* back(ListInterface< Type >& container)
+{
+  return container.tail_;
+}
+
+// insert one element from the container.
+// NOTE: the element has to be copyable!!!
+// @param container
+// @param element element to be inserted (will be copied)
+// @param postion to include the element
+// return ErrorCode (FIXME: so far there are only 2 possible error code values)
+template < typename Type >
+inline ErrorCode insert(ListInterface< Type >& container,
+                        const typename ListInterface< Type >::ElementType& element,
+                        cSize pos)
+{
+  if(container.free_ && container.head_ && (container.Length_ >= pos))
+  {
+    // search for element in the position
+    // FIXME: if pos > (container.Length_/2) then better to search backwards
+    typename ListInterface< Type >::ElementType* iterator = container.head_;
+    cSize cursor = 0;
+    while(cursor < pos && iterator)
+    {
+      iterator = iterator->next;
+      ++cursor;
+    }
+
+    if(iterator)
+    {
+      typename ListInterface< Type >::ElementType* newElement = container.free_;
+      container.free_ = container.free_->next;
+      newElement->data = element;
+      newElement->next = iterator;
+      newElement->prev = iterator->prev;
+      iterator->prev = newElement;
+      newElement->prev->next = newElement;
+
+      ++container.length_;
+
+      return NO_ERROR;
+    }
+  }
+  return UNKNOWN_ERROR;
+}
+
+// remove one element from the container.
+// NOTE: the element to be removed has to be a pointer to the position
+// @param container
+// @param element pointer to the element to be removed
+// return ErrorCode (FIXME: so far there are only 2 possible error code values)
 template < typename Type >
 inline ErrorCode remove(ListInterface< Type >& container,
                         const typename ListInterface< Type >::ElementType* element)
