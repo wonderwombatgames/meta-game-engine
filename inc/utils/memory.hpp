@@ -1,5 +1,5 @@
 /**
-  * helper functions to abstrct the backend
+  * composable memory allocators with diverse strategies
   *
   */
 
@@ -21,8 +21,8 @@
   Needs a way to have shorter freelists and to recover part of the memory.
   Perhaps make the free list check if the chunk being deallocated is
   contiguous to some other and if so merge them and buble them up.
-  Ideally all free space should be kept allocated in the largest possible
-  chunk size!
+  Ideally all free space should be kept as the largest possible
+  chunk sizes!
 */
 
 #ifndef UTILS_MEMORY_HPP
@@ -38,7 +38,10 @@ namespace W2E
 namespace Utils
 {
 
-// http://graphics.stanford.edu/~seander/bithacks.html#IntegerLogObvious
+// computes the nearest larger power of two
+// ref: http://graphics.stanford.edu/~seander/bithacks.html#IntegerLogObvious
+// @param d number to find the nearest pow2 from
+// @return the nearest larger power of two
 cSize roundToAligned(const cSize& d)
 {
   cSize v = d;
@@ -52,7 +55,7 @@ cSize roundToAligned(const cSize& d)
   return v;
 }
 
-// based on:
+// allocator based on ideas from Alexandrescu:
 // https://github.com/CppCon/CppCon2015/tree/master/Presentations/allocator%20Is%20to%20Allocation%20what%20vector%20Is%20to%20Vexation
 
 // memory block
@@ -78,7 +81,7 @@ Type* allocateType(Allocator& alloc, Blk& b, const cSize amount)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Fallback: try primary, if fails call secondary
+// Fallback: try primary alloc, if alloc fails try secondary
 ///////////////////////////////////////////////////////////////////////////////
 
 template < class Primary, class Fallback >
@@ -90,6 +93,9 @@ public:
   bool owns(Blk b);
 };
 
+// allocate chunk of certain size into memory block
+// @param n size of memory chunk
+// @return allocated memory block
 template < class Primary, class Fallback >
 Blk FallbackAllocator< Primary, Fallback >::allocate(cSize n)
 {
@@ -101,6 +107,8 @@ Blk FallbackAllocator< Primary, Fallback >::allocate(cSize n)
   return r;
 }
 
+// deallocate chunk described by block
+// @param b memory block
 template < class Primary, class Fallback >
 void FallbackAllocator< Primary, Fallback >::deallocate(Blk b)
 {
@@ -114,6 +122,9 @@ void FallbackAllocator< Primary, Fallback >::deallocate(Blk b)
   }
 }
 
+// check if the chunk is owned by this allocator
+// @param b memory block
+// @return true -> owns | false -> does not own
 template < class Primary, class Fallback >
 bool FallbackAllocator< Primary, Fallback >::owns(Blk b)
 {
@@ -121,8 +132,9 @@ bool FallbackAllocator< Primary, Fallback >::owns(Blk b)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Selector: Sizes ≤ threshold goes to SmallAllocator, else goes to LargeAllocator
+// Selector: Sizes ≤ threshold goes to SmallAllocator, else to LargeAllocator
 ///////////////////////////////////////////////////////////////////////////////
+
 template < cSize threshold, class SmallAllocator, class LargeAllocator >
 class Selector : private SmallAllocator, private LargeAllocator
 {
@@ -132,6 +144,9 @@ public:
   bool owns(Blk b);
 };
 
+// allocate chunk of certain size into memory block
+// @param n size of memory chunk
+// @return allocated memory block
 template < cSize threshold, class SmallAllocator, class LargeAllocator >
 Blk Selector< threshold, SmallAllocator, LargeAllocator >::allocate(cSize n)
 {
@@ -145,6 +160,8 @@ Blk Selector< threshold, SmallAllocator, LargeAllocator >::allocate(cSize n)
   return r;
 }
 
+// deallocate chunk described by block
+// @param b memory block
 template < cSize threshold, class SmallAllocator, class LargeAllocator >
 void Selector< threshold, SmallAllocator, LargeAllocator >::deallocate(Blk b)
 {
@@ -158,6 +175,9 @@ void Selector< threshold, SmallAllocator, LargeAllocator >::deallocate(Blk b)
   }
 }
 
+// check if the chunk is owned by this allocator
+// @param b memory block
+// @return true -> owns | false -> does not own
 template < cSize threshold, class SmallAllocator, class LargeAllocator >
 bool Selector< threshold, SmallAllocator, LargeAllocator >::owns(Blk b)
 {
@@ -165,7 +185,7 @@ bool Selector< threshold, SmallAllocator, LargeAllocator >::owns(Blk b)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Freelist: Keeps list of previous allocations of a given size
+// Freelist: Keeps list of previous allocations of any given size
 ///////////////////////////////////////////////////////////////////////////////
 
 template < class Parent, cSize minSize, cSize maxSize, cSize maxBlocks >
@@ -194,6 +214,9 @@ private:
   cSize countDown_{maxBlocks};
 };
 
+// allocate chunk of certain size into memory block
+// @param n size of memory chunk
+// @return allocated memory block
 template < class Parent, cSize minSize, cSize maxSize, cSize maxBlocks >
 Blk Freelist< Parent, minSize, maxSize, maxBlocks >::allocate(cSize n)
 {
@@ -207,6 +230,8 @@ Blk Freelist< Parent, minSize, maxSize, maxBlocks >::allocate(cSize n)
   return Parent::allocate(n);
 }
 
+// deallocate chunk described by block
+// @param b memory block
 template < class Parent, cSize minSize, cSize maxSize, cSize maxBlocks >
 void Freelist< Parent, minSize, maxSize, maxBlocks >::deallocate(Blk b)
 {
@@ -223,6 +248,9 @@ void Freelist< Parent, minSize, maxSize, maxBlocks >::deallocate(Blk b)
   }
 }
 
+// check if the chunk is owned by this allocator
+// @param b memory block
+// @return true -> owns | false -> does not own
 template < class Parent, cSize minSize, cSize maxSize, cSize maxBlocks >
 bool Freelist< Parent, minSize, maxSize, maxBlocks >::owns(Blk b)
 {
@@ -232,6 +260,7 @@ bool Freelist< Parent, minSize, maxSize, maxBlocks >::owns(Blk b)
 ///////////////////////////////////////////////////////////////////////////////
 // MAllocator: simple wraper around malloc to keep the interface consistent
 ///////////////////////////////////////////////////////////////////////////////
+
 // if Mallocator is used more than once in an allocator composite, the id of each
 // component MAllocator has to be different to avoid ambiguity @ template resolution
 template < u8 id >
@@ -248,6 +277,9 @@ private:
   MAllocator& operator=(const MAllocator& other) = delete;
 };
 
+// allocate chunk of certain size into memory block
+// @param n size of memory chunk
+// @return allocated memory block
 template < u8 id >
 Blk MAllocator< id >::allocate(cSize n)
 {
@@ -257,12 +289,18 @@ Blk MAllocator< id >::allocate(cSize n)
 
   return r;
 }
+
+// deallocate chunk described by block
+// @param b memory block
 template < u8 id >
 void MAllocator< id >::deallocate(Blk b)
 {
   std::free(b.ptr);
 }
 
+// check if the chunk is owned by this allocator
+// @param b memory block
+// @return true -> owns | false -> does not own
 template < u8 id >
 bool MAllocator< id >::owns(Blk b)
 {
@@ -272,7 +310,8 @@ bool MAllocator< id >::owns(Blk b)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Stack: Use static array and stack semantics
+// Stack: Use static array (compile time allocation)
+// and stack semantics to allocate memory
 ///////////////////////////////////////////////////////////////////////////////
 
 template < cSize size, cSize minBlock >
@@ -296,6 +335,9 @@ private:
   char* pointer_;
 };
 
+// allocate chunk of certain size into memory block
+// @param n size of memory chunk
+// @return allocated memory block
 template < cSize size, cSize minBlock >
 Blk StackAllocator< size, minBlock >::allocate(cSize n)
 {
@@ -309,6 +351,8 @@ Blk StackAllocator< size, minBlock >::allocate(cSize n)
   return result;
 }
 
+// deallocate chunk described by block
+// @param b memory block
 template < cSize size, cSize minBlock >
 void StackAllocator< size, minBlock >::deallocate(Blk b)
 {
@@ -318,6 +362,9 @@ void StackAllocator< size, minBlock >::deallocate(Blk b)
   }
 }
 
+// check if the chunk is owned by this allocator
+// @param b memory block
+// @return true -> owns | false -> does not own
 template < cSize size, cSize minBlock >
 bool StackAllocator< size, minBlock >::owns(Blk b)
 {
@@ -325,12 +372,11 @@ bool StackAllocator< size, minBlock >::owns(Blk b)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// PoolAllocator: uses malloc to get a big chunck and manages it
+// PoolAllocator: uses malloc to get a big chunck and manages its use
 // in a memory pool using a bitmap
 ///////////////////////////////////////////////////////////////////////////////
 
 // FIXME: change to allow allocating a range of sizes!
-
 template < cSize size, cSize block >
 class PoolAllocator
 {
@@ -368,6 +414,9 @@ private:
   const u8 bitMask[8] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
 };
 
+// allocate chunk of certain size into memory block
+// @param n size of memory chunk
+// @return allocated memory block
 template < cSize size, cSize block >
 Blk PoolAllocator< size, block >::allocate(cSize n)
 {
@@ -422,6 +471,8 @@ Blk PoolAllocator< size, block >::allocate(cSize n)
   return {nullptr, 0};
 }
 
+// deallocate chunk described by block
+// @param b memory block
 template < cSize size, cSize block >
 void PoolAllocator< size, block >::deallocate(Blk b)
 {
@@ -431,6 +482,9 @@ void PoolAllocator< size, block >::deallocate(Blk b)
   this->map_[offset] &= (~bitMask[bitset]);
 }
 
+// check if the chunk is owned by this allocator
+// @param b memory block
+// @return true -> owns | false -> does not own
 template < cSize size, cSize block >
 bool PoolAllocator< size, block >::owns(Blk b)
 {

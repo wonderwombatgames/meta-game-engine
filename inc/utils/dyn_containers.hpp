@@ -255,48 +255,48 @@ struct Tree : public TreeInterface
 ///////////////////////////////////////////////////////////////////////////////
 
 // TODO: implement
-template < typename Type >
-struct Trie : public TrieInterface
-{
-  Trie() = delete;
-  Trie(Allocator& alloc, const Type& init);
-  explicit Trie(const Trie& other);
-  Trie& operator=(const Trie& other);
-  // TODO: Move constructor???
-  virtual ~Trie() {}
-};
+// template < typename Type >
+// struct Trie : public TrieInterface
+// {
+//   Trie() = delete;
+//   Trie(Allocator& alloc, const Type& init);
+//   explicit Trie(const Trie& other);
+//   Trie& operator=(const Trie& other);
+//   // TODO: Move constructor???
+//   virtual ~Trie() {}
+// };
 
 ///////////////////////////////////////////////////////////////////////////////
 // HashMap : dynamic hash map containter
 ///////////////////////////////////////////////////////////////////////////////
 
 // TODO: implement
-template < typename Type, bool allowMultiple >
-struct HashMap // : Array ???should this inherite from Array???
-{
-  const bool allowMultiple_{allowMultiple};
-
-  HashMap() = delete;
-  explicit HashMap(Allocator& alloc, const Type& init);
-  explicit HashMap(const HashMap& other);
-  HashMap& operator=(const HashMap& other);
-  // TODO: Move constructor???
-};
+// template < typename Type, bool allowMultiple >
+// struct HashMap : public HashMapInterface
+// {
+//   const bool allowMultiple_{allowMultiple};
+//
+//   HashMap() = delete;
+//   explicit HashMap(Allocator& alloc, const Type& init);
+//   explicit HashMap(const HashMap& other);
+//   HashMap& operator=(const HashMap& other);
+//   // TODO: Move constructor???
+// };
 
 ///////////////////////////////////////////////////////////////////////////////
 // Heap : dynamic heap containter
 ///////////////////////////////////////////////////////////////////////////////
 
 // TODO: implement
-template < typename Type >
-struct Heap // : Array ???should this inherite from Array???
-{
-  Heap() = delete;
-  explicit Heap(Allocator& alloc, const Type& init);
-  explicit Heap(const Heap& other);
-  Heap& operator=(const Heap& other);
-  // TODO: Move constructor???
-};
+// template < typename Type >
+// struct Heap : public HeapInterface
+// {
+//   Heap() = delete;
+//   explicit Heap(Allocator& alloc, const Type& init);
+//   explicit Heap(const Heap& other);
+//   Heap& operator=(const Heap& other);
+//   // TODO: Move constructor???
+// };
 
 // Resize: for linear containers
 //-----------------------------------------------------------------

@@ -160,11 +160,24 @@ ListInterface< Type >::ListInterface(ListInterface& other)
 template < typename Type >
 ListInterface< Type >& ListInterface< Type >::operator=(ListInterface< Type >& other)
 {
-  // FIXME: deep copy
-  // this->length_ = other.length_;
-  // this->head_   = other.head_;
-  // this->tail_   = other.tail_;
-  // this->free_   = other.free_;
+  this->length_ = 0;
+  typename ListInterface< Type >::ElementType* otherElement = &(other.head_);
+  for(cSize i = 0; i < other.length_; i++, this->length_++)
+  {
+    if(container.free_ && otherElement)
+    {
+      // update this
+      typename ListInterface< Type >::ElementType* newElement = container.free_;
+      this->free_ = this->free_->next;
+      newElement->data = otherElement->data;
+      newElement->next = nullptr;
+      newElement->prev = this->tail_;
+      this->tail_->next = newElement;
+      this->tail_ = newElement;
+    }
+    // move other to next
+    otherElement = otherElement->next;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -200,23 +213,56 @@ struct TreeInterface // : Array ???should this inherite from Array???
   // TODO: Move constructor???
 };
 
+// TODO: Implement constructors
+
 ///////////////////////////////////////////////////////////////////////////////
 // Trie
 ///////////////////////////////////////////////////////////////////////////////
 
+// template < typename Type >
+// struct TrieInterface
+// {
+//   virtual ~TrieInterface() {}
+//   TrieInterface();
+//   explicit TrieInterface(const TrieInterface& other);
+//   TrieInterface& operator=(const TrieInterface& other);
+//   // TODO: Move constructor???
+// };
+
+///////////////////////////////////////////////////////////////////////////////
+// HashMap
+///////////////////////////////////////////////////////////////////////////////
+
+// TODO: Implement
 template < typename Type >
-struct TrieInterface
+struct HashMapInterface
 {
-  virtual ~TrieInterface() {}
-  TrieInterface();
-  explicit TrieInterface(const TrieInterface& other);
-  TrieInterface& operator=(const TrieInterface& other);
+  virtual ~HashMapInterface() {}
+  HashMapInterface();
+  explicit HashMapInterface(const HashMapInterface& other);
+  HashMapInterface& operator=(const HashMapInterface& other);
   // TODO: Move constructor???
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+// Heap
+///////////////////////////////////////////////////////////////////////////////
+
+// template < typename Type >
+// struct HeapInterface
+// {
+//   virtual ~HeapInterface() {}
+//   HeapInterface();
+//   explicit HeapInterface(const HeapInterface& other);
+//   HeapInterface& operator=(const HeapInterface& other);
+//   // TODO: Move constructor???
+// };
+
+///////////////////////////////////////////////////////////////////////////////
 // Accessors
 ///////////////////////////////////////////////////////////////////////////////
+
+// TODO: is it possible to colapse some functions across different container types?
 
 // Array acessor functions
 // ----------------------------------------------------------------------------
@@ -266,7 +312,7 @@ inline void clear(ArrayInterface< Type >& container)
 // @param el  element to be copied at the container
 // return ErrorCode (FIXME: so far there are only 2 possible error code values)
 template < typename Type >
-inline ErrorCode push_back(DEQInterface< Type >& container, const Type& el)
+inline ErrorCode pushBack(DEQInterface< Type >& container, const Type& el)
 {
   if((container.length_ < container.capacity()) || container.canOverwrite_)
   {
@@ -295,7 +341,7 @@ inline ErrorCode push_back(DEQInterface< Type >& container, const Type& el)
 // @param el  element to be copied at the container
 // return ErrorCode (FIXME: so far there are only 2 possible error code values)
 template < typename Type >
-inline ErrorCode push_front(DEQInterface< Type >& container, const Type& el)
+inline ErrorCode pushFront(DEQInterface< Type >& container, const Type& el)
 {
   m64 mm(container.capacity(), 0);
   if((container.length_ < container.capacity()) || container.canOverwrite_)
@@ -323,7 +369,7 @@ inline ErrorCode push_front(DEQInterface< Type >& container, const Type& el)
 // @param container
 // return ErrorCode (FIXME: so far there are only 2 possible error code values)
 template < typename Type >
-inline ErrorCode pop_back(DEQInterface< Type >& container)
+inline ErrorCode popBack(DEQInterface< Type >& container)
 {
   m64 mm(container.capacity(), 0);
   if(container.length_ > 0)
@@ -344,7 +390,7 @@ inline ErrorCode pop_back(DEQInterface< Type >& container)
 // @param container
 // return ErrorCode (FIXME: so far there are only 2 possible error code values)
 template < typename Type >
-inline ErrorCode pop_front(DEQInterface< Type >& container)
+inline ErrorCode popFront(DEQInterface< Type >& container)
 {
   m64 mm(container.capacity(), 0);
   if(container.length_ > 0)
@@ -458,7 +504,7 @@ inline void clear(ListInterface< Type >& container)
 // @param el  element to be copied at the container
 // return ErrorCode (FIXME: so far there are only 2 possible error code values)
 template < typename Type >
-inline ErrorCode push_front(ListInterface< Type >& container, const Type& element)
+inline ErrorCode pushFront(ListInterface< Type >& container, const Type& element)
 {
   if(container.free_)
   {
@@ -483,7 +529,7 @@ inline ErrorCode push_front(ListInterface< Type >& container, const Type& elemen
 // @param el  element to be copied at the container
 // return ErrorCode (FIXME: so far there are only 2 possible error code values)
 template < typename Type >
-inline ErrorCode push_back(ListInterface< Type >& container, const Type& element)
+inline ErrorCode pushBack(ListInterface< Type >& container, const Type& element)
 {
   if(container.free_)
   {
@@ -507,7 +553,7 @@ inline ErrorCode push_back(ListInterface< Type >& container, const Type& element
 // @param container
 // return ErrorCode (FIXME: so far there are only 2 possible error code values)
 template < typename Type >
-inline ErrorCode pop_front(ListInterface< Type >& container)
+inline ErrorCode popFront(ListInterface< Type >& container)
 {
   if(container.head_)
   {
@@ -531,7 +577,7 @@ inline ErrorCode pop_front(ListInterface< Type >& container)
 // @param container
 // return ErrorCode (FIXME: so far there are only 2 possible error code values)
 template < typename Type >
-inline ErrorCode pop_back(ListInterface< Type >& container)
+inline ErrorCode popBack(ListInterface< Type >& container)
 {
   if(container.tail_)
   {
